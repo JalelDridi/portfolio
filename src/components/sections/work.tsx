@@ -14,7 +14,7 @@ export function Work() {
       title="Things I have built and shipped"
       description="Most of this lives in private company repositories, so each one has a short case study: why it existed, what I built and what came of it."
     >
-      <ul className="grid gap-6 md:grid-cols-2">
+      <ul className="grid gap-6 *:min-w-0 md:grid-cols-2">
         {projects.map((project, index) => {
           const external = project.links[0];
           return (

@@ -16,7 +16,7 @@ export function Flagship() {
       title={`${flagship.name}: ${flagship.tagline.toLowerCase()}`}
       description={flagship.summary}
     >
-      <div className="grid items-start gap-10 lg:grid-cols-[1.25fr_1fr]">
+      <div className="grid items-start gap-10 *:min-w-0 lg:grid-cols-[1.25fr_1fr]">
         <Reveal>
           <BrowserFrame url="payout-ledger-gamma.vercel.app">
             <video

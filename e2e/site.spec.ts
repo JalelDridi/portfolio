@@ -112,7 +112,8 @@ for (const colorScheme of ["light", "dark"] as const) {
 }
 
 test("fits a phone screen without horizontal scrolling", async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 812 });
+  // Narrower than most phones, to leave a margin for font differences.
+  await page.setViewportSize({ width: 340, height: 812 });
   for (const path of ["/", "/work/spyder"]) {
     await page.goto(path);
 
