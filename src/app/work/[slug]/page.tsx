@@ -6,6 +6,7 @@ import { BrowserFrame } from "@/components/browser-frame";
 import { LinkButton } from "@/components/link-button";
 import { ProjectVisual } from "@/components/project-visual";
 import { Reveal } from "@/components/reveal";
+import { Rise } from "@/components/rise";
 import { Tags } from "@/components/tags";
 import { projects } from "@/content";
 
@@ -40,7 +41,7 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
 
   return (
     <main className="mx-auto w-full max-w-4xl px-5 pt-28 pb-16 sm:pb-24">
-      <Reveal>
+      <Rise>
         <Link
           href="/#work"
           className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -56,9 +57,9 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
         <p className="mt-4 max-w-2xl text-xl text-pretty text-muted-foreground">
           {project.summary}
         </p>
-      </Reveal>
+      </Rise>
 
-      <Reveal delay={0.1} className="mt-10">
+      <Rise delay={100} className="mt-10">
         {visual.kind === "image" ? (
           <BrowserFrame url={new URL(project.links[0].href).hostname}>
             <ProjectVisual project={project} size="page" />
@@ -71,7 +72,7 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
             </figcaption>
           </figure>
         )}
-      </Reveal>
+      </Rise>
 
       <div className="mt-12 grid gap-12 md:grid-cols-[1fr_15rem]">
         <div className="flex flex-col gap-10">

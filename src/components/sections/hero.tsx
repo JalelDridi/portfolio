@@ -3,7 +3,7 @@ import { flagship, heroDiagram, profile } from "@/content";
 import { Diagram } from "../diagram";
 import { GitHubIcon, LinkedInIcon } from "../icons";
 import { LinkButton } from "../link-button";
-import { Reveal } from "../reveal";
+import { Rise } from "../rise";
 import { BorderBeam } from "../ui/border-beam";
 import { DotPattern } from "../ui/dot-pattern";
 
@@ -23,7 +23,7 @@ export function Hero() {
 
       <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-16 sm:py-24 lg:grid-cols-[1.15fr_0.85fr] lg:py-28">
         <div className="flex flex-col gap-7">
-          <Reveal>
+          <Rise>
             <p className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3 py-1 text-sm font-medium">
               <span className="relative flex size-2" aria-hidden="true">
                 <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-bright opacity-60" />
@@ -31,9 +31,9 @@ export function Hero() {
               </span>
               {profile.availability}
             </p>
-          </Reveal>
+          </Rise>
 
-          <Reveal delay={0.05}>
+          <Rise>
             <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
               {profile.name}
             </h1>
@@ -41,15 +41,15 @@ export function Hero() {
               {profile.role}.{" "}
               <span className="text-gradient">{profile.headline}.</span>
             </p>
-          </Reveal>
+          </Rise>
 
-          <Reveal delay={0.1}>
+          <Rise delay={80}>
             <p className="max-w-xl text-lg leading-relaxed text-pretty text-muted-foreground">
               {profile.intro}
             </p>
-          </Reveal>
+          </Rise>
 
-          <Reveal delay={0.15}>
+          <Rise delay={160}>
             <ul className="flex flex-col gap-1.5 text-sm text-muted-foreground">
               {profile.facts.map((fact) => (
                 <li key={fact} className="flex items-center gap-2">
@@ -65,9 +65,9 @@ export function Hero() {
                 {profile.location}
               </li>
             </ul>
-          </Reveal>
+          </Rise>
 
-          <Reveal delay={0.2}>
+          <Rise delay={240}>
             <div className="flex flex-wrap items-center gap-3">
               <LinkButton variant="primary" href="#project">
                 See my work <ArrowRight aria-hidden="true" />
@@ -90,10 +90,10 @@ export function Hero() {
                 <LinkedInIcon />
               </LinkButton>
             </div>
-          </Reveal>
+          </Rise>
         </div>
 
-        <Reveal delay={0.25}>
+        <Rise delay={320}>
           <a
             href={flagship.demo}
             aria-label={`${flagship.name}: open the live demo`}
@@ -132,7 +132,7 @@ export function Hero() {
               colorTo="var(--brand-2)"
             />
           </a>
-        </Reveal>
+        </Rise>
       </div>
     </section>
   );

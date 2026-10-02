@@ -27,6 +27,7 @@ import {
   Webhook,
   type LucideIcon,
 } from "lucide-react";
+import { useInView } from "motion/react";
 import { createRef, useRef, useState, type RefObject } from "react";
 import type { DiagramSpec, IconName } from "@/content";
 import { cn } from "@/lib/utils";
@@ -74,6 +75,9 @@ export function Diagram({
   className?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // Beams animate continuously, so they only exist while the diagram is
+  // near the viewport.
+  const nearby = useInView(containerRef, { margin: "200px" });
   // One stable ref object per node, looked up by ID when drawing edges.
   const [refs] = useState<Record<string, RefObject<HTMLDivElement | null>>>(
     () =>
@@ -138,21 +142,22 @@ export function Diagram({
         </div>
       ))}
 
-      {spec.edges.map(([from, to], index) => (
-        <AnimatedBeam
-          key={`${from}-${to}`}
-          containerRef={containerRef}
-          fromRef={refs[from]}
-          toRef={refs[to]}
-          duration={4}
-          delay={index * 0.35}
-          pathColor="var(--border)"
-          pathOpacity={1}
-          pathWidth={1.5}
-          gradientStartColor="var(--brand-bright)"
-          gradientStopColor="var(--brand-2)"
-        />
-      ))}
+      {nearby &&
+        spec.edges.map(([from, to], index) => (
+          <AnimatedBeam
+            key={`${from}-${to}`}
+            containerRef={containerRef}
+            fromRef={refs[from]}
+            toRef={refs[to]}
+            duration={4}
+            delay={index * 0.35}
+            pathColor="var(--border)"
+            pathOpacity={1}
+            pathWidth={1.5}
+            gradientStartColor="var(--brand-bright)"
+            gradientStopColor="var(--brand-2)"
+          />
+        ))}
     </div>
   );
 }
