@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { profile } from "@/content";
+import { MobileNav } from "./mobile-nav";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
@@ -15,7 +16,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold tracking-tight"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight whitespace-nowrap"
         >
           <span
             aria-hidden="true"
@@ -43,10 +44,13 @@ export function SiteHeader() {
           <ThemeToggle />
           <Link
             href="/#contact"
-            className="inline-flex h-9 items-center rounded-full bg-foreground px-4 text-base font-medium text-background transition-opacity hover:opacity-85"
+            className="hidden h-9 items-center rounded-full bg-foreground sm:inline-flex px-4 text-base font-medium text-background transition-opacity hover:opacity-85"
           >
             Contact
           </Link>
+          <MobileNav
+            items={[...NAV, { href: "/#contact", label: "Contact" }]}
+          />
         </div>
       </div>
     </header>
