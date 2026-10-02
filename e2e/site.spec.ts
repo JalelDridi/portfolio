@@ -180,3 +180,71 @@ test("fits a phone screen without horizontal scrolling", async ({ page }) => {
     expect(overflow, path).toBeLessThanOrEqual(0);
   }
 });
+
+test("a phone gets the section links behind a menu button", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/");
+
+  await page.getByRole("button", { name: "Open the menu" }).click();
+  await page
+    .getByRole("navigation", { name: "Sections" })
+    .getByRole("link", { name: "Experience" })
+    .click();
+
+  await expect(page).toHaveURL(/#experience$/);
+  await expect(
+    page.getByRole("button", { name: "Open the menu" }),
+  ).toBeVisible();
+});
+
+test("an unknown address shows a way back to the home page", async ({
+  page,
+}) => {
+  await page.goto("/no-such-page");
+
+  await expect(
+    page.getByRole("heading", { level: 1, name: "This page does not exist" }),
+  ).toBeVisible();
+  await page.getByRole("link", { name: "Back to the home page" }).click();
+  await expect(page).toHaveURL(/\/$/);
+});
+
+test("a shared case study describes itself, not the home page", async ({
+  page,
+}) => {
+  await page.goto("/work/spyder");
+
+  const meta = (property: string) =>
+    page.locator(`meta[property="${property}"]`).getAttribute("content");
+  expect(await meta("og:title")).toBe("Spyder");
+  expect(await meta("og:url")).toMatch(/\/work\/spyder$/);
+  expect(await meta("og:image")).toContain("/work/spyder/opengraph-image");
+});
+
+test("the home page describes its subject to search engines", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const raw = await page
+    .locator('script[type="application/ld+json"]')
+    .textContent();
+  const data = JSON.parse(raw ?? "{}");
+
+  expect(data["@type"]).toBe("ProfilePage");
+  expect(data.mainEntity.name).toBe("Mohamed Jalel Dridi");
+  expect(data.mainEntity.sameAs).toContain("https://github.com/JalelDridi");
+});
+
+test("recordings wait until they are near the screen", async ({ page }) => {
+  await page.goto("/");
+  const video = page.locator("#project video");
+
+  await expect(video).toHaveAttribute("preload", "none");
+  await expect(video).not.toHaveAttribute("poster");
+
+  await video.scrollIntoViewIfNeeded();
+  await expect(video).toHaveAttribute("poster", /payout-ledger-poster/);
+});
