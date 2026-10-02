@@ -41,7 +41,7 @@ export function ogCard({
       <div style={{ display: "flex", flexDirection: "column" }}>
         <div
           style={{
-            fontSize: title.length > 28 ? 68 : 84,
+            fontSize: title.length > 44 ? 56 : title.length > 28 ? 68 : 84,
             fontWeight: 700,
             lineHeight: 1.05,
           }}

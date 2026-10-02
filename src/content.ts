@@ -700,3 +700,72 @@ export const experience = [
 
 export const education =
   "Engineering degree in Computer Science (IT Architecture & Cloud Computing), ESPRIT, Tunis, 2025.";
+
+/** The personal section. Every sentence here is Jalel's to approve. */
+export const about = {
+  title: "From keeping servers up to moving money",
+  portrait: {
+    src: "/me/portrait.jpg",
+    alt: "Mohamed Jalel Dridi, smiling, in a navy suit and glasses",
+    width: 460,
+    height: 460,
+  },
+  paragraphs: [
+    "I started on the infrastructure side. After two years of preparatory classes at IPEI El Manar I studied IT architecture and cloud computing at ESPRIT in Tunis, and my first paid work was at Pearls Consulting: deploying Laravel applications, automating releases, then building a field-inspection platform and the Kubernetes pipeline that shipped it.",
+    "In January 2026 I joined the team behind Offa.com, a US real-estate marketplace, and moved from running software to building products: first Deal Grader, then Spyder. In June I followed the same founding team to Potluck as its founding engineer, and took on the part with the least room for error: the payments.",
+    "The infrastructure habit stayed. I ask what happens when a webhook is late, a deploy stops halfway or two requests race for one balance, and I would rather have the database refuse a wrong state than trust every caller to avoid it. Payout Ledger is that habit, written down in public.",
+  ],
+  facts: [
+    { label: "Based in", value: "Bizerte, on Tunisia's north coast" },
+    {
+      label: "Working",
+      value: "Fully remote with US teams since January 2026",
+    },
+    { label: "Speaks", value: "Arabic, English and French" },
+    { label: "Studied", value: "IT architecture and cloud computing, ESPRIT" },
+  ],
+  clocksCaption: "The time right now at home and across the United States.",
+  /** Shown as analogue clocks. The first is home. */
+  clocks: [
+    { city: "Bizerte", zone: "Africa/Tunis" },
+    { city: "New York", zone: "America/New_York" },
+    { city: "Chicago", zone: "America/Chicago" },
+    { city: "San Francisco", zone: "America/Los_Angeles" },
+  ],
+};
+
+/** Roles outside engineering, as listed on the CV. */
+export const leadership = {
+  title: "Leading outside of code",
+  intro:
+    "Since 2022 I have helped run the El Alia chapter of JCI, Junior Chamber International, a worldwide network of young people who organise projects in their own towns. This year I am its president.",
+  organisation: {
+    name: "JCI El Alia",
+    detail: "Local chapter of Junior Chamber International · Bizerte, Tunisia",
+    href: "https://www.facebook.com/jcielalia",
+    linkLabel: "JCI El Alia on Facebook",
+  },
+  roles: [
+    { year: "2022", role: "Secretary General" },
+    { year: "2024", role: "Vice-President" },
+    { year: "2026", role: "President" },
+  ],
+  /** From the chapter's public posts in 2026. */
+  activity: {
+    label: "The chapter in 2026",
+    items: [
+      "A career event, Unlock Your Career",
+      "A three-day train-the-trainers course",
+      "The Coupe El Alia football tournament",
+      "A forum on creativity and branding",
+    ],
+  },
+  also: [
+    {
+      role: "Marketing Manager",
+      organisation: "Inceptum Junior Enterprise, ESPRIT",
+    },
+  ],
+  bridge:
+    "It is the same job as leading releases at Potluck: agree a plan, split the work, keep people informed and make sure it ships.",
+};
