@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { Clip, Shot } from "@/content";
 import { cn } from "@/lib/utils";
 import { BrowserFrame } from "./browser-frame";
+import { LazyVideo } from "./lazy-video";
 
 /** A phone outline around a tall screenshot or recording. */
 function PhoneFrame({ children }: { children: ReactNode }) {
@@ -72,21 +73,17 @@ export function ClipFigure({
   return (
     <figure className={cn("flex flex-col gap-3", className)}>
       <Frame frame={clip.frame} url={clip.url}>
-        {/* Silent, with controls so it can be paused. */}
-        <video
-          className="w-full bg-black"
+        <LazyVideo
+          // The shape is reserved up front, so nothing moves when it loads.
+          className={cn(
+            "w-full bg-black",
+            clip.frame === "phone" ? "aspect-[390/844]" : "aspect-[16/10]",
+          )}
+          webm={clip.webm}
+          mp4={clip.mp4}
           poster={clip.poster}
-          aria-label={clip.label}
-          autoPlay
-          muted
-          loop
-          playsInline
-          controls
-          preload="metadata"
-        >
-          <source src={clip.webm} type="video/webm" />
-          <source src={clip.mp4} type="video/mp4" />
-        </video>
+          label={clip.label}
+        />
       </Frame>
       <figcaption className="text-center text-base text-pretty text-muted-foreground">
         {clip.caption}

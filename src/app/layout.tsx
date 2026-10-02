@@ -11,9 +11,11 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
+// Only small labels use the mono face, so it is not worth a preload.
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  preload: false,
 });
 
 const description =

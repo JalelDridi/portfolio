@@ -2,6 +2,7 @@ import { ArrowUpRight, BookOpen } from "lucide-react";
 import { flagship } from "@/content";
 import { BrowserFrame } from "../browser-frame";
 import { GitHubIcon } from "../icons";
+import { LazyVideo } from "../lazy-video";
 import { LinkButton } from "../link-button";
 import { Reveal } from "../reveal";
 import { Section } from "../section";
@@ -19,20 +20,13 @@ export function Flagship() {
       <div className="grid items-start gap-10 *:min-w-0 lg:grid-cols-[1.25fr_1fr]">
         <Reveal>
           <BrowserFrame url="payout-ledger-gamma.vercel.app">
-            <video
+            <LazyVideo
               className="aspect-[16/10] w-full bg-black"
+              webm={flagship.video.webm}
+              mp4={flagship.video.mp4}
               poster={flagship.video.poster}
-              aria-label={flagship.video.label}
-              autoPlay
-              muted
-              loop
-              playsInline
-              controls
-              preload="metadata"
-            >
-              <source src={flagship.video.webm} type="video/webm" />
-              <source src={flagship.video.mp4} type="video/mp4" />
-            </video>
+              label={flagship.video.label}
+            />
             <BorderBeam
               size={160}
               duration={10}
