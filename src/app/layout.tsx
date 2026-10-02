@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Providers } from "@/components/providers";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { profile, SITE_URL } from "@/content";
 import "./globals.css";
 
@@ -18,7 +21,10 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: `${profile.name} · Founding Engineer, Full-Stack TypeScript`,
+  title: {
+    default: `${profile.name} · Founding Engineer, Full-Stack TypeScript`,
+    template: `%s · ${profile.name}`,
+  },
   description,
   alternates: { canonical: "/" },
   openGraph: {
@@ -32,11 +38,25 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
+    // next-themes sets the theme class on <html> before hydration.
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      suppressHydrationWarning
+      className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <Providers>
+          <a
+            href="#content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-md focus:bg-foreground focus:px-4 focus:py-2 focus:text-background"
+          >
+            Skip to content
+          </a>
+          <SiteHeader />
+          <div id="content">{children}</div>
+          <SiteFooter />
+        </Providers>
+      </body>
     </html>
   );
 }
