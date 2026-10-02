@@ -27,6 +27,13 @@ export async function generateMetadata(
     title: project.title,
     description: project.summary,
     alternates: { canonical: `/work/${project.slug}` },
+    // Without this a shared case study would show the home page's card.
+    openGraph: {
+      title: project.title,
+      description: project.summary,
+      url: `/work/${project.slug}`,
+      type: "article",
+    },
   };
 }
 
