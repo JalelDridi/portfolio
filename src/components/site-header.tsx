@@ -12,10 +12,10 @@ const NAV = [
 export function SiteHeader() {
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/75 backdrop-blur-md">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-5">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5">
         <Link
           href="/"
-          className="flex items-center gap-2 font-semibold tracking-tight"
+          className="flex items-center gap-2 text-lg font-semibold tracking-tight"
         >
           <span
             aria-hidden="true"
@@ -33,7 +33,7 @@ export function SiteHeader() {
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="rounded-md px-3 py-1.5 text-base text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               {item.label}
             </Link>
@@ -43,7 +43,7 @@ export function SiteHeader() {
           <ThemeToggle />
           <Link
             href="/#contact"
-            className="inline-flex h-9 items-center rounded-full bg-foreground px-4 text-sm font-medium text-background transition-opacity hover:opacity-85"
+            className="inline-flex h-9 items-center rounded-full bg-foreground px-4 text-base font-medium text-background transition-opacity hover:opacity-85"
           >
             Contact
           </Link>

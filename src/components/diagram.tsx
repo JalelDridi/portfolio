@@ -118,11 +118,11 @@ export function Diagram({
                   ref={refs[node.id]}
                   className={cn(
                     "flex items-center justify-center rounded-xl border border-border bg-card text-brand shadow-sm",
-                    compact ? "size-9" : "size-10 sm:size-12",
+                    compact ? "size-11" : "size-12 sm:size-14",
                   )}
                 >
                   <Icon
-                    className={compact ? "size-4" : "size-4 sm:size-5"}
+                    className={compact ? "size-5" : "size-5 sm:size-6"}
                     aria-hidden="true"
                   />
                 </div>
@@ -130,8 +130,8 @@ export function Diagram({
                   className={cn(
                     "leading-tight font-medium text-muted-foreground",
                     compact
-                      ? "max-w-16 text-[0.625rem]"
-                      : "max-w-20 text-[0.6875rem] sm:max-w-24 sm:text-xs",
+                      ? "max-w-20 text-xs"
+                      : "max-w-20 text-xs sm:max-w-28 sm:text-sm",
                   )}
                 >
                   {node.label}

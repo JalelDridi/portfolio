@@ -15,6 +15,8 @@ Jalel's personal site. Statically generated: a home page and one case-study page
 - `src/app/page.tsx` — the home page, assembled from `src/components/sections/`
 - `src/app/work/[slug]/page.tsx` — case-study pages
 - `src/components/diagram.tsx` — architecture sketches drawn from specs in `content.ts`
+- `src/components/media.tsx` — screenshots and recordings in browser or phone frames
+- `public/work`, `public/demo` — screenshots and silent recordings of public pages
 - `src/components/ui/` — vendored shadcn/ui and Magic UI components; do not hand-edit
 - `e2e/` — Playwright tests (content, links, accessibility, phone width)
 

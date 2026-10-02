@@ -20,11 +20,11 @@ export function Metrics() {
               delay={index * 0.06}
               className="flex flex-col gap-1"
             >
-              <dt className="order-2 text-sm text-muted-foreground">
+              <dt className="order-2 text-base text-muted-foreground">
                 {metric.label}
-                <span className="block font-mono text-xs">{metric.source}</span>
+                <span className="block font-mono text-sm">{metric.source}</span>
               </dt>
-              <dd className="order-1 text-3xl font-semibold tracking-tight sm:text-4xl">
+              <dd className="order-1 text-4xl font-semibold tracking-tight sm:text-5xl">
                 {/* The animated digits are decorative; the real value is read out. */}
                 <span className="sr-only">{final}</span>
                 <span aria-hidden="true">

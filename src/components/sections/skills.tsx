@@ -8,7 +8,7 @@ const half = Math.ceil(all.length / 2);
 
 function Chip({ children }: { children: string }) {
   return (
-    <span className="rounded-full border border-border bg-card px-4 py-1.5 text-sm font-medium whitespace-nowrap">
+    <span className="rounded-full border border-border bg-card px-4 py-1.5 text-base font-medium whitespace-nowrap">
       {children}
     </span>
   );
@@ -48,10 +48,10 @@ export function Skills() {
           <li key={group.group}>
             <Reveal delay={(index % 3) * 0.06} className="h-full">
               <div className="h-full rounded-2xl border border-border bg-card p-5">
-                <h3 className="font-mono text-xs font-medium tracking-widest text-brand uppercase">
+                <h3 className="font-mono text-sm font-medium tracking-widest text-brand uppercase">
                   {group.group}
                 </h3>
-                <p className="mt-3 leading-relaxed text-pretty">
+                <p className="mt-3 text-lg leading-relaxed text-pretty">
                   {group.items.join(" · ")}
                 </p>
               </div>

@@ -1,4 +1,4 @@
-import { Mail } from "lucide-react";
+import { FileDown, Mail } from "lucide-react";
 import { profile } from "@/content";
 import { GitHubIcon, LinkedInIcon } from "../icons";
 import { LinkButton } from "../link-button";
@@ -19,7 +19,7 @@ export function Contact() {
             className="pointer-events-none absolute -bottom-40 left-1/2 size-[32rem] -translate-x-1/2 rounded-full bg-brand-bright/15 blur-3xl"
           />
           <div className="relative">
-            <p className="font-mono text-xs font-medium tracking-widest text-brand uppercase">
+            <p className="font-mono text-sm font-medium tracking-widest text-brand uppercase">
               Contact
             </p>
             <h2
@@ -28,7 +28,7 @@ export function Contact() {
             >
               Hiring for payments or full-stack TypeScript?
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-pretty text-muted-foreground">
+            <p className="mx-auto mt-4 max-w-xl text-xl text-pretty text-muted-foreground">
               I am open to remote roles. Email is the quickest way to reach me.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -37,6 +37,9 @@ export function Contact() {
                 href={`mailto:${profile.links.email}`}
               >
                 <Mail aria-hidden="true" /> {profile.links.email}
+              </LinkButton>
+              <LinkButton href={profile.links.cv}>
+                <FileDown aria-hidden="true" /> Download CV
               </LinkButton>
               <LinkButton href={profile.links.linkedin}>
                 <LinkedInIcon /> LinkedIn

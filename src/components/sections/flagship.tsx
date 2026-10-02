@@ -40,7 +40,7 @@ export function Flagship() {
               colorTo="var(--brand-2)"
             />
           </BrowserFrame>
-          <p className="mt-3 text-sm text-muted-foreground">
+          <p className="mt-3 text-base text-muted-foreground">
             A dropped webhook is sent, the checks run, and reconciliation flags
             the payout the ledger has fallen behind on.
           </p>
@@ -52,10 +52,10 @@ export function Flagship() {
               <li key={point.title}>
                 <Reveal delay={index * 0.06}>
                   <div className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-brand/50">
-                    <h3 className="font-semibold tracking-tight">
+                    <h3 className="text-lg font-semibold tracking-tight">
                       {point.title}
                     </h3>
-                    <p className="mt-1 text-sm text-pretty text-muted-foreground">
+                    <p className="mt-1 text-base text-pretty text-muted-foreground">
                       {point.text}
                     </p>
                   </div>

@@ -18,10 +18,10 @@ export function Experience() {
               )}
             />
             <Reveal delay={index * 0.05}>
-              <p className="font-mono text-xs text-muted-foreground">
+              <p className="font-mono text-sm text-muted-foreground">
                 {job.period}
               </p>
-              <h3 className="mt-1 text-xl font-semibold tracking-tight">
+              <h3 className="mt-1 text-2xl font-semibold tracking-tight">
                 {job.role}
                 <span className="text-muted-foreground"> · </span>
                 {job.href ? (
@@ -36,14 +36,20 @@ export function Experience() {
                   job.company
                 )}
               </h3>
-              <p className="mt-1 text-sm text-muted-foreground">{job.detail}</p>
-              <p className="mt-3 max-w-2xl text-pretty">{job.summary}</p>
+              <p className="mt-1 text-base text-muted-foreground">
+                {job.detail}
+              </p>
+              <p className="mt-3 max-w-2xl text-lg text-pretty">
+                {job.summary}
+              </p>
             </Reveal>
           </li>
         ))}
       </ol>
       <Reveal>
-        <p className="mt-10 max-w-2xl text-muted-foreground">{education}</p>
+        <p className="mt-10 max-w-2xl text-lg text-muted-foreground">
+          {education}
+        </p>
       </Reveal>
     </Section>
   );

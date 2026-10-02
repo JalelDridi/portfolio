@@ -25,7 +25,7 @@ export function LinkButton({
     <a
       href={href}
       className={cn(
-        "inline-flex h-10 items-center gap-2 rounded-full px-5 text-sm font-medium transition-all active:translate-y-px [&_svg]:size-4",
+        "inline-flex h-11 items-center gap-2 rounded-full px-5 text-base font-medium transition-all active:translate-y-px [&_svg]:size-4",
         STYLES[variant],
         className,
       )}

@@ -3,7 +3,7 @@ import { profile } from "@/content";
 export function SiteFooter() {
   return (
     <footer className="border-t border-border">
-      <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-8 text-base text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
         <p>
           {profile.name} · {profile.location}
         </p>

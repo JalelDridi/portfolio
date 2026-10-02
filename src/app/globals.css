@@ -17,7 +17,7 @@
   --secondary: oklch(0.96 0.006 180);
   --secondary-foreground: oklch(0.2 0.02 200);
   --muted: oklch(0.96 0.006 180);
-  --muted-foreground: oklch(0.44 0.02 200);
+  --muted-foreground: oklch(0.38 0.02 200);
   --accent: oklch(0.96 0.006 180);
   --accent-foreground: oklch(0.2 0.02 200);
   --destructive: oklch(0.577 0.245 27.325);
@@ -42,7 +42,7 @@
   --secondary: oklch(0.24 0.015 220);
   --secondary-foreground: oklch(0.96 0.005 180);
   --muted: oklch(0.24 0.015 220);
-  --muted-foreground: oklch(0.74 0.015 200);
+  --muted-foreground: oklch(0.8 0.012 200);
   --accent: oklch(0.24 0.015 220);
   --accent-foreground: oklch(0.96 0.005 180);
   --destructive: oklch(0.704 0.191 22.216);
@@ -112,6 +112,8 @@
   }
   html {
     @apply scroll-smooth font-sans;
+    /* One notch above the browser default, so every rem-based size grows. */
+    font-size: 106.25%;
     scroll-padding-top: 5rem;
   }
   body {
