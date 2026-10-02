@@ -1,7 +1,6 @@
 import Image from "next/image";
 import type { Project } from "@/content";
 import { Diagram } from "./diagram";
-import { DotPattern } from "./ui/dot-pattern";
 
 /** The picture for a project: a real screenshot, or an architecture sketch. */
 export function ProjectVisual({
@@ -43,11 +42,9 @@ export function ProjectVisual({
           : "relative flex w-full items-center overflow-hidden px-4 py-12 sm:px-12 sm:py-16"
       }
     >
-      <DotPattern
-        width={18}
-        height={18}
-        cr={0.9}
-        className="text-foreground/10"
+      <div
+        aria-hidden="true"
+        className="bg-dots pointer-events-none absolute inset-0 opacity-60"
       />
       <Diagram spec={visual.diagram} compact={size === "card"} />
     </div>

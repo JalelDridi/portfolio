@@ -5,16 +5,13 @@ import { GitHubIcon, LinkedInIcon } from "../icons";
 import { LinkButton } from "../link-button";
 import { Rise } from "../rise";
 import { BorderBeam } from "../ui/border-beam";
-import { DotPattern } from "../ui/dot-pattern";
 
 export function Hero() {
   return (
     <section className="relative overflow-hidden pt-14">
-      <DotPattern
-        width={22}
-        height={22}
-        cr={1}
-        className="text-foreground/15 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,black,transparent)]"
+      <div
+        aria-hidden="true"
+        className="bg-dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,black,transparent)]"
       />
       <div
         aria-hidden="true"
@@ -33,7 +30,7 @@ export function Hero() {
             </p>
           </Rise>
 
-          <Rise>
+          <div>
             <h1 className="text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
               {profile.name}
             </h1>
@@ -41,13 +38,13 @@ export function Hero() {
               {profile.role}.{" "}
               <span className="text-gradient">{profile.headline}.</span>
             </p>
-          </Rise>
+          </div>
 
-          <Rise delay={80}>
+          <div>
             <p className="max-w-xl text-lg leading-relaxed text-pretty text-muted-foreground">
               {profile.intro}
             </p>
-          </Rise>
+          </div>
 
           <Rise delay={160}>
             <ul className="flex flex-col gap-1.5 text-sm text-muted-foreground">

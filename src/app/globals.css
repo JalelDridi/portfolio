@@ -122,6 +122,15 @@
   }
 }
 
+/* A dot grid drawn by CSS: no DOM nodes and no JavaScript. */
+@utility bg-dots {
+  background-image: radial-gradient(
+    color-mix(in oklch, var(--foreground) 16%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+}
+
 @utility text-gradient {
   background-image: linear-gradient(
     100deg,
