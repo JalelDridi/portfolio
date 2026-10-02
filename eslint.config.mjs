@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Vendored UI library components (shadcn/ui, Magic UI).
+    "src/components/ui/**",
     "test-results/**",
     "playwright-report/**",
   ]),
