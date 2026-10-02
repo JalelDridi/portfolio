@@ -55,6 +55,62 @@ test("a project card opens its case study, which links out", async ({
   await expect(page).toHaveURL(/\/#work$/);
 });
 
+test.describe("the pipeline playground", () => {
+  test.beforeEach(async ({ page }) => {
+    // Steps are instant with motion reduced, which keeps these tests fast.
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+  });
+
+  const counters = (page: import("@playwright/test").Page) =>
+    page.locator("dl").filter({ hasText: "Owed to seller" });
+
+  test("a webhook sent twice is stored and applied once", async ({ page }) => {
+    await page.getByRole("button", { name: "Send it twice" }).click();
+
+    await expect(page.getByRole("status")).toContainText(
+      "already stored: skipped",
+    );
+    await expect(counters(page)).toContainText("Stored1");
+    await expect(counters(page)).toContainText("Applied1");
+    await expect(counters(page)).toContainText("$25.00");
+  });
+
+  test("an out-of-order payout waits, then ends at the same balance", async ({
+    page,
+  }) => {
+    await page.getByRole("button", { name: "Send out of order" }).click();
+
+    await expect(page.getByRole("status")).toContainText("Retried");
+    await expect(counters(page)).toContainText("Stored2");
+    await expect(counters(page)).toContainText("Applied2");
+    await expect(counters(page)).toContainText("$0.00");
+  });
+
+  test("balances add up across several runs", async ({ page }) => {
+    const send = page.getByRole("button", { name: "Send a webhook" });
+    await send.click();
+    await expect(counters(page)).toContainText("Applied1");
+    await send.click();
+
+    await expect(counters(page)).toContainText("Applied2");
+    await expect(counters(page)).toContainText("$50.00");
+  });
+});
+
+test("shows the local time in Bizerte and the gap to the visitor", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ timezoneId: "America/New_York" });
+  const page = await context.newPage();
+  await page.goto("/");
+
+  await expect(
+    page.getByText(/\d{2}:\d{2} here now, [56] hours ahead of you/),
+  ).toBeVisible();
+  await context.close();
+});
+
 test("an unknown case study is a 404", async ({ page }) => {
   const response = await page.goto("/work/does-not-exist");
 

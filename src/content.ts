@@ -619,27 +619,6 @@ export const projects: Project[] = [
   },
 ];
 
-/** The pipeline shown in the hero, taken from Payout Ledger. */
-export const heroDiagram: DiagramSpec = {
-  columns: [
-    [{ id: "hook", label: "Webhook", icon: "webhook" }],
-    [{ id: "inbox", label: "Inbox", icon: "box" }],
-    [{ id: "ledger", label: "Ledger", icon: "database" }],
-    [
-      { id: "recon", label: "Reconcile", icon: "activity" },
-      { id: "alert", label: "Alert", icon: "bell" },
-    ],
-  ],
-  edges: [
-    ["hook", "inbox"],
-    ["inbox", "ledger"],
-    ["ledger", "recon"],
-    ["ledger", "alert"],
-  ],
-  caption:
-    "The Payout Ledger pipeline: verify, store once, apply once, then check.",
-};
-
 export const skills = [
   {
     group: "Languages",

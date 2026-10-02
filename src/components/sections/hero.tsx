@@ -1,6 +1,7 @@
 import { ArrowRight, FileDown, Mail, MapPin } from "lucide-react";
-import { flagship, heroDiagram, profile } from "@/content";
-import { Diagram } from "../diagram";
+import { flagship, profile } from "@/content";
+import { LocalTime } from "../local-time";
+import { PipelinePlayground } from "../pipeline-playground";
 import { GitHubIcon, LinkedInIcon } from "../icons";
 import { LinkButton } from "../link-button";
 import { Rise } from "../rise";
@@ -59,7 +60,10 @@ export function Hero() {
               ))}
               <li className="flex items-center gap-2">
                 <MapPin className="size-3.5 text-brand" aria-hidden="true" />
-                {profile.location}
+                <span>
+                  {profile.location}
+                  <LocalTime />
+                </span>
               </li>
             </ul>
           </Rise>
@@ -94,44 +98,35 @@ export function Hero() {
         </div>
 
         <Rise delay={320}>
-          <a
-            href={flagship.demo}
-            aria-label={`${flagship.name}: open the live demo`}
-            className="group relative block overflow-hidden rounded-2xl border border-border bg-card/80 p-6 shadow-xl shadow-black/5 backdrop-blur transition-transform hover:-translate-y-1 dark:shadow-black/30"
-          >
-            <div className="flex items-center justify-between gap-3">
-              <p className="font-mono text-sm font-medium tracking-widest text-brand uppercase">
-                Open source
-              </p>
-              <p className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
-                <span
-                  aria-hidden="true"
-                  className="size-1.5 rounded-full bg-brand-bright"
-                />
-                Live demo
-              </p>
-            </div>
-            <p className="mt-3 text-2xl font-semibold tracking-tight">
-              {flagship.name}
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-card/80 p-6 shadow-xl shadow-black/5 backdrop-blur dark:shadow-black/30">
+            <p className="font-mono text-sm font-medium tracking-widest text-brand uppercase">
+              Try it
             </p>
-            <p className="mt-1 text-base text-muted-foreground">
-              {flagship.tagline}
+            <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+              Break my pipeline
+            </h2>
+            <p className="mt-1 mb-6 text-base text-muted-foreground">
+              A small model of {flagship.name}, my open-source payout monitor.
+              Send it the webhooks that break payment systems.
             </p>
-            <Diagram spec={heroDiagram} compact className="mt-8 mb-2" />
-            <p className="mt-6 flex items-center gap-1.5 text-base font-medium">
-              Break it on purpose
+            <PipelinePlayground />
+            <a
+              href={flagship.demo}
+              className="group mt-6 inline-flex items-center gap-1.5 text-base font-medium underline decoration-border underline-offset-4 hover:decoration-brand"
+            >
+              Open the real demo
               <ArrowRight
                 className="size-4 transition-transform group-hover:translate-x-1"
                 aria-hidden="true"
               />
-            </p>
+            </a>
             <BorderBeam
               size={120}
               duration={9}
               colorFrom="var(--brand-bright)"
               colorTo="var(--brand-2)"
             />
-          </a>
+          </div>
         </Rise>
       </div>
     </section>
