@@ -27,7 +27,7 @@ export function ProjectVisual({
         priority={size === "page"}
         className={
           size === "card"
-            ? "aspect-[16/10] w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+            ? "h-60 w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
             : "w-full"
         }
       />
@@ -38,7 +38,7 @@ export function ProjectVisual({
     <div
       className={
         size === "card"
-          ? "relative flex aspect-[16/10] w-full items-center overflow-hidden px-5"
+          ? "relative flex h-60 w-full items-center overflow-hidden px-5"
           : "relative flex w-full items-center overflow-hidden px-4 py-12 sm:px-12 sm:py-16"
       }
     >

@@ -104,7 +104,7 @@ export function Diagram({
           key={index}
           className={cn(
             "z-10 flex flex-col items-center justify-center",
-            compact ? "gap-3" : "gap-4 sm:gap-5",
+            compact ? "gap-2" : "gap-4 sm:gap-5",
           )}
         >
           {column.map((node) => {

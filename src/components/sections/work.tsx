@@ -41,24 +41,29 @@ export function Work() {
                       {project.summary}
                     </p>
                     <Tags items={project.stack.slice(0, 4)} />
-                    <p
-                      aria-hidden="true"
-                      className="flex items-center gap-1.5 pt-1 text-sm font-medium"
-                    >
-                      Read the case study
-                      <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
-                    </p>
+                    <div className="flex items-center justify-between gap-3 pt-1">
+                      <p
+                        aria-hidden="true"
+                        className="flex items-center gap-1.5 text-sm font-medium"
+                      >
+                        Read the case study
+                        <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" />
+                      </p>
+                      {external && (
+                        <a
+                          href={external.href}
+                          aria-label={`${external.label} (opens ${new URL(external.href).hostname})`}
+                          className="relative z-10 inline-flex h-8 items-center gap-1 rounded-full border border-border px-3 text-xs font-medium transition-colors hover:bg-foreground hover:text-background"
+                        >
+                          Visit
+                          <ArrowUpRight
+                            className="size-3.5"
+                            aria-hidden="true"
+                          />
+                        </a>
+                      )}
+                    </div>
                   </div>
-                  {external && (
-                    <a
-                      href={external.href}
-                      aria-label={`${external.label} (opens ${new URL(external.href).hostname})`}
-                      className="absolute top-3 right-3 z-10 inline-flex h-8 items-center gap-1 rounded-full border border-border bg-background/90 px-3 text-xs font-medium backdrop-blur transition-colors hover:bg-foreground hover:text-background"
-                    >
-                      Visit
-                      <ArrowUpRight className="size-3.5" aria-hidden="true" />
-                    </a>
-                  )}
                 </article>
               </Reveal>
             </li>
