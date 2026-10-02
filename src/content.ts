@@ -4,13 +4,17 @@ export const SITE_URL = "https://jaleldridi.vercel.app";
 
 export const profile = {
   name: "Mohamed Jalel Dridi",
-  headline:
-    "Founding Engineer · Full-Stack TypeScript · Payments & Reliability",
+  shortName: "Jalel Dridi",
+  role: "Founding Engineer",
+  headline: "Full-stack TypeScript, payments and reliability",
   availability: "Open to remote roles",
-  location: "Bizerte, Tunisia (UTC+1)",
-  intro: [
-    "I'm a full-stack engineer working in TypeScript across Next.js, NestJS and PostgreSQL. As founding engineer at Potluck, a US live-shopping marketplace, I own the Stripe Connect payments stack and the production infrastructure, and I built the realtime messaging system and the live-shopping product end to end.",
-    "My work sits where money, reliability and trust meet. I have about two years' experience and have worked fully remote with US teams since January 2026.",
+  location: "Bizerte, Tunisia · UTC+1",
+  intro:
+    "I build the parts of a product where money, reliability and trust meet. As founding engineer at Potluck, a US live-shopping marketplace, I own the Stripe Connect payments stack and the production infrastructure, and I built the realtime messaging system and the live-shopping product end to end.",
+  facts: [
+    "About two years' experience",
+    "Fully remote with US teams since January 2026",
+    "English C2 · French C1 · Arabic native",
   ],
   links: {
     github: "https://github.com/JalelDridi",
@@ -19,40 +23,122 @@ export const profile = {
   },
 };
 
+/** Figures taken from the CV; each names where it comes from. */
+export const metrics = [
+  { value: 14000, suffix: "+", label: "messages a week", source: "Spyder" },
+  {
+    value: 99.99,
+    decimals: 2,
+    suffix: "%",
+    label: "delivery reliability",
+    source: "Spyder",
+  },
+  {
+    value: 750,
+    prefix: "~",
+    suffix: " ms",
+    label: "realtime latency",
+    source: "Potluck messaging",
+  },
+  { value: 99, label: "automated tests", source: "Payout Ledger" },
+];
+
 export const flagship = {
   name: "Payout Ledger",
   tagline: "An open-source payout monitor for marketplaces",
   summary:
-    "Webhooks from a payment provider arrive twice, out of order, or not at all. Payout Ledger ingests them idempotently, records every money movement in a double-entry ledger that cannot go negative, reconciles against the provider, and alerts on failed or stuck payouts. The live demo has a simulator, so you can send it each kind of failure and watch what it catches.",
+    "Webhooks from a payment provider arrive twice, out of order, or not at all. Payout Ledger ingests them idempotently, records every money movement in a double-entry ledger that cannot go negative, reconciles against the provider, and alerts on failed or stuck payouts.",
   points: [
-    "Balances stay correct under concurrent writes: 25 payouts racing for a balance that covers 10, and exactly 10 go through.",
-    "Any delivery order reaches the same final state, proven with property-based tests.",
-    "The ledger's rules are enforced by the database itself, not only by application code.",
-    "Eight design decisions written up with the options considered and the trade-offs.",
+    {
+      title: "Correct under concurrency",
+      text: "25 payouts race for a balance that covers 10. Exactly 10 go through.",
+    },
+    {
+      title: "Order does not matter",
+      text: "Property-based tests deliver events in random orders. The end state is always the same.",
+    },
+    {
+      title: "Enforced by the database",
+      text: "Unbalanced transactions, overdrafts and edits to ledger rows are rejected by Postgres itself.",
+    },
+    {
+      title: "Decisions written down",
+      text: "Eight design records with the options considered and the trade-offs.",
+    },
   ],
   stack: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Playwright"],
   demo: "https://payout-ledger-gamma.vercel.app",
   repo: "https://github.com/JalelDridi/payout-ledger",
-  image: {
-    src: "/payout-ledger.png",
-    alt: "The Payout Ledger dashboard: summary tiles, six simulator scenarios, open alerts and a reconciliation mismatch",
+  decisions:
+    "https://github.com/JalelDridi/payout-ledger/tree/main/docs/decisions",
+  video: {
+    mp4: "/demo/payout-ledger.mp4",
+    webm: "/demo/payout-ledger.webm",
+    poster: "/demo/payout-ledger-poster.jpg",
+    label:
+      "Screen recording of the Payout Ledger demo: a dropped webhook is sent, the checks run, and reconciliation flags the mismatch",
   },
 };
 
-export type CaseStudy = {
+export type DiagramSpec = {
+  /** Columns left to right; each holds the nodes stacked in it. */
+  columns: { id: string; label: string; icon: IconName }[][];
+  edges: [from: string, to: string][];
+  caption: string;
+};
+
+export type IconName =
+  | "user"
+  | "server"
+  | "database"
+  | "card"
+  | "webhook"
+  | "shield"
+  | "bell"
+  | "radio"
+  | "send"
+  | "route"
+  | "mail"
+  | "message"
+  | "chart"
+  | "ticket"
+  | "gift"
+  | "video"
+  | "git"
+  | "rocket"
+  | "check"
+  | "layers"
+  | "gateway"
+  | "phone"
+  | "box"
+  | "activity";
+
+export type Project = {
+  slug: string;
   title: string;
-  context: string;
+  company: string;
+  year: string;
+  /** One line for the card. */
+  summary: string;
   why: string;
   built: string[];
   outcome?: string;
   stack: string[];
-  link?: { label: string; href: string };
+  links: { label: string; href: string }[];
+  visual:
+    | { kind: "image"; src: string; alt: string; width: number; height: number }
+    | { kind: "diagram"; diagram: DiagramSpec };
+  note?: string;
 };
 
-export const caseStudies: CaseStudy[] = [
+export const projects: Project[] = [
   {
+    slug: "deal-grader",
     title: "Deal Grader",
-    context: "Offa.com · US real-estate marketplace · 2026",
+    company: "Offa.com",
+    year: "2026",
+    summary:
+      "A public tool that scores any US real-estate deal in about 30 seconds.",
     why: "A free public tool that scores a US real-estate deal in about 30 seconds, built to bring investors to Offa's marketplace.",
     built: [
       "Interactive underwriting inputs with a score that updates as you type.",
@@ -61,12 +147,26 @@ export const caseStudies: CaseStudy[] = [
       "Hardened for a public launch: it degrades gracefully when a data source is down, blocks abuse and validates US addresses.",
     ],
     stack: ["React", "TypeScript", "Node.js", "Google Places API", "AWS"],
-    link: { label: "grade.offa.com", href: "https://grade.offa.com" },
+    links: [
+      { label: "Open Deal Grader", href: "https://grade.offa.com" },
+      { label: "Offa.com", href: "https://offa.com" },
+    ],
+    visual: {
+      kind: "image",
+      src: "/work/deal-grader.png",
+      alt: "The Deal Grader page: a form asking for a property address, price, beds and baths, with a Grade This Deal button",
+      width: 1440,
+      height: 900,
+    },
   },
   {
+    slug: "potluck-live",
     title: "Potluck LIVE",
-    context: "Potluck · US live-shopping marketplace · 2026",
-    why: "The company's live-shopping product, which I built end to end.",
+    company: "Potluck",
+    year: "2026",
+    summary:
+      "The company's live-shopping product, built end to end: sign-up, tokens, shows and giveaways.",
+    why: "Potluck's live-shopping product, where home bakers sell on camera. I built it end to end.",
     built: [
       "A public sign-up page per show, with one-field, phone-only signup.",
       "A token ledger kept entirely on the server (earn, spend, referrals) whose balances can never go negative.",
@@ -75,10 +175,42 @@ export const caseStudies: CaseStudy[] = [
     outcome:
       "Shipped to production through idempotent migrations, with headless test suites covering the flows.",
     stack: ["Next.js", "TypeScript", "PostgreSQL", "Playwright"],
+    links: [
+      {
+        label: "Live shows on Potluck",
+        href: "https://www.bigpotluck.com/live",
+      },
+    ],
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [{ id: "signup", label: "Show sign-up", icon: "phone" }],
+          [{ id: "ledger", label: "Token ledger", icon: "ticket" }],
+          [
+            { id: "console", label: "Host console", icon: "video" },
+            { id: "giveaway", label: "Giveaways", icon: "gift" },
+            { id: "analytics", label: "Live analytics", icon: "chart" },
+          ],
+        ],
+        edges: [
+          ["signup", "ledger"],
+          ["ledger", "console"],
+          ["ledger", "giveaway"],
+          ["ledger", "analytics"],
+        ],
+        caption:
+          "Sign-ups earn tokens in a server-only ledger that feeds the show console, giveaways and analytics.",
+      },
+    },
   },
   {
+    slug: "payments",
     title: "Payments on Stripe Connect",
-    context: "Potluck · 2026",
+    company: "Potluck",
+    year: "2026",
+    summary:
+      "Checkout, transfers, payouts, webhooks and reconciliation for a two-sided marketplace.",
     why: "I own the payments stack: checkout, transfers, payouts, webhooks and reconciliation. In a marketplace, every one of those has to be right for both the buyer and the seller.",
     built: [
       "An order is marked paid only after the payment is verified server-side against Stripe, with inventory decremented exactly once.",
@@ -87,12 +219,49 @@ export const caseStudies: CaseStudy[] = [
       "A daily reconciliation of the database against Stripe that classifies every mismatch by cause.",
     ],
     outcome:
-      "Payout Ledger, above, is a from-scratch public rebuild of these ideas. It shares no code with Potluck.",
+      "Payout Ledger is a from-scratch public rebuild of these ideas. It shares no code with Potluck.",
     stack: ["Stripe Connect", "Next.js", "TypeScript", "PostgreSQL"],
+    links: [
+      { label: "Potluck", href: "https://www.bigpotluck.com" },
+      {
+        label: "Payout Ledger, the public rebuild",
+        href: "https://payout-ledger-gamma.vercel.app",
+      },
+    ],
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [
+            { id: "checkout", label: "Checkout", icon: "card" },
+            { id: "webhooks", label: "Stripe webhooks", icon: "webhook" },
+          ],
+          [{ id: "verify", label: "Server verification", icon: "shield" }],
+          [
+            { id: "order", label: "Order and stock", icon: "box" },
+            { id: "recon", label: "Reconciliation", icon: "activity" },
+            { id: "alerts", label: "Payout alerts", icon: "bell" },
+          ],
+        ],
+        edges: [
+          ["checkout", "verify"],
+          ["webhooks", "verify"],
+          ["verify", "order"],
+          ["verify", "recon"],
+          ["verify", "alerts"],
+        ],
+        caption:
+          "Nothing the client sends is trusted: the server verifies with Stripe before an order is paid.",
+      },
+    },
   },
   {
+    slug: "realtime-messaging",
     title: "Realtime messaging",
-    context: "Potluck · 2026",
+    company: "Potluck",
+    year: "2026",
+    summary:
+      "Buyer and seller chat with about 750 ms latency and read-only clients.",
     why: "Buyers and sellers needed to talk before and after an order, in real time, without the client ever being trusted with write access.",
     built: [
       "PostgreSQL is the system of record; messages are mirrored by the server to a realtime database.",
@@ -106,10 +275,78 @@ export const caseStudies: CaseStudy[] = [
       "Next.js",
       "TypeScript",
     ],
+    links: [{ label: "Potluck", href: "https://www.bigpotluck.com" }],
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [{ id: "sender", label: "Sender", icon: "user" }],
+          [{ id: "api", label: "API server", icon: "server" }],
+          [
+            { id: "pg", label: "PostgreSQL", icon: "database" },
+            { id: "rtdb", label: "Realtime mirror", icon: "radio" },
+          ],
+          [{ id: "reader", label: "Read-only client", icon: "message" }],
+        ],
+        edges: [
+          ["sender", "api"],
+          ["api", "pg"],
+          ["api", "rtdb"],
+          ["rtdb", "reader"],
+        ],
+        caption:
+          "Writes go through the server to Postgres; clients only ever read the mirror.",
+      },
+    },
   },
   {
+    slug: "release-pipeline",
+    title: "Infrastructure and release pipeline",
+    company: "Potluck",
+    year: "2026",
+    summary:
+      "Production infrastructure and a deploy pipeline that checks itself, built from scratch.",
+    why: "A three-person team needs to ship to production many times a week without anyone babysitting a deploy.",
+    built: [
+      "Postgres with backups, object storage with scoped permissions, and TLS.",
+      "Push-to-main auto-deploy that confirms the new version is serving before it runs migrations.",
+      "A Playwright visual and accessibility suite behind a 25-check smoke test.",
+      "Performance work: self-hosted fonts and a server-rendered first feed image removed 5.7 to 8.1 seconds of LCP load delay.",
+    ],
+    outcome:
+      "I also lead release engineering: cutting releases, reviewing PRs, setting review conventions and onboarding new engineers.",
+    stack: ["AWS", "PostgreSQL", "GitHub Actions", "Playwright", "Sentry"],
+    links: [{ label: "Potluck", href: "https://www.bigpotluck.com" }],
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [{ id: "push", label: "Push to main", icon: "git" }],
+          [{ id: "deploy", label: "Build and deploy", icon: "rocket" }],
+          [{ id: "version", label: "Version check", icon: "check" }],
+          [
+            { id: "migrate", label: "Migrations", icon: "database" },
+            { id: "smoke", label: "Smoke tests", icon: "shield" },
+          ],
+        ],
+        edges: [
+          ["push", "deploy"],
+          ["deploy", "version"],
+          ["version", "migrate"],
+          ["version", "smoke"],
+        ],
+        caption:
+          "Migrations only run once the new version is confirmed to be serving.",
+      },
+    },
+  },
+  {
+    slug: "spyder",
     title: "Spyder",
-    context: "Offa.com · 2026",
+    company: "Offa.com",
+    year: "2026",
+    summary:
+      "A multi-provider SMS and email platform sending 14,000+ messages a week.",
     why: "A multi-provider SMS and email platform that replaced part of Offa's dependence on its CRM for outbound campaigns.",
     built: [
       "Routing across several providers, with failover when one has delivery problems.",
@@ -119,6 +356,186 @@ export const caseStudies: CaseStudy[] = [
     outcome:
       "14,000+ messages a week at 99.99% delivery reliability, with 35% less CRM dependency and 20% lower delivery cost.",
     stack: ["NestJS", "Prisma", "PostgreSQL", "React"],
+    links: [{ label: "Offa.com", href: "https://offa.com" }],
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [{ id: "campaign", label: "Campaign", icon: "send" }],
+          [{ id: "router", label: "Provider router", icon: "route" }],
+          [
+            { id: "sms1", label: "SMS provider", icon: "message" },
+            { id: "sms2", label: "Failover provider", icon: "message" },
+            { id: "email", label: "Email provider", icon: "mail" },
+          ],
+          [{ id: "triage", label: "Delivery triage", icon: "activity" }],
+        ],
+        edges: [
+          ["campaign", "router"],
+          ["router", "sms1"],
+          ["router", "sms2"],
+          ["router", "email"],
+          ["sms1", "triage"],
+          ["sms2", "triage"],
+          ["email", "triage"],
+        ],
+        caption:
+          "Messages are routed across providers, with failover and automated triage of failures.",
+      },
+    },
+  },
+  {
+    slug: "inspection-platform",
+    title: "Field-inspection platform",
+    company: "Pearls Consulting",
+    year: "2025",
+    summary:
+      "A web and mobile inspection platform, deployed to Kubernetes through GitLab CI/CD.",
+    why: "My end-of-studies project: a full-stack platform for running field inspections, with a web app and a mobile app.",
+    built: [
+      "The web application in Laravel 12 and React with TypeScript, and the mobile app in React Native.",
+      "GitLab CI/CD pipelines that deploy to Kubernetes.",
+      "Infrastructure provisioned with Terraform.",
+      "Observability with Prometheus and Grafana.",
+    ],
+    stack: [
+      "Laravel",
+      "React",
+      "React Native",
+      "Kubernetes",
+      "Terraform",
+      "GitLab CI/CD",
+    ],
+    links: [],
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [{ id: "ci", label: "GitLab CI/CD", icon: "git" }],
+          [{ id: "k8s", label: "Kubernetes", icon: "layers" }],
+          [
+            { id: "web", label: "Web app", icon: "server" },
+            { id: "mobile", label: "Mobile API", icon: "phone" },
+          ],
+          [{ id: "obs", label: "Prometheus, Grafana", icon: "chart" }],
+        ],
+        edges: [
+          ["ci", "k8s"],
+          ["k8s", "web"],
+          ["k8s", "mobile"],
+          ["web", "obs"],
+          ["mobile", "obs"],
+        ],
+        caption:
+          "Pipelines deploy to Kubernetes on infrastructure defined in Terraform.",
+      },
+    },
+  },
+  {
+    slug: "event-orchestrator",
+    title: "Event Orchestrator",
+    company: "ESPRIT · team project",
+    year: "2024",
+    summary:
+      "An event-management platform built as Spring Boot microservices with Kafka and Kubernetes.",
+    why: "A university team project: an event-management platform built as microservices, to learn how a distributed system is put together and deployed.",
+    built: [
+      "Spring Boot services behind an API gateway, with service discovery and a central configuration server.",
+      "Real-time notifications through Apache Kafka.",
+      "An Angular frontend, with Docker Compose and Kubernetes manifests for deployment.",
+    ],
+    note: "Built by a team of six. The repository is public.",
+    stack: ["Spring Boot", "Angular", "Kafka", "Docker", "Kubernetes"],
+    links: [
+      {
+        label: "Source on GitHub",
+        href: "https://github.com/JalelDridi/pi-event-management-application",
+      },
+    ],
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [{ id: "ui", label: "Angular app", icon: "user" }],
+          [{ id: "gw", label: "API gateway", icon: "gateway" }],
+          [
+            { id: "events", label: "Event service", icon: "server" },
+            { id: "users", label: "User service", icon: "server" },
+          ],
+          [{ id: "kafka", label: "Kafka notifications", icon: "bell" }],
+        ],
+        edges: [
+          ["ui", "gw"],
+          ["gw", "events"],
+          ["gw", "users"],
+          ["events", "kafka"],
+        ],
+        caption: "Services sit behind a gateway and notify through Kafka.",
+      },
+    },
+  },
+];
+
+/** The pipeline shown in the hero, taken from Payout Ledger. */
+export const heroDiagram: DiagramSpec = {
+  columns: [
+    [{ id: "hook", label: "Webhook", icon: "webhook" }],
+    [{ id: "inbox", label: "Inbox", icon: "box" }],
+    [{ id: "ledger", label: "Ledger", icon: "database" }],
+    [
+      { id: "recon", label: "Reconcile", icon: "activity" },
+      { id: "alert", label: "Alert", icon: "bell" },
+    ],
+  ],
+  edges: [
+    ["hook", "inbox"],
+    ["inbox", "ledger"],
+    ["ledger", "recon"],
+    ["ledger", "alert"],
+  ],
+  caption:
+    "The Payout Ledger pipeline: verify, store once, apply once, then check.",
+};
+
+export const skills = [
+  {
+    group: "Languages",
+    items: ["TypeScript", "JavaScript", "PHP", "Python", "Java"],
+  },
+  {
+    group: "Backend",
+    items: [
+      "Node.js",
+      "NestJS",
+      "Prisma",
+      "PostgreSQL",
+      "Redis",
+      "WebSockets",
+      "Laravel",
+    ],
+  },
+  {
+    group: "Frontend",
+    items: ["React", "Next.js", "React Native", "Tailwind CSS"],
+  },
+  {
+    group: "Payments",
+    items: ["Stripe", "Stripe Connect", "Webhooks", "Reconciliation"],
+  },
+  {
+    group: "Cloud and DevOps",
+    items: [
+      "AWS",
+      "Docker",
+      "Kubernetes",
+      "Terraform",
+      "GitHub Actions",
+      "GitLab CI/CD",
+    ],
+  },
+  {
+    group: "Quality",
+    items: ["Playwright", "Vitest", "Sentry", "Prometheus", "Grafana"],
   },
 ];
 
@@ -126,28 +543,38 @@ export const experience = [
   {
     role: "Founding Engineer",
     company: "Potluck",
+    href: "https://www.bigpotluck.com",
     detail: "US live-shopping marketplace · fully remote",
     period: "Jun 2026 – present",
+    summary:
+      "Own the Stripe Connect payments stack and production infrastructure. Built the live-shopping product and realtime messaging. Lead releases for a three-person team.",
   },
   {
     role: "Software Engineer",
     company: "Offa.com",
+    href: "https://offa.com",
     detail: "US real-estate marketplace · fully remote",
     period: "Jan 2026 – Jun 2026",
+    summary:
+      "Built and launched Deal Grader and Spyder, a multi-provider messaging platform. Replaced polling with WebSocket notifications.",
   },
   {
     role: "Software Engineer, end-of-studies internship",
     company: "Pearls Consulting",
-    detail: "Tunis · Laravel, React, Kubernetes, Terraform, GitLab CI/CD",
+    detail: "Tunis",
     period: "Feb 2025 – Aug 2025",
+    summary:
+      "Built a field-inspection platform in Laravel, React and React Native, with CI/CD to Kubernetes and Terraform.",
   },
   {
     role: "DevOps & Web Consultant, part-time",
     company: "Pearls Consulting",
     detail: "Tunis · alongside studies",
     period: "Jul 2024 – Jan 2025",
+    summary:
+      "Laravel deployments with 30% better uptime; CI/CD automation that cut manual deploys by 60%.",
   },
 ];
 
 export const education =
-  "Engineering degree in Computer Science (IT Architecture & Cloud Computing), ESPRIT, Tunis, 2025. Arabic (native), English (C2), French (C1).";
+  "Engineering degree in Computer Science (IT Architecture & Cloud Computing), ESPRIT, Tunis, 2025.";
