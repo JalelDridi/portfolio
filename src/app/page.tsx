@@ -1,69 +1,201 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
+import {
+  caseStudies,
+  education,
+  experience,
+  flagship,
+  profile,
+} from "@/content";
+
+function Tags({ items }: { items: string[] }) {
+  return (
+    <ul className="flex flex-wrap gap-2" aria-label="Technologies">
+      {items.map((item) => (
+        <li
+          key={item}
+          className="rounded-full border border-line px-2.5 py-0.5 text-sm text-muted"
+        >
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function ButtonLink({
+  href,
+  primary = false,
+  children,
+}: {
+  href: string;
+  primary?: boolean;
+  children: ReactNode;
+}) {
+  return (
+    <a
+      href={href}
+      className={
+        primary
+          ? "rounded-md bg-foreground px-4 py-2 text-sm font-medium text-background hover:opacity-90"
+          : "rounded-md border border-line px-4 py-2 text-sm font-medium hover:bg-subtle"
+      }
+    >
+      {children}
+    </a>
+  );
+}
+
+function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
+  return (
+    <h2
+      id={id}
+      className="text-sm font-semibold tracking-widest text-muted uppercase"
+    >
+      {children}
+    </h2>
+  );
+}
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <main className="mx-auto flex w-full max-w-3xl flex-col gap-20 px-5 py-16 sm:py-24">
+      <header className="flex flex-col gap-6">
+        <div>
+          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
+            {profile.name}
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mt-3 text-lg text-muted">{profile.headline}</p>
+          <p className="mt-1 text-muted">
+            {profile.availability} · {profile.location}
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+        <div className="flex flex-col gap-4 text-lg leading-relaxed">
+          {profile.intro.map((paragraph) => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+        </div>
+        <nav aria-label="Contact" className="flex flex-wrap gap-3">
+          <ButtonLink primary href={`mailto:${profile.links.email}`}>
+            Email me
+          </ButtonLink>
+          <ButtonLink href={profile.links.github}>GitHub</ButtonLink>
+          <ButtonLink href={profile.links.linkedin}>LinkedIn</ButtonLink>
+        </nav>
+      </header>
+
+      <section aria-labelledby="project" className="flex flex-col gap-6">
+        <SectionHeading id="project">Open-source project</SectionHeading>
+        <article className="overflow-hidden rounded-xl border border-line">
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            href={flagship.demo}
+            className="block border-b border-line bg-subtle"
+            aria-label={`Open the ${flagship.name} live demo`}
           >
             <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+              src={flagship.image.src}
+              alt={flagship.image.alt}
+              width={2400}
+              height={3000}
+              priority
+              sizes="(min-width: 768px) 768px, 100vw"
+              className="aspect-[16/10] w-full object-cover object-top"
             />
-            Deploy Now
           </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
+          <div className="flex flex-col gap-5 p-6">
+            <div>
+              <h3 className="text-2xl font-semibold tracking-tight">
+                {flagship.name}
+              </h3>
+              <p className="mt-1 text-muted">{flagship.tagline}</p>
+            </div>
+            <p className="leading-relaxed">{flagship.summary}</p>
+            <ul className="flex list-disc flex-col gap-2 pl-5 leading-relaxed">
+              {flagship.points.map((point) => (
+                <li key={point}>{point}</li>
+              ))}
+            </ul>
+            <Tags items={flagship.stack} />
+            <div className="flex flex-wrap gap-3">
+              <ButtonLink primary href={flagship.demo}>
+                Try the live demo
+              </ButtonLink>
+              <ButtonLink href={flagship.repo}>Read the code</ButtonLink>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section aria-labelledby="work" className="flex flex-col gap-10">
+        <SectionHeading id="work">Work</SectionHeading>
+        {caseStudies.map((study) => (
+          <article key={study.title} className="flex flex-col gap-4">
+            <div>
+              <h3 className="text-2xl font-semibold tracking-tight">
+                {study.title}
+              </h3>
+              <p className="mt-1 text-muted">{study.context}</p>
+            </div>
+            <p className="leading-relaxed">{study.why}</p>
+            <ul className="flex list-disc flex-col gap-2 pl-5 leading-relaxed">
+              {study.built.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+            {study.outcome && (
+              <p className="leading-relaxed">{study.outcome}</p>
+            )}
+            <Tags items={study.stack} />
+            {study.link && (
+              <p>
+                <a className="font-medium underline" href={study.link.href}>
+                  {study.link.label}
+                </a>
+              </p>
+            )}
+          </article>
+        ))}
+      </section>
+
+      <section aria-labelledby="experience" className="flex flex-col gap-6">
+        <SectionHeading id="experience">Experience</SectionHeading>
+        <ul className="flex flex-col gap-5">
+          {experience.map((job) => (
+            <li
+              key={`${job.company}-${job.period}`}
+              className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+            >
+              <div>
+                <p className="font-medium">
+                  {job.role} · {job.company}
+                </p>
+                <p className="text-muted">{job.detail}</p>
+              </div>
+              <p className="shrink-0 text-muted">{job.period}</p>
+            </li>
+          ))}
+        </ul>
+        <p className="text-muted">{education}</p>
+      </section>
+
+      <footer className="flex flex-col gap-4 border-t border-line pt-8">
+        <SectionHeading id="contact">Contact</SectionHeading>
+        <p className="text-lg leading-relaxed">
+          The quickest way to reach me is{" "}
+          <a className="underline" href={`mailto:${profile.links.email}`}>
+            {profile.links.email}
           </a>
-        </div>
-      </main>
-    </div>
+          . I&apos;m also on{" "}
+          <a className="underline" href={profile.links.linkedin}>
+            LinkedIn
+          </a>{" "}
+          and{" "}
+          <a className="underline" href={profile.links.github}>
+            GitHub
+          </a>
+          .
+        </p>
+      </footer>
+    </main>
   );
 }
