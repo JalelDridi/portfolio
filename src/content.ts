@@ -20,6 +20,7 @@ export const profile = {
     github: "https://github.com/JalelDridi",
     linkedin: "https://www.linkedin.com/in/mohamed-jalel-dridi",
     email: "med.jalel.dridi@gmail.com",
+    cv: "/Jalel_Dridi_CV.pdf",
   },
 };
 
@@ -113,6 +114,29 @@ export type IconName =
   | "box"
   | "activity";
 
+/** A screenshot of a page anyone can open without logging in. */
+export type Shot = {
+  src: string;
+  alt: string;
+  caption: string;
+  width: number;
+  height: number;
+  frame: "browser" | "phone";
+  /** Shown in the browser frame's address bar. */
+  url?: string;
+};
+
+/** A short, silent screen recording. */
+export type Clip = {
+  mp4: string;
+  webm: string;
+  poster: string;
+  label: string;
+  caption: string;
+  frame: "browser" | "phone";
+  url?: string;
+};
+
 export type Project = {
   slug: string;
   title: string;
@@ -129,11 +153,57 @@ export type Project = {
     | { kind: "image"; src: string; alt: string; width: number; height: number }
     | { kind: "diagram"; diagram: DiagramSpec };
   note?: string;
+  /** Picture for the card and the top of the case study. */
+  cover?: Shot;
+  clip?: Clip;
+  gallery?: Shot[];
 };
 
 export const projects: Project[] = [
   {
     slug: "deal-grader",
+    cover: {
+      src: "/work/deal-grader-report.jpg",
+      alt: "A Deal Grader report: a score of 77 out of 100 labelled Strong Exit, a score breakdown, price against the market, and nearby off-market deals",
+      caption:
+        "A public report page. The score updates live as the price and down payment sliders move.",
+      width: 1440,
+      height: 900,
+      frame: "browser",
+      url: "grade.offa.com/report",
+    },
+    clip: {
+      mp4: "/demo/deal-grader.mp4",
+      webm: "/demo/deal-grader.webm",
+      poster: "/demo/deal-grader-poster.jpg",
+      label:
+        "Screen recording scrolling through a Deal Grader report: score, value estimate, rental income, financing calculator, neighbourhood data and nearby deals",
+      caption:
+        "Scrolling through a public report: score, value estimate, rental income, financing, neighbourhood and nearby deals.",
+      frame: "browser",
+      url: "grade.offa.com/report",
+    },
+    gallery: [
+      {
+        src: "/work/deal-grader-financing.jpg",
+        alt: "The financing calculator and neighbourhood profile sections of a Deal Grader report",
+        caption:
+          "Financing calculator with live monthly cash flow, above the neighbourhood profile.",
+        width: 1440,
+        height: 900,
+        frame: "browser",
+        url: "grade.offa.com/report",
+      },
+      {
+        src: "/work/deal-grader-nearby.jpg",
+        alt: "A grid of nearby off-market property listings with photos, prices and after-repair values",
+        caption: "Nearby off-market deals, pulled from live marketplace data.",
+        width: 1440,
+        height: 900,
+        frame: "browser",
+        url: "grade.offa.com/report",
+      },
+    ],
     title: "Deal Grader",
     company: "Offa.com",
     year: "2026",
@@ -161,6 +231,18 @@ export const projects: Project[] = [
   },
   {
     slug: "potluck-live",
+    gallery: [
+      {
+        src: "/work/potluck-live.jpg",
+        alt: "The Live shows page on Potluck, listing upcoming shows",
+        caption:
+          "The public Live shows page, where viewers save a spot for an upcoming show.",
+        width: 1440,
+        height: 900,
+        frame: "browser",
+        url: "bigpotluck.com/live",
+      },
+    ],
     title: "Potluck LIVE",
     company: "Potluck",
     year: "2026",
@@ -206,6 +288,27 @@ export const projects: Project[] = [
   },
   {
     slug: "payments",
+    cover: {
+      src: "/work/potluck-how-it-works.jpg",
+      alt: "Potluck's How it works page, with four steps for customers and four for chefs",
+      caption:
+        "How Potluck works: customers pay when they order, and the chef is paid after pickup.",
+      width: 1440,
+      height: 900,
+      frame: "browser",
+      url: "bigpotluck.com/how-it-works",
+    },
+    gallery: [
+      {
+        src: "/work/potluck-item-phone.jpg",
+        alt: "A product page on a phone: a chocolate chip cookie at five dollars, with pickup or delivery and an Add to cart button",
+        caption:
+          "A product page. The price shown is set on the server, never taken from the client.",
+        width: 780,
+        height: 1688,
+        frame: "phone",
+      },
+    ],
     title: "Payments on Stripe Connect",
     company: "Potluck",
     year: "2026",
@@ -257,6 +360,26 @@ export const projects: Project[] = [
   },
   {
     slug: "realtime-messaging",
+    cover: {
+      src: "/work/potluck-kitchen.jpg",
+      alt: "A kitchen page on Potluck with Follow and Message buttons and a menu",
+      caption:
+        "A kitchen page. Message opens a thread with the seller before any order exists.",
+      width: 1440,
+      height: 900,
+      frame: "browser",
+      url: "bigpotluck.com/profile",
+    },
+    gallery: [
+      {
+        src: "/work/potluck-kitchen-phone.jpg",
+        alt: "The same kitchen page on a phone",
+        caption: "The same page on a phone, where most buyers are.",
+        width: 780,
+        height: 1688,
+        frame: "phone",
+      },
+    ],
     title: "Realtime messaging",
     company: "Potluck",
     year: "2026",
@@ -301,6 +424,26 @@ export const projects: Project[] = [
   },
   {
     slug: "release-pipeline",
+    cover: {
+      src: "/work/potluck-feed.jpg",
+      alt: "The Potluck home feed: a grid of homemade baked goods with prices and seller names",
+      caption:
+        "The home feed. Server-rendering its first image is what removed the LCP delay.",
+      width: 1440,
+      height: 900,
+      frame: "browser",
+      url: "bigpotluck.com",
+    },
+    clip: {
+      mp4: "/demo/potluck-mobile.mp4",
+      webm: "/demo/potluck-mobile.webm",
+      poster: "/demo/potluck-mobile-poster.jpg",
+      label:
+        "Screen recording of Potluck on a phone: scrolling the feed, opening a kitchen page, then a product page",
+      caption:
+        "Potluck on a phone: the feed, a kitchen page, then a product page.",
+      frame: "phone",
+    },
     title: "Infrastructure and release pipeline",
     company: "Potluck",
     year: "2026",
