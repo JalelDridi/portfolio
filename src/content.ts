@@ -167,7 +167,7 @@ export const projects: Project[] = [
     year: "2026",
     summary:
       "Typed SDKs for Tunisia's payment gateways, with webhook handlers that verify before they act.",
-    why: "Tunisian developers integrate Konnect and Flouci by hand, and both gateways notify a shop with an unsigned GET that anyone could forge. tnpay makes the safe integration the easy one.",
+    why: "Tunisia's online payments reached 19 million transactions in 2025, through about a thousand sites. More than 600 public repositories integrate Konnect or Flouci by hand, and the only JavaScript package for either had 32 downloads a month. Both gateways notify a shop with an unsigned GET that anyone could forge. tnpay makes the safe integration the easy one.",
     built: [
       "Typed clients for Konnect and Flouci: create a payment, read it back, refund it.",
       "A webhook handler that takes only the reference from the request, fetches the payment from the gateway, and runs your code once per payment however many times the webhook is delivered.",
@@ -175,7 +175,7 @@ export const projects: Project[] = [
       "Runs on Node 20+ and edge runtimes; one function serves as a Next.js route handler.",
     ],
     outcome:
-      "Three packages, 73 tests including a property test that delivers webhooks in random orders, and a live checkout demo.",
+      "Three packages on npm, 75 tests including a property test that delivers webhooks in random orders, a live checkout demo on the Konnect sandbox, and two bugs found and fixed against the real API.",
     stack: ["TypeScript", "Node.js", "Vitest", "fast-check", "Next.js"],
     links: [
       {
@@ -183,6 +183,10 @@ export const projects: Project[] = [
         href: "https://github.com/JalelDridi/tnpay",
       },
       { label: "Checkout demo", href: "https://tnpay-demo.vercel.app" },
+      {
+        label: "@tnpay/konnect on npm",
+        href: "https://www.npmjs.com/package/@tnpay/konnect",
+      },
     ],
     visual: {
       kind: "diagram",
