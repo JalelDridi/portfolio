@@ -145,7 +145,11 @@ test("the theme switch changes the colour scheme", async ({ page }) => {
 });
 
 for (const colorScheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/work/payments"]) {
+  for (const path of [
+    "/",
+    "/work/payments",
+    "/writing/webhooks-in-any-order",
+  ]) {
     test(`no detectable accessibility violations on ${path} in ${colorScheme} mode`, async ({
       page,
     }) => {
@@ -171,7 +175,11 @@ for (const colorScheme of ["light", "dark"] as const) {
 test("fits a phone screen without horizontal scrolling", async ({ page }) => {
   // Narrower than most phones, to leave a margin for font differences.
   await page.setViewportSize({ width: 340, height: 812 });
-  for (const path of ["/", "/work/spyder"]) {
+  for (const path of [
+    "/",
+    "/work/spyder",
+    "/writing/twenty-five-payouts-a-balance-for-ten",
+  ]) {
     await page.goto(path);
 
     const overflow = await page.evaluate(
@@ -248,4 +256,55 @@ test("recordings wait until they are near the screen", async ({ page }) => {
 
   await video.scrollIntoViewIfNeeded();
   await expect(video).toHaveAttribute("poster", /payout-ledger-poster/);
+});
+
+test("the about section shows the portrait, the story and live clocks", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const about = page.locator("#about");
+
+  await expect(
+    about.getByRole("img", { name: /Mohamed Jalel Dridi/ }),
+  ).toBeVisible();
+  await expect(
+    about.getByText("I started on the infrastructure side"),
+  ).toBeVisible();
+  // Each clock shows a real time once the browser has one.
+  await expect(about.getByText(/^\d{2}:\d{2}$/)).toHaveCount(4);
+});
+
+test("the leadership section lists the three JCI roles in order", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  const roles = page.locator("#leadership ol li");
+  await expect(roles).toHaveText([
+    /2022.*Secretary General/,
+    /2024.*Vice-President/,
+    /2026.*President/,
+  ]);
+});
+
+test("an article opens from the home page and links to its sources", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page
+    .getByRole("link", {
+      name: "Twenty-five payouts, a balance that covers ten",
+    })
+    .click();
+
+  await expect(page).toHaveURL(/\/writing\/twenty-five-payouts/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Twenty-five payouts, a balance that covers ten",
+  );
+  await expect(
+    page.getByRole("link", { name: "The design record" }),
+  ).toHaveAttribute("href", /0003-concurrency/);
+
+  await page.getByRole("link", { name: "All writing" }).click();
+  await expect(page).toHaveURL(/\/#writing$/);
 });

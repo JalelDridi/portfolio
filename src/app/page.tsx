@@ -1,10 +1,13 @@
+import { About } from "@/components/sections/about";
 import { Contact } from "@/components/sections/contact";
 import { Experience } from "@/components/sections/experience";
 import { Flagship } from "@/components/sections/flagship";
 import { Hero } from "@/components/sections/hero";
+import { Leadership } from "@/components/sections/leadership";
 import { Metrics } from "@/components/sections/metrics";
 import { Skills } from "@/components/sections/skills";
 import { Work } from "@/components/sections/work";
+import { Writing } from "@/components/sections/writing";
 import { experience, flagship, profile, SITE_URL, skills } from "@/content";
 
 // Tells search engines who this page is about, in their own vocabulary.
@@ -49,8 +52,11 @@ export default function Home() {
       <Metrics />
       <Flagship />
       <Work />
+      <Writing />
       <Skills />
+      <About />
       <Experience />
+      <Leadership />
       <Contact />
     </main>
   );

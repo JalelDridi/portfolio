@@ -12,6 +12,7 @@ Jalel's personal site. Statically generated: a home page and one case-study page
 ## Layout
 
 - `src/content.ts` — all copy; edit wording here
+- `src/writing.ts` — the articles, as typed blocks; pages at `src/app/writing/[slug]/page.tsx`
 - `src/app/page.tsx` — the home page, assembled from `src/components/sections/`
 - `src/app/work/[slug]/page.tsx` — case-study pages
 - `src/components/diagram.tsx` — architecture sketches drawn from specs in `content.ts`
