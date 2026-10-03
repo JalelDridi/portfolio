@@ -161,6 +161,54 @@ export type Project = {
 
 export const projects: Project[] = [
   {
+    slug: "tnpay",
+    title: "tnpay",
+    company: "Open source",
+    year: "2026",
+    summary:
+      "Typed SDKs for Tunisia's payment gateways, with webhook handlers that verify before they act.",
+    why: "Tunisian developers integrate Konnect and Flouci by hand, and both gateways notify a shop with an unsigned GET that anyone could forge. tnpay makes the safe integration the easy one.",
+    built: [
+      "Typed clients for Konnect and Flouci: create a payment, read it back, refund it.",
+      "A webhook handler that takes only the reference from the request, fetches the payment from the gateway, and runs your code once per payment however many times the webhook is delivered.",
+      "A fake Konnect and a fake Flouci, in-process, so tests and local development need no account.",
+      "Runs on Node 20+ and edge runtimes; one function serves as a Next.js route handler.",
+    ],
+    outcome:
+      "Three packages, 73 tests including a property test that delivers webhooks in random orders, and a live checkout demo.",
+    stack: ["TypeScript", "Node.js", "Vitest", "fast-check", "Next.js"],
+    links: [
+      {
+        label: "Source on GitHub",
+        href: "https://github.com/JalelDridi/tnpay",
+      },
+      { label: "Checkout demo", href: "https://tnpay-demo.vercel.app" },
+    ],
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [{ id: "shop", label: "Your checkout", icon: "card" }],
+          [
+            { id: "konnect", label: "Konnect", icon: "webhook" },
+            { id: "flouci", label: "Flouci", icon: "webhook" },
+          ],
+          [{ id: "verify", label: "Verify by lookup", icon: "shield" }],
+          [{ id: "once", label: "onPaid, once", icon: "check" }],
+        ],
+        edges: [
+          ["shop", "konnect"],
+          ["shop", "flouci"],
+          ["konnect", "verify"],
+          ["flouci", "verify"],
+          ["verify", "once"],
+        ],
+        caption:
+          "The webhook proves nothing on its own: the handler asks the gateway, then acts once.",
+      },
+    },
+  },
+  {
     slug: "deal-grader",
     cover: {
       src: "/work/deal-grader-report.jpg",

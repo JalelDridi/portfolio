@@ -2,6 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const PROJECTS = [
+  "tnpay",
   "Deal Grader",
   "Potluck LIVE",
   "Payments on Stripe Connect",
