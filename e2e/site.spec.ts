@@ -214,7 +214,12 @@ test("the theme switch changes the colour scheme", async ({ page }) => {
 });
 
 for (const colorScheme of ["light", "dark"] as const) {
-  for (const path of ["/", "/work/potluck", "/writing/webhooks-in-any-order"]) {
+  for (const path of [
+    "/",
+    "/work/potluck",
+    "/writing/webhooks-in-any-order",
+    "/changelog",
+  ]) {
     test(`no detectable accessibility violations on ${path} in ${colorScheme} mode`, async ({
       page,
     }) => {
@@ -397,6 +402,21 @@ test("the status strip shows three live clocks, the site version and the deploy 
   await expect(footer).toContainText(/Site v\d+\.\d+\.\d+/);
   await expect(footer).toContainText(/Last deploy \d{1,2} \w{3} \d{4}/);
   await expect(footer).not.toContainText("Built with");
+});
+
+test("the changelog lists the current version first and is linked from the status strip", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page
+    .getByRole("contentinfo")
+    .getByRole("link", { name: "changelog" })
+    .click();
+  await expect(page).toHaveURL(/\/changelog$/);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Changelog" }),
+  ).toBeVisible();
+  await expect(page.locator("main ol li").first()).toContainText("3.0.0");
 });
 
 test("with motion reduced the hero is visible at once", async ({ page }) => {

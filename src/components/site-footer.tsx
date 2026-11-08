@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { site } from "@/content";
 import { StatusClocks } from "./status-clocks";
 
@@ -21,7 +22,15 @@ export function SiteFooter() {
     <footer className="border-t border-foreground">
       <div className="mx-auto flex w-full max-w-6xl flex-wrap gap-x-6 gap-y-2 px-5 py-5 font-mono text-[0.85rem] text-muted-foreground">
         <StatusClocks zones={ZONES} />
-        <span>Site v{site.version}</span>
+        <span>
+          Site v{site.version} ·{" "}
+          <Link
+            className="underline underline-offset-4 hover:text-brand"
+            href="/changelog"
+          >
+            changelog
+          </Link>
+        </span>
         <span>Last deploy {BUILT}</span>
         <a
           className="underline underline-offset-4 hover:text-brand"

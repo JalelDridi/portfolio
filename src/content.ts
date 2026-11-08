@@ -7,6 +7,66 @@ export const site = {
   repo: "https://github.com/JalelDridi/portfolio",
 };
 
+/** Every version of the site, newest first; the first is `site.version`. */
+export const changelog: {
+  version: string;
+  date: string;
+  title: string;
+  items: string[];
+}[] = [
+  {
+    version: "3.0.0",
+    date: "2026-11-08",
+    title: "Statement",
+    items: [
+      "Bricolage Grotesque and IBM Plex replace Geist; cool paper with one cobalt accent, square corners, rules instead of cards.",
+      "An account summary with sourced numbers replaces the counting metrics.",
+      "The pipeline playground posts its steps into a ledger book.",
+      "Work is a table with hover previews; one Potluck case study with four parts; Kora added; earlier projects grouped.",
+      "Working hours and hiring setup in About; a copy button for the email.",
+      "A status strip with live clocks, the deploy date and this changelog.",
+    ],
+  },
+  {
+    version: "2.2.0",
+    date: "2026-10-03",
+    title: "About, leadership, writing",
+    items: [
+      "An About section with a portrait and four clocks.",
+      "A Leadership section.",
+      "Two articles drawn from Payout Ledger's design records.",
+      "A card and case study for tnpay.",
+    ],
+  },
+  {
+    version: "2.1.0",
+    date: "2026-10-02",
+    title: "Faster and shareable",
+    items: [
+      "Recordings load only near the screen.",
+      "A phone menu.",
+      "A share card per case study, structured data, a custom 404.",
+    ],
+  },
+  {
+    version: "2.0.0",
+    date: "2026-10-02",
+    title: "Second design",
+    items: [
+      "Dark theme with a green accent, animated diagrams, real screenshots and recordings.",
+      "The pipeline playground and the live time in Bizerte in the hero.",
+    ],
+  },
+  {
+    version: "1.0.0",
+    date: "2026-10-02",
+    title: "First version",
+    items: [
+      "A single-column page with the profile, the flagship project and five case studies.",
+    ],
+  },
+];
+
 export const profile = {
   name: "Mohamed Jalel Dridi",
   shortName: "Jalel Dridi",
