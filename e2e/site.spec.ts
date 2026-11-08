@@ -104,6 +104,17 @@ test.describe("the pipeline playground", () => {
     await expect(counters(page)).toContainText("$0.00");
   });
 
+  test("each step posts an entry in the ledger book", async ({ page }) => {
+    await page.getByRole("button", { name: "Send it twice" }).click();
+    const rows = page
+      .getByRole("table", { name: "Ledger entries" })
+      .locator("tbody tr");
+    await expect(rows).toHaveCount(5);
+    await expect(rows.last()).toContainText("evt_001");
+    await expect(rows.last()).toContainText("skipped");
+    await expect(rows.nth(2)).toContainText("$25.00");
+  });
+
   test("balances add up across several runs", async ({ page }) => {
     const send = page.getByRole("button", { name: "Send a webhook" });
     await send.click();

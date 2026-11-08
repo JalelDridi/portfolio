@@ -4,7 +4,6 @@ import { AccountSummary } from "../account-summary";
 import { GitHubIcon, LinkedInIcon } from "../icons";
 import { LinkButton } from "../link-button";
 import { LocalTime } from "../local-time";
-import { PipelinePlayground } from "../pipeline-playground";
 import { Rise } from "../rise";
 
 export function Hero() {
@@ -96,10 +95,6 @@ export function Hero() {
         <Rise delay={320}>
           <AccountSummary />
         </Rise>
-      </div>
-
-      <div className="mx-auto w-full max-w-6xl px-5 pb-10">
-        <PipelinePlayground />
       </div>
     </section>
   );
