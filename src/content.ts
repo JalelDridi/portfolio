@@ -2,6 +2,11 @@
 
 export const SITE_URL = "https://jaleldridi.vercel.app";
 
+export const site = {
+  version: "3.0.0",
+  repo: "https://github.com/JalelDridi/portfolio",
+};
+
 export const profile = {
   name: "Mohamed Jalel Dridi",
   shortName: "Jalel Dridi",

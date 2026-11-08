@@ -4,54 +4,47 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Statement: cool paper, ink, one cobalt accent, square corners. */
 :root {
-  --radius: 0.75rem;
-  --background: oklch(0.99 0.003 160);
-  --foreground: oklch(0.2 0.02 200);
+  --radius: 0;
+  --background: oklch(0.967 0.004 150);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 200);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 200);
-  --primary: oklch(0.2 0.02 200);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.006 180);
-  --secondary-foreground: oklch(0.2 0.02 200);
-  --muted: oklch(0.96 0.006 180);
-  --muted-foreground: oklch(0.38 0.02 200);
-  --accent: oklch(0.96 0.006 180);
-  --accent-foreground: oklch(0.2 0.02 200);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.008 180);
-  --input: oklch(0.9 0.008 180);
-  --ring: oklch(0.55 0.13 165);
-  /* Brand: the green of a balanced ledger. */
-  --brand: oklch(0.48 0.12 165);
-  --brand-bright: oklch(0.62 0.15 165);
-  --brand-2: oklch(0.5 0.12 225);
+  --foreground: oklch(0.19 0.012 240);
+  --muted-foreground: oklch(0.44 0.015 240);
+  --border: oklch(0.84 0.008 160);
+  /* The one accent: numbers, hover, focus. */
+  --brand: oklch(0.45 0.21 265);
+  /* Held or failed entries only. */
+  --debit: oklch(0.5 0.17 28);
+
+  /*
+   * The shadcn tokens follow the ones above. They are declared once here:
+   * `.dark` sits on the same <html> element, so these resolve against
+   * whichever theme's values apply.
+   */
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: var(--foreground);
+  --primary-foreground: var(--background);
+  --secondary: color-mix(in oklch, var(--foreground) 4%, var(--background));
+  --secondary-foreground: var(--foreground);
+  --muted: color-mix(in oklch, var(--foreground) 4%, var(--background));
+  --accent: color-mix(in oklch, var(--foreground) 4%, var(--background));
+  --accent-foreground: var(--foreground);
+  --destructive: var(--debit);
+  --input: var(--border);
+  --ring: var(--brand);
 }
 
 .dark {
-  --background: oklch(0.155 0.012 220);
-  --foreground: oklch(0.96 0.005 180);
-  --card: oklch(0.195 0.014 220);
-  --card-foreground: oklch(0.96 0.005 180);
-  --popover: oklch(0.195 0.014 220);
-  --popover-foreground: oklch(0.96 0.005 180);
-  --primary: oklch(0.96 0.005 180);
-  --primary-foreground: oklch(0.17 0.012 220);
-  --secondary: oklch(0.24 0.015 220);
-  --secondary-foreground: oklch(0.96 0.005 180);
-  --muted: oklch(0.24 0.015 220);
-  --muted-foreground: oklch(0.8 0.012 200);
-  --accent: oklch(0.24 0.015 220);
-  --accent-foreground: oklch(0.96 0.005 180);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 11%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.7 0.14 165);
-  --brand: oklch(0.8 0.15 165);
-  --brand-bright: oklch(0.8 0.15 165);
-  --brand-2: oklch(0.78 0.12 215);
+  --background: oklch(0.2 0.03 250);
+  --card: oklch(0.23 0.03 250);
+  --foreground: oklch(0.94 0.005 160);
+  --muted-foreground: oklch(0.75 0.01 220);
+  --border: oklch(0.32 0.025 240);
+  --brand: oklch(0.72 0.14 270);
+  --debit: oklch(0.72 0.17 28);
 }
 
 @theme inline {
@@ -74,34 +67,26 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-brand: var(--brand);
-  --color-brand-bright: var(--brand-bright);
-  --color-brand-2: var(--brand-2);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+  --color-debit: var(--debit);
+  --font-sans: var(--font-plex-sans);
+  --font-mono: var(--font-plex-mono);
+  --font-display: var(--font-display);
+  --font-heading: var(--font-display);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
-  --animate-marquee: marquee var(--duration) infinite linear;
-  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  /* A rule drawn from the left, once. */
+  --animate-draw: draw 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
-  @keyframes marquee {
+  @keyframes draw {
     from {
-      transform: translateX(0);
+      transform: scaleX(0);
     }
     to {
-      transform: translateX(calc(-100% - var(--gap)));
-    }
-  }
-  @keyframes marquee-vertical {
-    from {
-      transform: translateY(0);
-    }
-    to {
-      transform: translateY(calc(-100% - var(--gap)));
+      transform: scaleX(1);
     }
   }
 }
@@ -120,28 +105,8 @@
     @apply bg-background text-foreground antialiased;
   }
   ::selection {
-    background: color-mix(in oklch, var(--brand-bright) 35%, transparent);
+    background: color-mix(in oklch, var(--brand) 25%, transparent);
   }
-}
-
-/* A dot grid drawn by CSS: no DOM nodes and no JavaScript. */
-@utility bg-dots {
-  background-image: radial-gradient(
-    color-mix(in oklch, var(--foreground) 16%, transparent) 1px,
-    transparent 1px
-  );
-  background-size: 22px 22px;
-}
-
-@utility text-gradient {
-  background-image: linear-gradient(
-    100deg,
-    var(--brand) 0%,
-    var(--brand-2) 100%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
 }
 
 /* People who ask for less motion get a still page. */
