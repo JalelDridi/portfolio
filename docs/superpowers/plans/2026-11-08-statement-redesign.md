@@ -35,17 +35,21 @@
 ### Task 1: Foundations: fonts, tokens, shared components, header and status strip
 
 **Files:**
+
 - Modify: `src/app/globals.css`, `src/app/layout.tsx`, `src/components/section.tsx`, `src/components/link-button.tsx`, `src/components/tags.tsx`, `src/components/site-header.tsx`, `src/components/site-footer.tsx`, `src/components/theme-toggle.tsx`, `src/components/mobile-nav.tsx`, `src/components/reveal.tsx`, `src/content.ts`
 - Create: `src/components/status-clocks.tsx`
 - Test: `e2e/site.spec.ts`
 
 **Interfaces:**
+
 - Produces: CSS tokens `--brand`, `--debit`, `--font-display`, `--font-sans`, `--font-mono`; Tailwind utilities `font-display`, `text-brand`, `text-debit`, `border-debit`; `Section({ id, eyebrow, title, description?, children })` unchanged signature, new look; `LinkButton({ href, variant?: "primary" | "outline" | "brand", children, className?, "aria-label"? })`; `Tags({ items })`; `StatusClocks({ zones: { city: string; zone: string }[] })` client component rendering `<span>` per city with the time as `HH:MM`; `site` export in `content.ts`: `{ version: "3.0.0", repo: "https://github.com/JalelDridi/portfolio" }`; `Reveal` becomes a passthrough (`<div className>` when a className is given, else a fragment) so untouched sections still compile.
 
 - [ ] **Step 1: Write the failing tests** in `e2e/site.spec.ts`
 
 ```ts
-test("the status strip shows three live clocks, the site version and the deploy date", async ({ page }) => {
+test("the status strip shows three live clocks, the site version and the deploy date", async ({
+  page,
+}) => {
   await page.goto("/");
   const footer = page.getByRole("contentinfo");
   await expect(footer.getByText(/^\d{2}:\d{2}$/)).toHaveCount(3);
@@ -57,9 +61,14 @@ test("the status strip shows three live clocks, the site version and the deploy 
 test("with motion reduced the hero is visible at once", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const h1 = page.getByRole("heading", { level: 1, name: "Mohamed Jalel Dridi" });
+  const h1 = page.getByRole("heading", {
+    level: 1,
+    name: "Mohamed Jalel Dridi",
+  });
   await expect(h1).toBeVisible();
-  expect(await h1.evaluate((el) => getComputedStyle(el.parentElement!).opacity)).toBe("1");
+  expect(
+    await h1.evaluate((el) => getComputedStyle(el.parentElement!).opacity),
+  ).toBe("1");
 });
 ```
 
@@ -106,24 +115,30 @@ git commit -m "feat: statement foundations: Bricolage and Plex, paper tokens, sq
 ### Task 2: Hero with the account summary
 
 **Files:**
+
 - Modify: `src/content.ts`, `src/components/sections/hero.tsx`, `src/app/page.tsx`
 - Rename: `git mv src/components/sections/metrics.tsx src/components/account-summary.tsx` and rewrite it
 - Test: `e2e/site.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `Rise`, `LinkButton`, `LocalTime`, icons, tokens from Task 1.
 - Produces: `ledger` export in `content.ts`: `{ title: "Account summary", asOf: "as of today", rows: { name: string; detail: string; value: string; href?: string }[], total: { label: string; value: string } }`; `AccountSummary()` server component rendering `<ul aria-label="Account summary">`; `metrics` export removed.
 
 - [ ] **Step 1: Write the failing test**
 
 ```ts
-test("the account summary is in the HTML with its numbers before any JavaScript runs", async ({ browser }) => {
+test("the account summary is in the HTML with its numbers before any JavaScript runs", async ({
+  browser,
+}) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("/");
   const summary = page.getByRole("list", { name: "Account summary" });
   await expect(summary).toContainText("99 tests · 8 design records");
-  await expect(summary).toContainText("14,000+ messages a week · 99.99% delivered");
+  await expect(summary).toContainText(
+    "14,000+ messages a week · 99.99% delivered",
+  );
   await expect(summary).toContainText("Open to remote roles");
   await expect(page.locator("body")).not.toContainText(/(^|\s)0\+|(^|\s)0%/);
   await context.close();
@@ -139,13 +154,13 @@ Expected: FAIL, no list named "Account summary".
 
 In `content.ts` remove `metrics` and add `ledger` with exactly these rows:
 
-| name | detail | value | href |
-| --- | --- | --- | --- |
-| Payout Ledger | Open-source payout monitor with a live demo | 99 tests · 8 design records | flagship.repo |
-| tnpay | Typed SDKs for Tunisia's payment gateways | 3 packages on npm · 75 tests | https://github.com/JalelDridi/tnpay |
-| Kora | Daily football puzzle in Arabic, French and English | live every day since 6 Oct 2026 | https://kora-tn.vercel.app |
-| Spyder | Multi-provider messaging platform at Offa.com | 14,000+ messages a week · 99.99% delivered | /work/spyder |
-| Potluck | Stripe Connect payments stack and production infrastructure | owned since Jun 2026 | https://www.bigpotluck.com |
+| name          | detail                                                      | value                                      | href                                |
+| ------------- | ----------------------------------------------------------- | ------------------------------------------ | ----------------------------------- |
+| Payout Ledger | Open-source payout monitor with a live demo                 | 99 tests · 8 design records                | flagship.repo                       |
+| tnpay         | Typed SDKs for Tunisia's payment gateways                   | 3 packages on npm · 75 tests               | https://github.com/JalelDridi/tnpay |
+| Kora          | Daily football puzzle in Arabic, French and English         | live every day since 6 Oct 2026            | https://kora-tn.vercel.app          |
+| Spyder        | Multi-provider messaging platform at Offa.com               | 14,000+ messages a week · 99.99% delivered | /work/spyder                        |
+| Potluck       | Stripe Connect payments stack and production infrastructure | owned since Jun 2026                       | https://www.bigpotluck.com          |
 
 `total: { label: profile.availability, value: "Bizerte · UTC+1" }`.
 
@@ -174,11 +189,13 @@ git commit -m "feat: hero with an account summary instead of counting metrics"
 ### Task 3: The playground as a ledger book
 
 **Files:**
+
 - Modify: `src/lib/pipeline-sim.ts` (add `event` to `Step`), `src/components/pipeline-playground.tsx`, `src/app/page.tsx`
 - Create: `src/components/sections/playground.tsx`
 - Test: `e2e/site.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `play`, `SCENARIOS`, `initialState`, `formatCents` from `pipeline-sim.ts`; `LinkButton`; `flagship` from content.
 - Produces: `Step` gains `event: string` (the event ID the step is about, e.g. `evt_001`); `Playground()` server section with `id="playground"`; `PipelinePlayground()` client component rendering the buttons, the `role="status"` line, `<table aria-label="Ledger entries">` and the totals `<dl>`.
 
@@ -187,7 +204,9 @@ git commit -m "feat: hero with an account summary instead of counting metrics"
 ```ts
 test("each step posts an entry in the ledger book", async ({ page }) => {
   await page.getByRole("button", { name: "Send it twice" }).click();
-  const rows = page.getByRole("table", { name: "Ledger entries" }).locator("tbody tr");
+  const rows = page
+    .getByRole("table", { name: "Ledger entries" })
+    .locator("tbody tr");
   await expect(rows).toHaveCount(5);
   await expect(rows.last()).toContainText("evt_001");
   await expect(rows.last()).toContainText("skipped");
@@ -207,11 +226,12 @@ In `pipeline-sim.ts` add `event: string` to `Step`; in `play`, make the inner `s
 - [ ] **Step 4: Render the book**
 
 `pipeline-playground.tsx`: keep `run`, `busy`, `useReducedMotion` and the pacing; add `const [entries, setEntries] = useState<Step[]>([])`, appending each step as it plays and keeping the last 12. Render:
+
 - `<table aria-label="Ledger entries" className="w-full border-t-2 border-foreground font-mono text-[0.9rem]">` with `<thead>` (label style) Stage (`hidden sm:table-cell`), Event, Entry, Owed to seller (right-aligned, `tabular-nums`), Result; `<tbody>` one `tr` per entry with `border-b border-border` and `align-baseline`; Result text by tone: `ok` → "applied" when `after.applied` grew or `after.balance` changed, else "stored" when `after.stored` grew, else "ok"; `skip` → "skipped" in `text-muted-foreground`; `wait` → "held" in `text-debit`. With no entries, one row spanning the columns: "No entries yet. Press a button to send the pipeline a webhook."
 - Under it the totals `<dl className="grid grid-cols-3 border-b-2 border-foreground py-3">` with `<dt>` Stored, Applied, Owed to seller (label style) immediately followed by `<dd className="font-mono text-xl tabular-nums">` (no whitespace between `dt` and `dd`).
 - The `role="status"` paragraph keeps its initial text "Press a button to send the pipeline a webhook." and the live messages; style `font-mono text-[0.9rem] min-h-[3.25rem]`.
 - The three buttons: square (`h-11 px-4 border border-foreground font-sans text-base font-medium hover:bg-brand hover:border-brand hover:text-background disabled:opacity-50`), the first one `border-brand text-brand`.
-Export the pieces so the section can lay them out: simplest is one component with the prop `layout` omitted and the component rendering a two-column grid itself: left `lg:w-[22rem]` block with the buttons and the status; right the table and totals.
+  Export the pieces so the section can lay them out: simplest is one component with the prop `layout` omitted and the component rendering a two-column grid itself: left `lg:w-[22rem]` block with the buttons and the status; right the table and totals.
 
 `sections/playground.tsx`: `<section id="playground" aria-labelledby="playground-title" className="border-y border-foreground">` with an inner `max-w-6xl px-5 py-12 sm:py-16` grid `lg:grid-cols-[0.8fr_1.2fr] gap-10`: left: eyebrow "Try it", `<h2 id="playground-title">` "Break my pipeline." in the section title style, the sentence "A small model of Payout Ledger, my open-source payout monitor. Send it the webhooks that break payment systems and watch the ledger take only what it should.", then the playground's buttons and status; right: the table and totals; under the table a link "Open the real demo" to `flagship.demo`. (Pass `slots` or render `PipelinePlayground` once with the two-column layout inside it; either is fine as long as the DOM order is buttons, status, table, totals.)
 
@@ -234,11 +254,13 @@ git commit -m "feat: the pipeline playground posts its steps into a ledger book"
 ### Task 4: Flagship, the work table and notes
 
 **Files:**
+
 - Modify: `src/components/sections/flagship.tsx`, `src/components/sections/work.tsx`, `src/components/sections/writing.tsx`, `src/components/browser-frame.tsx`, `src/components/project-visual.tsx`
 - Create: `src/components/work-table.tsx`, `src/lib/dates.ts`
 - Test: `e2e/site.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `Section`, `LinkButton`, `Tags`, `LazyVideo`, `DiagramPanel`, `projects`, `flagship`, `articles`.
 - Produces: `BrowserFrame({ url, note?, children, className? })` (square, `border-foreground`, bar with `url` left and `note` right in mono); `formatShortDate(iso: string): string` → "2 Oct 2026"; `WorkTable({ rows: { slug; title; company; year; summary; url?: string; earlier?: boolean }[], previews: Record<string, ReactNode> })` client component; `PreviewVisual({ project })` server component (cover or image via `next/image` with `sizes="(min-width: 1024px) 480px, 1px"` and `className="aspect-[4/3] w-full object-cover object-top"`, else `DiagramPanel size="card"`). `DiagramPanel` loses the dotted background.
 
@@ -296,11 +318,13 @@ git commit -m "feat: flagship frame, work as a table with hover previews, notes 
 ### Task 5: Skills, About with "Working with me", Experience, Leadership, Contact
 
 **Files:**
+
 - Modify: `src/components/sections/skills.tsx`, `src/components/sections/about.tsx`, `src/components/sections/experience.tsx`, `src/components/sections/leadership.tsx`, `src/components/sections/contact.tsx`, `src/components/world-clocks.tsx` (container classes only), `src/content.ts`
 - Create: `src/components/copy-button.tsx`
 - Test: `e2e/site.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `Section`, `LinkButton`, `WorldClocks`, `about`, `skills`, `experience`, `education`, `leadership`, `profile`.
 - Produces: `about.facts` gains `{ label: "Hours", value: "Flexible: I adapt to the team's time zone." }` and `{ label: "Hiring setup", value: "Contractor or employer of record; no visa sponsorship needed." }` after the existing four; `about.figure = { label: "fig. 1 · Bizerte", coordinates: "37°16′N 9°52′E" }`; `CopyButton({ text, label?: string })` client component: a `<button>` named "Copy email" (or `label`) that writes `text` to the clipboard and reads "Copied" for two seconds, with `aria-live="polite"`.
 
@@ -308,12 +332,16 @@ git commit -m "feat: flagship frame, work as a table with hover previews, notes 
 
 ```ts
 test("the copy button puts the email on the clipboard", async ({ browser }) => {
-  const context = await browser.newContext({ permissions: ["clipboard-read", "clipboard-write"] });
+  const context = await browser.newContext({
+    permissions: ["clipboard-read", "clipboard-write"],
+  });
   const page = await context.newPage();
   await page.goto("/#contact");
   await page.getByRole("button", { name: "Copy email" }).click();
   await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
-  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("med.jalel.dridi@gmail.com");
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "med.jalel.dridi@gmail.com",
+  );
   await context.close();
 });
 ```
@@ -353,10 +381,12 @@ git commit -m "feat: ruled skills, about with working hours and hiring setup, co
 ### Task 6: Case study, article, 404 and share cards
 
 **Files:**
+
 - Modify: `src/app/work/[slug]/page.tsx`, `src/app/writing/[slug]/page.tsx`, `src/app/not-found.tsx`, `src/lib/og.tsx`, `src/components/media.tsx`
 - Test: `e2e/site.spec.ts` (no new test; the axe, phone, case-study, article, 404 and OG tests cover it)
 
 **Interfaces:**
+
 - Consumes: `BrowserFrame({ url, note? })`, `LinkButton`, `Tags`, `formatShortDate`, `DiagramPanel`, `ShotFigure`, `ClipFigure`.
 - Produces: a `Row({ label, id?, children })` helper inside `work/[slug]/page.tsx` (`grid md:grid-cols-[10rem_1fr] gap-x-8 py-8 border-t border-border`, label as an `h2` in label style when `id` is given) reused by the article page via copy, not import (two files, each self-contained).
 
@@ -391,10 +421,12 @@ git commit -m "feat: case studies, articles, 404 and share cards in the statemen
 ### Task 7: Content structure: Kora, one Potluck case study, earlier projects, redirects
 
 **Files:**
+
 - Modify: `src/content.ts`, `next.config.ts`, `src/app/work/[slug]/page.tsx`, `src/components/work-table.tsx` (only if the divider needs the `earlier` flag plumbed), `e2e/site.spec.ts`
 - Create: `public/work/kora-chkoun.png` (copy of `D:\Downloads\Portfolio\kora\.superpowers\sdd\2026-10-05-sprint-2\screens\chkoun-fr-1280-2-playing.png`)
 
 **Interfaces:**
+
 - Consumes: `Project`, `DiagramSpec`, `Shot` types; `Row` from Task 6.
 - Produces: `Project` gains `parts?: { title: string; built: string[]; outcome?: string; diagram?: DiagramSpec }[]` and `earlier?: boolean`; `projects` order: `potluck`, `tnpay`, `deal-grader`, `kora`, `spyder`, `inspection-platform` (earlier), `event-orchestrator` (earlier); `redirects()` in `next.config.ts` mapping `/work/potluck-live`, `/work/payments`, `/work/messaging`, `/work/infrastructure` to `/work/potluck` with `permanent: true`.
 
@@ -403,19 +435,35 @@ git commit -m "feat: case studies, articles, 404 and share cards in the statemen
 In `e2e/site.spec.ts`: `PROJECTS = ["Potluck", "tnpay", "Deal Grader", "Kora", "Spyder", "Field-inspection platform", "Event Orchestrator"]`; in the axe loop replace `/work/payments` with `/work/potluck`; in "hovering a work row changes the preview" the initial `data-preview` becomes `"potluck"`; add:
 
 ```ts
-test("old Potluck case-study links redirect to the merged one", async ({ page }) => {
-  for (const old of ["/work/payments", "/work/potluck-live", "/work/messaging", "/work/infrastructure"]) {
+test("old Potluck case-study links redirect to the merged one", async ({
+  page,
+}) => {
+  for (const old of [
+    "/work/payments",
+    "/work/potluck-live",
+    "/work/messaging",
+    "/work/infrastructure",
+  ]) {
     await page.goto(old);
     await expect(page).toHaveURL(/\/work\/potluck$/);
   }
-  await expect(page.getByRole("heading", { level: 1, name: "Potluck" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Payments on Stripe Connect" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Potluck" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Payments on Stripe Connect" }),
+  ).toBeVisible();
 });
 
 test("Kora has a case study with its live link", async ({ page }) => {
   await page.goto("/work/kora");
-  await expect(page.getByRole("heading", { level: 1, name: "Kora" })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Play Kora" })).toHaveAttribute("href", "https://kora-tn.vercel.app");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Kora" }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Play Kora" })).toHaveAttribute(
+    "href",
+    "https://kora-tn.vercel.app",
+  );
 });
 ```
 
@@ -427,16 +475,18 @@ Expected: FAIL.
 - [ ] **Step 3: Merge Potluck**
 
 In `content.ts` replace the four Potluck entries with one:
+
 - `slug: "potluck"`, `title: "Potluck"`, `company: "Potluck"`, `year: "2026"`.
 - `summary: "Founding engineer: the Stripe Connect payments stack, the live-shopping product, realtime messaging and the release pipeline of a US live-shopping marketplace."`
 - `why: "Potluck is a US marketplace where home bakers sell on camera. I joined as its founding engineer in June 2026 and own the parts with the least room for error: payments, production infrastructure and the realtime systems."`
 - `parts`: four entries in this order, each taking the old entry's `title` (Payments on Stripe Connect, Potluck LIVE, Realtime messaging, Infrastructure and release pipeline), `built`, `outcome` and, as `diagram`, the old `visual.diagram`.
 - `cover`: the old payments entry's cover if it has one, else the first cover among the four; `clip`: the first clip among the four; `gallery`: all four galleries concatenated, de-duplicated by `src`, minus the chosen cover; `stack`: the union in first-seen order, cut to six; `links`: the union de-duplicated by `href`; `visual`: the payments diagram; `note`: none.
-Keep every sentence from the old entries unchanged.
+  Keep every sentence from the old entries unchanged.
 
 - [ ] **Step 4: Kora, earlier projects, redirects**
 
 Copy the screenshot to `public/work/kora-chkoun.png` and read its pixel size (`node -e` with `fs.readFileSync` and the PNG header at bytes 16–24). Add the project after `deal-grader`:
+
 - `slug: "kora"`, `title: "Kora"`, `company: "Open source · side project"`, `year: "2026"`.
 - `summary: "A daily guess-the-footballer game for Tunisia, in Arabic, French and English, with its own data pipeline."`
 - `why: "Daily sports puzzles exist for the big leagues and not for Tunisian football. Kora is a hub of small daily games about the national team and Ligue 1, built to have real Tunisian players, not just code."`
@@ -444,7 +494,7 @@ Copy the screenshot to `public/work/kora-chkoun.png` and read its pixel size (`n
 - `outcome: "Live since 6 October 2026, with a new puzzle every day."`
 - `stack: ["Next.js", "TypeScript", "PostgreSQL", "Redis", "Playwright"]`; `links: [{ label: "Play Kora", href: "https://kora-tn.vercel.app" }, { label: "Source on GitHub", href: "https://github.com/JalelDridi/kora" }]`.
 - `cover: { src: "/work/kora-chkoun.png", alt: "Chkoun?, Kora's daily puzzle, in French: a grid of guesses with some fields revealed", caption: "Chkoun?, the daily puzzle, in French.", width, height, frame: "browser", url: "kora-tn.vercel.app/fr/chkoun" }`; `visual: { kind: "image", src, alt, width, height }` with the same values.
-Mark `inspection-platform` and `event-orchestrator` with `earlier: true` and move them to the end. In `next.config.ts` add the `redirects()` from Interfaces. In `work/[slug]/page.tsx` render `parts` after "Why it existed": for each part a `Row` labelled with `part.title` (as an `h2`) containing its built list, its outcome paragraph and, when present, its diagram in a `DiagramFigure`-style frame; when `parts` exist, skip the top-level "What I built" row (the merged entry has no `built` of its own: set `built: []`).
+  Mark `inspection-platform` and `event-orchestrator` with `earlier: true` and move them to the end. In `next.config.ts` add the `redirects()` from Interfaces. In `work/[slug]/page.tsx` render `parts` after "Why it existed": for each part a `Row` labelled with `part.title` (as an `h2`) containing its built list, its outcome paragraph and, when present, its diagram in a `DiagramFigure`-style frame; when `parts` exist, skip the top-level "What I built" row (the merged entry has no `built` of its own: set `built: []`).
 
 - [ ] **Step 5: Run the suite**
 
@@ -463,21 +513,30 @@ git commit -m "feat: one Potluck case study with four parts, Kora added, earlier
 ### Task 8: Changelog page and the site version
 
 **Files:**
+
 - Create: `src/app/changelog/page.tsx`
 - Modify: `src/content.ts`, `src/components/site-footer.tsx`, `src/app/sitemap.ts`, `e2e/site.spec.ts`
 
 **Interfaces:**
+
 - Consumes: `site.version`, `formatShortDate`, `Row` pattern.
 - Produces: `changelog` export: `{ version: string; date: string; title: string; items: string[] }[]`, newest first, `changelog[0].version === site.version`.
 
 - [ ] **Step 1: Write the failing test**
 
 ```ts
-test("the changelog lists the current version first and is linked from the status strip", async ({ page }) => {
+test("the changelog lists the current version first and is linked from the status strip", async ({
+  page,
+}) => {
   await page.goto("/");
-  await page.getByRole("contentinfo").getByRole("link", { name: "changelog" }).click();
+  await page
+    .getByRole("contentinfo")
+    .getByRole("link", { name: "changelog" })
+    .click();
   await expect(page).toHaveURL(/\/changelog$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Changelog" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Changelog" }),
+  ).toBeVisible();
   await expect(page.locator("main ol li").first()).toContainText("3.0.0");
 });
 ```
@@ -492,6 +551,7 @@ Expected: FAIL.
 - [ ] **Step 3: Content and page**
 
 `changelog` entries (check the dates with `git log --format='%ad %s' --date=short` and correct them if they differ):
+
 - 3.0.0, today's date, "Statement": ["Bricolage Grotesque and IBM Plex replace Geist; cool paper with one cobalt accent, square corners, rules instead of cards.", "An account summary with sourced numbers replaces the counting metrics.", "The pipeline playground posts its steps into a ledger book.", "Work is a table with hover previews; one Potluck case study with four parts; Kora added; earlier projects grouped.", "Working hours and hiring setup in About; a copy button for the email.", "A status strip with live clocks, the deploy date and this changelog."]
 - 2.2.0, 2026-10-03, "About, leadership, writing": ["An About section with a portrait and four clocks.", "A Leadership section.", "Two articles drawn from Payout Ledger's design records.", "A card and case study for tnpay."]
 - 2.1.0, 2026-10-02, "Faster and shareable": ["Recordings load only near the screen.", "A phone menu.", "A share card per case study, structured data, a custom 404."]
@@ -519,6 +579,7 @@ git commit -m "feat: a changelog page, linked from the status strip"
 ### Task 9: Whole-site verification, Lighthouse, screenshots and preview
 
 **Files:**
+
 - Create: `D:\Downloads\Portfolio\docs\redesign\shots-site\*.png` (outside the repo), `D:\Downloads\Portfolio\docs\redesign\verification.md`
 - Modify: only what the checks require.
 

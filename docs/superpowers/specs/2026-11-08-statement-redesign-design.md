@@ -36,16 +36,16 @@ The site is well built but assembled from the defaults of shadcn/ui, Magic UI an
 
 Light (default), in `:root`:
 
-| Token | Value | Use |
-| --- | --- | --- |
-| `--background` | `oklch(0.967 0.004 150)` (cool paper, #f3f5f2) | page |
-| `--card` | `oklch(1 0 0)` | frames around media |
-| `--foreground` | `oklch(0.19 0.012 240)` (#141a1f) | ink, strong rules |
-| `--muted-foreground` | `oklch(0.44 0.015 240)` (#4b5660) | secondary text |
-| `--border` | `oklch(0.84 0.008 160)` (#c6cec9) | hairline rules |
-| `--brand` | `oklch(0.45 0.21 265)` (#1f3fd1) | the one accent: numbers, hover, focus |
-| `--debit` | `oklch(0.5 0.17 28)` (#c3312a) | held or failed entries only |
-| `--radius` | `0` | square corners everywhere except the phone frame |
+| Token                | Value                                          | Use                                              |
+| -------------------- | ---------------------------------------------- | ------------------------------------------------ |
+| `--background`       | `oklch(0.967 0.004 150)` (cool paper, #f3f5f2) | page                                             |
+| `--card`             | `oklch(1 0 0)`                                 | frames around media                              |
+| `--foreground`       | `oklch(0.19 0.012 240)` (#141a1f)              | ink, strong rules                                |
+| `--muted-foreground` | `oklch(0.44 0.015 240)` (#4b5660)              | secondary text                                   |
+| `--border`           | `oklch(0.84 0.008 160)` (#c6cec9)              | hairline rules                                   |
+| `--brand`            | `oklch(0.45 0.21 265)` (#1f3fd1)               | the one accent: numbers, hover, focus            |
+| `--debit`            | `oklch(0.5 0.17 28)` (#c3312a)                 | held or failed entries only                      |
+| `--radius`           | `0`                                            | square corners everywhere except the phone frame |
 
 Dark (`.dark`): `--background oklch(0.2 0.03 250)` (#0f1a26), `--card oklch(0.23 0.03 250)` (#142131), `--foreground oklch(0.94 0.005 160)` (#eceeea), `--muted-foreground oklch(0.75 0.01 220)` (#a8b2b9), `--border oklch(0.32 0.025 240)` (#2a3947), `--brand oklch(0.72 0.14 270)` (#86a0ff), `--debit oklch(0.72 0.17 28)` (#ff7b6e). The other shadcn tokens (`--primary`, `--secondary`, `--muted`, `--accent`, `--ring`, `--input`, popover) follow: primary = foreground, muted and secondary = a 4 % tint of foreground over background, ring = brand. `--brand-bright` and `--brand-2` are removed.
 
