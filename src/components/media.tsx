@@ -56,7 +56,7 @@ export function ShotFigure({
           className="w-full"
         />
       </Frame>
-      <figcaption className="text-center text-base text-pretty text-muted-foreground">
+      <figcaption className="text-left font-mono text-[0.85rem] text-pretty text-muted-foreground">
         {shot.caption}
       </figcaption>
     </figure>
@@ -85,7 +85,7 @@ export function ClipFigure({
           label={clip.label}
         />
       </Frame>
-      <figcaption className="text-center text-base text-pretty text-muted-foreground">
+      <figcaption className="text-left font-mono text-[0.85rem] text-pretty text-muted-foreground">
         {clip.caption}
       </figcaption>
     </figure>

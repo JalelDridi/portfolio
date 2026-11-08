@@ -3,7 +3,7 @@ import { profile } from "@/content";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
-/** The card shown when a page is shared: dark, with the site's green. */
+/** The card shown when a page is shared: paper, ink and cobalt. */
 export function ogCard({
   eyebrow,
   title,
@@ -22,9 +22,9 @@ export function ogCard({
         flexDirection: "column",
         justifyContent: "space-between",
         padding: 72,
-        background: "#0b1416",
-        backgroundImage: "linear-gradient(135deg, #0b1416 55%, #0f3d30 100%)",
-        color: "#f1f5f4",
+        background: "#f3f5f2",
+        color: "#141a1f",
+        borderTop: "4px solid #141a1f",
       }}
     >
       <div
@@ -33,7 +33,8 @@ export function ogCard({
           fontSize: 26,
           letterSpacing: 4,
           textTransform: "uppercase",
-          color: "#34d399",
+          fontFamily: "ui-monospace, Menlo, monospace",
+          color: "#1f3fd1",
         }}
       >
         {eyebrow}
@@ -42,8 +43,9 @@ export function ogCard({
         <div
           style={{
             fontSize: title.length > 44 ? 56 : title.length > 28 ? 68 : 84,
-            fontWeight: 700,
+            fontWeight: 800,
             lineHeight: 1.05,
+            color: "#141a1f",
           }}
         >
           {title}
@@ -52,7 +54,7 @@ export function ogCard({
           style={{
             fontSize: 34,
             marginTop: 28,
-            color: "#b6c4c1",
+            color: "#4b5660",
             lineHeight: 1.3,
           }}
         >
@@ -64,7 +66,7 @@ export function ogCard({
           display: "flex",
           justifyContent: "space-between",
           fontSize: 26,
-          color: "#b6c4c1",
+          color: "#4b5660",
         }}
       >
         <div>{profile.name}</div>
