@@ -190,6 +190,11 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
         {project.parts?.map((part) => (
           <Row key={part.title} label={part.title} id={partId(part.title)}>
             <div className="flex flex-col gap-8">
+              {part.why && (
+                <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
+                  {part.why}
+                </p>
+              )}
               <BuiltList items={part.built} />
               {part.outcome && (
                 <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">

@@ -81,7 +81,10 @@ test("hovering a work row changes the preview", async ({ page }) => {
 
 test("old Potluck case-study links redirect to the merged one", async ({
   page,
+  request,
 }) => {
+  const response = await request.get("/work/payments", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
   for (const old of [
     "/work/payments",
     "/work/potluck-live",

@@ -141,6 +141,7 @@ export type Project = {
   /** Sections of a case study that covers several pieces of work. */
   parts?: {
     title: string;
+    why?: string;
     built: string[];
     outcome?: string;
     diagram?: DiagramSpec;
@@ -151,6 +152,32 @@ export type Project = {
   cover?: Shot;
   clip?: Clip;
   gallery?: Shot[];
+};
+
+// The Potluck case study draws this twice: as its visual and beside its
+// payments part.
+const PAYMENTS_DIAGRAM: DiagramSpec = {
+  columns: [
+    [
+      { id: "checkout", label: "Checkout", icon: "card" },
+      { id: "webhooks", label: "Stripe webhooks", icon: "webhook" },
+    ],
+    [{ id: "verify", label: "Server verification", icon: "shield" }],
+    [
+      { id: "order", label: "Order and stock", icon: "box" },
+      { id: "recon", label: "Reconciliation", icon: "activity" },
+      { id: "alerts", label: "Payout alerts", icon: "bell" },
+    ],
+  ],
+  edges: [
+    ["checkout", "verify"],
+    ["webhooks", "verify"],
+    ["verify", "order"],
+    ["verify", "recon"],
+    ["verify", "alerts"],
+  ],
+  caption:
+    "Nothing the client sends is trusted: the server verifies with Stripe before an order is paid.",
 };
 
 export const projects: Project[] = [
@@ -178,6 +205,26 @@ export const projects: Project[] = [
     },
     gallery: [
       {
+        src: "/work/potluck-kitchen.jpg",
+        alt: "A kitchen page on Potluck with Follow and Message buttons and a menu",
+        caption:
+          "A kitchen page. Message opens a thread with the seller before any order exists.",
+        width: 1440,
+        height: 900,
+        frame: "browser",
+        url: "bigpotluck.com/profile",
+      },
+      {
+        src: "/work/potluck-feed.jpg",
+        alt: "The Potluck home feed: a grid of homemade baked goods with prices and seller names",
+        caption:
+          "The home feed. Server-rendering its first image is what removed the LCP delay.",
+        width: 1440,
+        height: 900,
+        frame: "browser",
+        url: "bigpotluck.com",
+      },
+      {
         src: "/work/potluck-item-phone.jpg",
         alt: "A product page on a phone: a chocolate chip cookie at five dollars, with pickup or delivery and an Add to cart button",
         caption:
@@ -186,7 +233,6 @@ export const projects: Project[] = [
         height: 1688,
         frame: "phone",
       },
-
       {
         src: "/work/potluck-live.jpg",
         alt: "The Live shows page on Potluck, listing upcoming shows",
@@ -197,7 +243,6 @@ export const projects: Project[] = [
         frame: "browser",
         url: "bigpotluck.com/live",
       },
-
       {
         src: "/work/potluck-kitchen-phone.jpg",
         alt: "The same kitchen page on a phone",
@@ -217,6 +262,7 @@ export const projects: Project[] = [
     parts: [
       {
         title: "Payments on Stripe Connect",
+        why: "I own the payments stack: checkout, transfers, payouts, webhooks and reconciliation. In a marketplace, every one of those has to be right for both the buyer and the seller.",
         built: [
           "An order is marked paid only after the payment is verified server-side against Stripe, with inventory decremented exactly once.",
           "Checkout validation that rejects client-supplied prices, items no longer on sale and quantities above stock, covered by a suite of attack tests.",
@@ -225,32 +271,11 @@ export const projects: Project[] = [
         ],
         outcome:
           "Payout Ledger is a from-scratch public rebuild of these ideas. It shares no code with Potluck.",
-        diagram: {
-          columns: [
-            [
-              { id: "checkout", label: "Checkout", icon: "card" },
-              { id: "webhooks", label: "Stripe webhooks", icon: "webhook" },
-            ],
-            [{ id: "verify", label: "Server verification", icon: "shield" }],
-            [
-              { id: "order", label: "Order and stock", icon: "box" },
-              { id: "recon", label: "Reconciliation", icon: "activity" },
-              { id: "alerts", label: "Payout alerts", icon: "bell" },
-            ],
-          ],
-          edges: [
-            ["checkout", "verify"],
-            ["webhooks", "verify"],
-            ["verify", "order"],
-            ["verify", "recon"],
-            ["verify", "alerts"],
-          ],
-          caption:
-            "Nothing the client sends is trusted: the server verifies with Stripe before an order is paid.",
-        },
+        diagram: PAYMENTS_DIAGRAM,
       },
       {
         title: "Potluck LIVE",
+        why: "Potluck's live-shopping product, where home bakers sell on camera. I built it end to end.",
         built: [
           "A public sign-up page per show, with one-field, phone-only signup.",
           "A token ledger kept entirely on the server (earn, spend, referrals) whose balances can never go negative.",
@@ -280,6 +305,7 @@ export const projects: Project[] = [
       },
       {
         title: "Realtime messaging",
+        why: "Buyers and sellers needed to talk before and after an order, in real time, without the client ever being trusted with write access.",
         built: [
           "PostgreSQL is the system of record; messages are mirrored by the server to a realtime database.",
           "Clients are read-only, using short-lived tokens that carry the threads the user belongs to.",
@@ -308,6 +334,7 @@ export const projects: Project[] = [
       },
       {
         title: "Infrastructure and release pipeline",
+        why: "A three-person team needs to ship to production many times a week without anyone babysitting a deploy.",
         built: [
           "Postgres with backups, object storage with scoped permissions, and TLS.",
           "Push-to-main auto-deploy that confirms the new version is serving before it runs migrations.",
@@ -344,6 +371,9 @@ export const projects: Project[] = [
       "PostgreSQL",
       "Playwright",
       "Firebase Realtime Database",
+      "AWS",
+      "GitHub Actions",
+      "Sentry",
     ],
     links: [
       { label: "Potluck", href: "https://www.bigpotluck.com" },
@@ -356,32 +386,7 @@ export const projects: Project[] = [
         href: "https://www.bigpotluck.com/live",
       },
     ],
-    visual: {
-      kind: "diagram",
-      diagram: {
-        columns: [
-          [
-            { id: "checkout", label: "Checkout", icon: "card" },
-            { id: "webhooks", label: "Stripe webhooks", icon: "webhook" },
-          ],
-          [{ id: "verify", label: "Server verification", icon: "shield" }],
-          [
-            { id: "order", label: "Order and stock", icon: "box" },
-            { id: "recon", label: "Reconciliation", icon: "activity" },
-            { id: "alerts", label: "Payout alerts", icon: "bell" },
-          ],
-        ],
-        edges: [
-          ["checkout", "verify"],
-          ["webhooks", "verify"],
-          ["verify", "order"],
-          ["verify", "recon"],
-          ["verify", "alerts"],
-        ],
-        caption:
-          "Nothing the client sends is trusted: the server verifies with Stripe before an order is paid.",
-      },
-    },
+    visual: { kind: "diagram", diagram: PAYMENTS_DIAGRAM },
   },
   {
     slug: "tnpay",
