@@ -4,10 +4,10 @@ import { BrowserFrame } from "../browser-frame";
 import { GitHubIcon } from "../icons";
 import { LazyVideo } from "../lazy-video";
 import { LinkButton } from "../link-button";
-import { Reveal } from "../reveal";
 import { Section } from "../section";
 import { Tags } from "../tags";
-import { BorderBeam } from "../ui/border-beam";
+
+const LETTERS = ["a", "b", "c", "d"];
 
 export function Flagship() {
   return (
@@ -17,9 +17,12 @@ export function Flagship() {
       title={`${flagship.name}: ${flagship.tagline.toLowerCase()}`}
       description={flagship.summary}
     >
-      <div className="grid items-start gap-10 *:min-w-0 lg:grid-cols-[1.25fr_1fr]">
-        <Reveal>
-          <BrowserFrame url="payout-ledger-gamma.vercel.app">
+      <div className="grid items-start gap-10 *:min-w-0 lg:grid-cols-[1.2fr_0.8fr]">
+        <div>
+          <BrowserFrame
+            url="payout-ledger-gamma.vercel.app"
+            note="screen recording"
+          >
             <LazyVideo
               className="aspect-[16/10] w-full bg-black"
               webm={flagship.video.webm}
@@ -27,37 +30,33 @@ export function Flagship() {
               poster={flagship.video.poster}
               label={flagship.video.label}
             />
-            <BorderBeam
-              size={160}
-              duration={10}
-              colorFrom="var(--brand-bright)"
-              colorTo="var(--brand-2)"
-            />
           </BrowserFrame>
-          <p className="mt-3 text-base text-muted-foreground">
+          <p className="mt-3 text-[0.95rem] text-muted-foreground">
             A dropped webhook is sent, the checks run, and reconciliation flags
             the payout the ledger has fallen behind on.
           </p>
-        </Reveal>
+        </div>
 
         <div className="flex flex-col gap-6">
-          <ul className="grid gap-3">
+          <dl className="border-t border-border">
             {flagship.points.map((point, index) => (
-              <li key={point.title}>
-                <Reveal delay={index * 0.06}>
-                  <div className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-brand/50">
-                    <h3 className="text-lg font-semibold tracking-tight">
-                      {point.title}
-                    </h3>
-                    <p className="mt-1 text-base text-pretty text-muted-foreground">
-                      {point.text}
-                    </p>
-                  </div>
-                </Reveal>
-              </li>
+              <div
+                key={point.title}
+                className="grid grid-cols-[1.6rem_1fr] border-b border-border py-3.5"
+              >
+                <dt className="font-mono text-[0.85rem] text-brand">
+                  {LETTERS[index]}
+                </dt>
+                <dd>
+                  <b className="block text-[1.1rem] font-semibold">
+                    {point.title}
+                  </b>
+                  <span className="text-muted-foreground">{point.text}</span>
+                </dd>
+              </div>
             ))}
-          </ul>
-          <Reveal delay={0.25}>
+          </dl>
+          <div>
             <Tags items={flagship.stack} />
             <div className="mt-5 flex flex-wrap gap-3">
               <LinkButton variant="primary" href={flagship.demo}>
@@ -70,7 +69,7 @@ export function Flagship() {
                 <BookOpen aria-hidden="true" /> Design decisions
               </LinkButton>
             </div>
-          </Reveal>
+          </div>
         </div>
       </div>
     </Section>

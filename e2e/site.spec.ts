@@ -72,6 +72,15 @@ test("a project card opens its case study, which links out", async ({
   await expect(page).toHaveURL(/\/#work$/);
 });
 
+test("hovering a work row changes the preview", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const preview = page.locator("#work [data-preview]");
+  await expect(preview).toHaveAttribute("data-preview", "tnpay");
+  await page.getByRole("link", { name: "Deal Grader", exact: true }).hover();
+  await expect(preview).toHaveAttribute("data-preview", "deal-grader");
+});
+
 test.describe("the pipeline playground", () => {
   test.beforeEach(async ({ page }) => {
     // Steps are instant with motion reduced, which keeps these tests fast.

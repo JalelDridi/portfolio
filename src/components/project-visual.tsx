@@ -2,7 +2,7 @@ import Image from "next/image";
 import type { Project } from "@/content";
 import { Diagram } from "./diagram";
 
-/** A project's architecture sketch on a dotted background. */
+/** A project's architecture sketch. */
 export function DiagramPanel({
   project,
   size,
@@ -19,17 +19,13 @@ export function DiagramPanel({
           : "relative flex w-full items-center overflow-hidden px-4 py-12 sm:px-12 sm:py-16"
       }
     >
-      <div
-        aria-hidden="true"
-        className="bg-dots pointer-events-none absolute inset-0 opacity-60"
-      />
       <Diagram spec={project.visual.diagram} compact={size === "card"} />
     </div>
   );
 }
 
-/** The picture on a project card: a real screenshot when there is one. */
-export function CardVisual({ project }: { project: Project }) {
+/** The preview beside the work table: a real screenshot when there is one. */
+export function PreviewVisual({ project }: { project: Project }) {
   const image =
     project.cover ?? (project.visual.kind === "image" ? project.visual : null);
 
@@ -40,8 +36,8 @@ export function CardVisual({ project }: { project: Project }) {
       alt={image.alt}
       width={image.width}
       height={image.height}
-      sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
-      className="h-64 w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+      sizes="(min-width: 1024px) 480px, 1px"
+      className="aspect-[4/3] w-full object-cover object-top"
     />
   );
 }
