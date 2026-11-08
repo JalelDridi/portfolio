@@ -25,6 +25,7 @@ export function AccountSummary() {
       <div
         aria-hidden="true"
         className="animate-draw origin-left border-t-2 border-foreground"
+        style={{ animationDelay: "320ms" }}
       />
       <div className="flex justify-between border-b border-border py-2 font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
         <span>{ledger.title}</span>
@@ -34,7 +35,7 @@ export function AccountSummary() {
         {ledger.rows.map((row) => (
           <li
             key={row.name}
-            className="grid grid-cols-1 items-baseline gap-x-4 border-b border-border py-3 sm:grid-cols-[1fr_auto]"
+            className="grid grid-cols-1 items-baseline gap-x-4 border-b border-border py-3 sm:grid-cols-[1fr_minmax(0,15rem)]"
           >
             <div>
               {row.href ? (
