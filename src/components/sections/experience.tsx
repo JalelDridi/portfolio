@@ -1,29 +1,22 @@
 import { ArrowUpRight } from "lucide-react";
 import { education, experience } from "@/content";
-import { cn } from "@/lib/utils";
-import { Reveal } from "../reveal";
 import { Section } from "../section";
 
 export function Experience() {
   return (
     <Section id="experience" eyebrow="Experience" title="Where I have worked">
-      <ol className="relative flex flex-col gap-10 border-l border-border pl-6 sm:pl-8">
-        {experience.map((job, index) => (
-          <li key={`${job.company}-${job.period}`} className="relative">
-            <span
-              aria-hidden="true"
-              className={cn(
-                "absolute top-1.5 -left-[1.8125rem] size-2.5 rounded-full ring-4 ring-background sm:-left-[2.3125rem]",
-                index === 0 ? "bg-brand-bright" : "bg-muted-foreground/40",
-              )}
-            />
-            <Reveal delay={index * 0.05}>
-              <p className="font-mono text-sm text-muted-foreground">
-                {job.period}
-              </p>
-              <h3 className="mt-1 text-2xl font-semibold tracking-tight">
-                {job.role}
-                <span className="text-muted-foreground"> · </span>
+      <ol className="border-t-2 border-foreground">
+        {experience.map((job) => (
+          <li
+            key={`${job.company}-${job.period}`}
+            className="grid gap-x-6 border-b border-border py-5 sm:grid-cols-[9rem_1fr]"
+          >
+            <p className="pt-1.5 font-mono text-[0.85rem] text-muted-foreground">
+              {job.period}
+            </p>
+            <div>
+              <h3 className="font-display text-2xl font-bold tracking-[-0.02em]">
+                {job.role} <span className="text-muted-foreground">·</span>{" "}
                 {job.href ? (
                   <a
                     href={job.href}
@@ -39,18 +32,16 @@ export function Experience() {
               <p className="mt-1 text-base text-muted-foreground">
                 {job.detail}
               </p>
-              <p className="mt-3 max-w-2xl text-lg text-pretty">
+              <p className="mt-3 max-w-2xl text-[1.1rem] text-pretty">
                 {job.summary}
               </p>
-            </Reveal>
+            </div>
           </li>
         ))}
       </ol>
-      <Reveal>
-        <p className="mt-10 max-w-2xl text-lg text-muted-foreground">
-          {education}
-        </p>
-      </Reveal>
+      <p className="mt-8 max-w-2xl text-[1.1rem] text-pretty text-muted-foreground">
+        {education}
+      </p>
     </Section>
   );
 }

@@ -799,7 +799,14 @@ export const about = {
     },
     { label: "Speaks", value: "Arabic, English and French" },
     { label: "Studied", value: "IT architecture and cloud computing, ESPRIT" },
+    { label: "Hours", value: "Flexible: I adapt to the team's time zone." },
+    {
+      label: "Hiring setup",
+      value: "Contractor or employer of record; no visa sponsorship needed.",
+    },
   ],
+  /** The caption under the portrait. */
+  figure: { label: "fig. 1 · Bizerte", coordinates: "37°16′N 9°52′E" },
   clocksCaption: "The time right now at home and across the United States.",
   /** Shown as analogue clocks. The first is home. */
   clocks: [

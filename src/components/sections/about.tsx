@@ -1,17 +1,15 @@
 import Image from "next/image";
 import { about } from "@/content";
-import { Reveal } from "../reveal";
 import { Section } from "../section";
-import { BorderBeam } from "../ui/border-beam";
 import { WorldClocks } from "../world-clocks";
 
 export function About() {
-  const { portrait } = about;
+  const { portrait, figure } = about;
   return (
     <Section id="about" eyebrow="About" title={about.title}>
-      <div className="grid items-start gap-10 *:min-w-0 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
-        <Reveal>
-          <div className="relative mx-auto max-w-sm overflow-hidden rounded-3xl border border-border bg-card lg:mx-0">
+      <div className="grid items-start gap-10 *:min-w-0 lg:grid-cols-[0.7fr_1.3fr]">
+        <figure className="mx-auto w-full max-w-sm lg:mx-0 lg:max-w-none">
+          <div className="border border-foreground">
             <Image
               src={portrait.src}
               alt={portrait.alt}
@@ -20,48 +18,44 @@ export function About() {
               sizes="(min-width: 1024px) 400px, 384px"
               className="aspect-square w-full object-cover"
             />
-            <dl className="flex flex-col divide-y divide-border">
-              {about.facts.map((fact) => (
-                <div key={fact.label} className="px-5 py-3.5">
-                  <dt className="font-mono text-sm tracking-widest text-brand uppercase">
-                    {fact.label}
-                  </dt>
-                  <dd className="mt-1 text-lg text-pretty">{fact.value}</dd>
-                </div>
-              ))}
-            </dl>
-            <BorderBeam
-              size={160}
-              duration={11}
-              colorFrom="var(--brand-bright)"
-              colorTo="var(--brand-2)"
-            />
           </div>
-        </Reveal>
+          <figcaption className="mt-2 flex justify-between font-mono text-[0.85rem] text-muted-foreground">
+            <span>{figure.label}</span>
+            <span>{figure.coordinates}</span>
+          </figcaption>
+        </figure>
 
         <div className="flex flex-col gap-6">
           {about.paragraphs.map((paragraph, index) => (
-            <Reveal key={paragraph} delay={index * 0.06}>
-              <p
-                className={
-                  index === 0
-                    ? "text-2xl leading-relaxed text-pretty"
-                    : "text-xl leading-relaxed text-pretty text-muted-foreground"
-                }
-              >
-                {paragraph}
-              </p>
-            </Reveal>
+            <p
+              key={paragraph}
+              className={
+                index === 0
+                  ? "text-[1.45rem] leading-snug text-pretty"
+                  : "text-[1.15rem] leading-relaxed text-pretty text-muted-foreground"
+              }
+            >
+              {paragraph}
+            </p>
           ))}
 
-          <Reveal delay={0.2}>
-            <div className="mt-4 rounded-2xl border border-border bg-card p-6">
-              <WorldClocks clocks={about.clocks} />
-              <p className="mt-5 text-center text-base text-muted-foreground">
-                {about.clocksCaption}
-              </p>
-            </div>
-          </Reveal>
+          <dl className="grid gap-x-5 gap-y-4 border-t border-border pt-4 sm:grid-cols-3">
+            {about.facts.map((fact) => (
+              <div key={fact.label}>
+                <dt className="font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
+                  {fact.label}
+                </dt>
+                <dd className="mt-1 font-medium text-pretty">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+
+          <div className="border-y border-border py-5">
+            <WorldClocks clocks={about.clocks} />
+            <p className="mt-5 text-center text-base text-muted-foreground">
+              {about.clocksCaption}
+            </p>
+          </div>
         </div>
       </div>
     </Section>

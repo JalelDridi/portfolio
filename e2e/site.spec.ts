@@ -324,6 +324,20 @@ test("the leadership section lists the three JCI roles in order", async ({
   ]);
 });
 
+test("the copy button puts the email on the clipboard", async ({ browser }) => {
+  const context = await browser.newContext({
+    permissions: ["clipboard-read", "clipboard-write"],
+  });
+  const page = await context.newPage();
+  await page.goto("/#contact");
+  await page.getByRole("button", { name: "Copy email" }).click();
+  await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "med.jalel.dridi@gmail.com",
+  );
+  await context.close();
+});
+
 test("an article opens from the home page and links to its sources", async ({
   page,
 }) => {
