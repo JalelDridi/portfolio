@@ -10,6 +10,7 @@ export function Work() {
     company: project.company,
     year: project.year,
     summary: project.summary,
+    earlier: project.earlier,
     url:
       project.cover?.url ??
       (project.links[0] ? new URL(project.links[0].href).hostname : undefined),

@@ -8,7 +8,7 @@ import { ClipFigure, ShotFigure } from "@/components/media";
 import { DiagramPanel } from "@/components/project-visual";
 import { Rise } from "@/components/rise";
 import { Tags } from "@/components/tags";
-import { type Project, projects, type Shot } from "@/content";
+import { type DiagramSpec, projects, type Shot } from "@/content";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -40,16 +40,45 @@ export async function generateMetadata(
 const LABEL =
   "font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase";
 
-function DiagramFigure({ project }: { project: Project }) {
-  if (project.visual.kind !== "diagram") return null;
+function DiagramFigure({ spec }: { spec: DiagramSpec }) {
   return (
     <figure className="overflow-hidden border border-foreground bg-card">
-      <DiagramPanel project={project} size="page" />
+      <DiagramPanel spec={spec} size="page" />
       <figcaption className="border-t border-border px-4 py-2 font-mono text-[0.85rem] text-muted-foreground">
-        {project.visual.diagram.caption}
+        {spec.caption}
       </figcaption>
     </figure>
   );
+}
+
+/** What was built, as a lettered list. */
+function BuiltList({ items }: { items: string[] }) {
+  return (
+    <ol className="max-w-3xl">
+      {items.map((item, itemIndex) => (
+        <li
+          key={item}
+          className="grid grid-cols-[1.6rem_1fr] border-b border-border py-3 text-lg leading-relaxed"
+        >
+          <span
+            aria-hidden="true"
+            className="pt-0.5 font-mono text-[0.85rem] text-muted-foreground"
+          >
+            {String.fromCharCode(97 + itemIndex)}
+          </span>
+          <span className="text-pretty">{item}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** An id for a part's heading, from its title. */
+function partId(title: string) {
+  return `part-${title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")}`;
 }
 
 /** A ruled row: the label in its own column, the content beside it. */
@@ -94,7 +123,9 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
   // Everything not used as the lead goes in the gallery.
   const stills: Shot[] = [
     ...(cover && lead !== "cover" ? [cover] : []),
-    ...(visual.kind === "image" && (lead !== "visual" || cover)
+    ...(visual.kind === "image" &&
+    (lead !== "visual" || cover) &&
+    visual.src !== cover?.src
       ? [
           {
             ...visual,
@@ -106,7 +137,9 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
       : []),
     ...(project.gallery ?? []),
   ];
-  const showDiagramBelow = visual.kind === "diagram" && lead !== "visual";
+  // A case study in parts draws each part's diagram beside it instead.
+  const showDiagramBelow =
+    visual.kind === "diagram" && lead !== "visual" && !project.parts;
 
   return (
     <main className="mx-auto w-full max-w-6xl px-5 pt-24 pb-16 sm:pb-24">
@@ -132,7 +165,7 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
         {lead === "clip" && clip && <ClipFigure clip={clip} />}
         {lead === "cover" && cover && <ShotFigure shot={cover} priority />}
         {lead === "visual" && visual.kind === "diagram" && (
-          <DiagramFigure project={project} />
+          <DiagramFigure spec={visual.diagram} />
         )}
         {lead === "visual" && visual.kind === "image" && (
           <ShotFigure
@@ -154,24 +187,25 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
           </p>
         </Row>
 
-        <Row label="What I built" id="built">
-          <ol className="max-w-3xl">
-            {project.built.map((item, itemIndex) => (
-              <li
-                key={item}
-                className="grid grid-cols-[1.6rem_1fr] border-b border-border py-3 text-lg leading-relaxed"
-              >
-                <span
-                  aria-hidden="true"
-                  className="pt-0.5 font-mono text-[0.85rem] text-muted-foreground"
-                >
-                  {String.fromCharCode(97 + itemIndex)}
-                </span>
-                <span className="text-pretty">{item}</span>
-              </li>
-            ))}
-          </ol>
-        </Row>
+        {project.parts?.map((part) => (
+          <Row key={part.title} label={part.title} id={partId(part.title)}>
+            <div className="flex flex-col gap-8">
+              <BuiltList items={part.built} />
+              {part.outcome && (
+                <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
+                  {part.outcome}
+                </p>
+              )}
+              {part.diagram && <DiagramFigure spec={part.diagram} />}
+            </div>
+          </Row>
+        ))}
+
+        {project.built.length > 0 && (
+          <Row label="What I built" id="built">
+            <BuiltList items={project.built} />
+          </Row>
+        )}
 
         {project.outcome && (
           <Row label="Outcome" id="outcome">
@@ -224,7 +258,7 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
 
         {showDiagramBelow && (
           <Row label="How it fits together" id="architecture">
-            <DiagramFigure project={project} />
+            <DiagramFigure spec={visual.diagram} />
           </Row>
         )}
       </div>

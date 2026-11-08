@@ -2,12 +2,10 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const PROJECTS = [
+  "Potluck",
   "tnpay",
   "Deal Grader",
-  "Potluck LIVE",
-  "Payments on Stripe Connect",
-  "Realtime messaging",
-  "Infrastructure and release pipeline",
+  "Kora",
   "Spyder",
   "Field-inspection platform",
   "Event Orchestrator",
@@ -76,9 +74,40 @@ test("hovering a work row changes the preview", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   const preview = page.locator("#work [data-preview]");
-  await expect(preview).toHaveAttribute("data-preview", "tnpay");
+  await expect(preview).toHaveAttribute("data-preview", "potluck");
   await page.getByRole("link", { name: "Deal Grader", exact: true }).hover();
   await expect(preview).toHaveAttribute("data-preview", "deal-grader");
+});
+
+test("old Potluck case-study links redirect to the merged one", async ({
+  page,
+}) => {
+  for (const old of [
+    "/work/payments",
+    "/work/potluck-live",
+    "/work/realtime-messaging",
+    "/work/release-pipeline",
+  ]) {
+    await page.goto(old);
+    await expect(page).toHaveURL(/\/work\/potluck$/);
+  }
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Potluck" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Payments on Stripe Connect" }),
+  ).toBeVisible();
+});
+
+test("Kora has a case study with its live link", async ({ page }) => {
+  await page.goto("/work/kora");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Kora" }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Play Kora" })).toHaveAttribute(
+    "href",
+    "https://kora-tn.vercel.app",
+  );
 });
 
 test.describe("the pipeline playground", () => {
@@ -182,11 +211,7 @@ test("the theme switch changes the colour scheme", async ({ page }) => {
 });
 
 for (const colorScheme of ["light", "dark"] as const) {
-  for (const path of [
-    "/",
-    "/work/payments",
-    "/writing/webhooks-in-any-order",
-  ]) {
+  for (const path of ["/", "/work/potluck", "/writing/webhooks-in-any-order"]) {
     test(`no detectable accessibility violations on ${path} in ${colorScheme} mode`, async ({
       page,
     }) => {

@@ -1,16 +1,15 @@
 import Image from "next/image";
-import type { Project } from "@/content";
+import type { DiagramSpec, Project } from "@/content";
 import { Diagram } from "./diagram";
 
-/** A project's architecture sketch. */
+/** An architecture sketch, sized for a card or a page. */
 export function DiagramPanel({
-  project,
+  spec,
   size,
 }: {
-  project: Project;
+  spec: DiagramSpec;
   size: "card" | "page";
 }) {
-  if (project.visual.kind !== "diagram") return null;
   return (
     <div
       className={
@@ -19,7 +18,7 @@ export function DiagramPanel({
           : "relative flex w-full items-center overflow-hidden px-4 py-12 sm:px-12 sm:py-16"
       }
     >
-      <Diagram spec={project.visual.diagram} compact={size === "card"} />
+      <Diagram spec={spec} compact={size === "card"} />
     </div>
   );
 }
@@ -29,7 +28,11 @@ export function PreviewVisual({ project }: { project: Project }) {
   const image =
     project.cover ?? (project.visual.kind === "image" ? project.visual : null);
 
-  if (!image) return <DiagramPanel project={project} size="card" />;
+  if (!image) {
+    return project.visual.kind === "diagram" ? (
+      <DiagramPanel spec={project.visual.diagram} size="card" />
+    ) : null;
+  }
   return (
     <Image
       src={image.src}
