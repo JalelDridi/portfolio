@@ -29,26 +29,6 @@ export const profile = {
   },
 };
 
-/** Figures taken from the CV; each names where it comes from. */
-export const metrics = [
-  { value: 14000, suffix: "+", label: "messages a week", source: "Spyder" },
-  {
-    value: 99.99,
-    decimals: 2,
-    suffix: "%",
-    label: "delivery reliability",
-    source: "Spyder",
-  },
-  {
-    value: 750,
-    prefix: "~",
-    suffix: " ms",
-    label: "realtime latency",
-    source: "Potluck messaging",
-  },
-  { value: 99, label: "automated tests", source: "Payout Ledger" },
-];
-
 export const flagship = {
   name: "Payout Ledger",
   tagline: "An open-source payout monitor for marketplaces",
@@ -717,6 +697,45 @@ export const skills = [
     items: ["Playwright", "Vitest", "Sentry", "Prometheus", "Grafana"],
   },
 ];
+
+/** The hero's account summary: one row per project, each value from the CV or the repo. */
+export const ledger = {
+  title: "Account summary",
+  asOf: "as of today",
+  rows: [
+    {
+      name: "Payout Ledger",
+      detail: "Open-source payout monitor with a live demo",
+      value: "99 tests · 8 design records",
+      href: flagship.repo,
+    },
+    {
+      name: "tnpay",
+      detail: "Typed SDKs for Tunisia's payment gateways",
+      value: "3 packages on npm · 75 tests",
+      href: "https://github.com/JalelDridi/tnpay",
+    },
+    {
+      name: "Kora",
+      detail: "Daily football puzzle in Arabic, French and English",
+      value: "live every day since 6 Oct 2026",
+      href: "https://kora-tn.vercel.app",
+    },
+    {
+      name: "Spyder",
+      detail: "Multi-provider messaging platform at Offa.com",
+      value: "14,000+ messages a week · 99.99% delivered",
+      href: "/work/spyder",
+    },
+    {
+      name: "Potluck",
+      detail: "Stripe Connect payments stack and production infrastructure",
+      value: "owned since Jun 2026",
+      href: "https://www.bigpotluck.com",
+    },
+  ] as { name: string; detail: string; value: string; href?: string }[],
+  total: { label: profile.availability, value: "Bizerte · UTC+1" },
+};
 
 export const experience = [
   {

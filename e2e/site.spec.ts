@@ -35,6 +35,22 @@ test("shows who I am, the open-source project and every piece of work", async ({
   }
 });
 
+test("the account summary is in the HTML with its numbers before any JavaScript runs", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/");
+  const summary = page.getByRole("list", { name: "Account summary" });
+  await expect(summary).toContainText("99 tests · 8 design records");
+  await expect(summary).toContainText(
+    "14,000+ messages a week · 99.99% delivered",
+  );
+  await expect(summary).toContainText("Open to remote roles");
+  await expect(page.locator("body")).not.toContainText(/(^|\s)0\+|(^|\s)0%/);
+  await context.close();
+});
+
 test("a project card opens its case study, which links out", async ({
   page,
 }) => {

@@ -1,60 +1,56 @@
-import { ArrowRight, FileDown, Mail, MapPin } from "lucide-react";
-import { flagship, profile } from "@/content";
-import { LocalTime } from "../local-time";
-import { PipelinePlayground } from "../pipeline-playground";
+import { ArrowDown, FileDown, Mail, MapPin } from "lucide-react";
+import { profile } from "@/content";
+import { AccountSummary } from "../account-summary";
 import { GitHubIcon, LinkedInIcon } from "../icons";
 import { LinkButton } from "../link-button";
+import { LocalTime } from "../local-time";
+import { PipelinePlayground } from "../pipeline-playground";
 import { Rise } from "../rise";
-import { BorderBeam } from "../ui/border-beam";
 
 export function Hero() {
-  return (
-    <section className="relative overflow-hidden pt-16">
-      <div
-        aria-hidden="true"
-        className="bg-dots pointer-events-none absolute inset-0 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_30%,black,transparent)]"
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-40 left-1/2 size-[42rem] -translate-x-1/2 rounded-full bg-brand-bright/15 blur-3xl"
-      />
+  const nameLines = profile.name.split(" ");
 
-      <div className="relative mx-auto grid w-full max-w-6xl items-center gap-12 px-5 py-12 sm:py-16 lg:grid-cols-[1.15fr_0.85fr] lg:py-16">
+  return (
+    <section>
+      <div className="mx-auto grid w-full max-w-6xl items-start gap-12 px-5 pt-10 pb-6 sm:pt-14 lg:grid-cols-[1.1fr_0.9fr] lg:gap-14">
         <div className="flex flex-col gap-7">
           <Rise>
-            <p className="inline-flex items-center gap-2 rounded-full border border-border bg-background/70 px-3.5 py-1.5 text-base font-medium">
-              <span className="relative flex size-2" aria-hidden="true">
-                <span className="absolute inline-flex size-full animate-ping rounded-full bg-brand-bright opacity-60" />
-                <span className="relative inline-flex size-2 rounded-full bg-brand-bright" />
-              </span>
-              {profile.availability}
-            </p>
+            <h1
+              aria-label={profile.name}
+              className="font-display text-[clamp(3.4rem,8.4vw,7.6rem)] leading-[0.86] font-extrabold tracking-[-0.035em] [font-variation-settings:'opsz'_96,'wdth'_88]"
+            >
+              {nameLines.map((line, index) => (
+                <span
+                  key={line}
+                  className={
+                    index === nameLines.length - 1
+                      ? "block font-light"
+                      : "block"
+                  }
+                >
+                  {line}
+                </span>
+              ))}
+            </h1>
           </Rise>
 
-          <div>
-            <h1 className="text-5xl font-semibold tracking-tight text-balance sm:text-7xl">
-              {profile.name}
-            </h1>
-            <p className="mt-5 text-2xl font-medium tracking-tight text-balance sm:text-3xl">
-              {profile.role}.{" "}
-              <span className="text-gradient">{profile.headline}.</span>
+          <Rise delay={80} className="flex flex-col gap-5">
+            <p className="text-[1.55rem] leading-tight tracking-[-0.01em] text-balance">
+              <b className="font-semibold">Founding Engineer at Potluck.</b>{" "}
+              {profile.headline}.
             </p>
-          </div>
-
-          <div>
-            <p className="max-w-xl text-xl leading-relaxed text-pretty text-muted-foreground">
+            <p className="max-w-xl text-[1.15rem] text-pretty text-muted-foreground">
               {profile.intro}
             </p>
-          </div>
+          </Rise>
 
           <Rise delay={160}>
             <ul className="flex flex-col gap-1.5 text-base text-muted-foreground">
               {profile.facts.map((fact) => (
-                <li key={fact} className="flex items-center gap-2">
-                  <span
-                    aria-hidden="true"
-                    className="size-1 rounded-full bg-brand"
-                  />
+                <li key={fact} className="flex items-baseline gap-2">
+                  <span aria-hidden="true" className="font-mono text-brand">
+                    ·
+                  </span>
                   {fact}
                 </li>
               ))}
@@ -70,8 +66,8 @@ export function Hero() {
 
           <Rise delay={240}>
             <div className="flex flex-wrap items-center gap-3">
-              <LinkButton variant="primary" href="#project">
-                See my work <ArrowRight aria-hidden="true" />
+              <LinkButton variant="primary" href="#work">
+                See the work <ArrowDown aria-hidden="true" />
               </LinkButton>
               <LinkButton href={`mailto:${profile.links.email}`}>
                 <Mail aria-hidden="true" /> Email me
@@ -98,36 +94,12 @@ export function Hero() {
         </div>
 
         <Rise delay={320}>
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-card/80 p-6 shadow-xl shadow-black/5 backdrop-blur dark:shadow-black/30">
-            <p className="font-mono text-sm font-medium tracking-widest text-brand uppercase">
-              Try it
-            </p>
-            <h2 className="mt-3 text-2xl font-semibold tracking-tight">
-              Break my pipeline
-            </h2>
-            <p className="mt-1 mb-6 text-base text-muted-foreground">
-              A small model of {flagship.name}, my open-source payout monitor.
-              Send it the webhooks that break payment systems.
-            </p>
-            <PipelinePlayground />
-            <a
-              href={flagship.demo}
-              className="group mt-6 inline-flex items-center gap-1.5 text-base font-medium underline decoration-border underline-offset-4 hover:decoration-brand"
-            >
-              Open the real demo
-              <ArrowRight
-                className="size-4 transition-transform group-hover:translate-x-1"
-                aria-hidden="true"
-              />
-            </a>
-            <BorderBeam
-              size={120}
-              duration={9}
-              colorFrom="var(--brand-bright)"
-              colorTo="var(--brand-2)"
-            />
-          </div>
+          <AccountSummary />
         </Rise>
+      </div>
+
+      <div className="mx-auto w-full max-w-6xl px-5 pb-10">
+        <PipelinePlayground />
       </div>
     </section>
   );
