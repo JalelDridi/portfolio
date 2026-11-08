@@ -1,20 +1,32 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  IBM_Plex_Mono,
+  IBM_Plex_Sans,
+} from "next/font/google";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { profile, SITE_URL } from "@/content";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const display = Bricolage_Grotesque({
   subsets: ["latin"],
+  axes: ["opsz", "wdth"],
+  variable: "--font-display",
 });
 
-// Only small labels use the mono face, so it is not worth a preload.
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const plexSans = IBM_Plex_Sans({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-sans",
+});
+
+// Only labels, dates and numbers use the mono face, so it is not worth a preload.
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-plex-mono",
   preload: false,
 });
 
@@ -44,7 +56,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${display.variable} ${plexSans.variable} ${plexMono.variable}`}
     >
       <body>
         <Providers>

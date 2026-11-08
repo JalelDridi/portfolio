@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { Reveal } from "./reveal";
 
+/** A home-page section: a label column and the title under a strong rule. */
 export function Section({
   id,
   eyebrow,
@@ -20,23 +20,25 @@ export function Section({
       aria-labelledby={`${id}-title`}
       className="mx-auto w-full max-w-6xl px-5 py-16 sm:py-24"
     >
-      <Reveal>
-        <p className="font-mono text-sm font-medium tracking-widest text-brand uppercase">
+      <div className="grid gap-3 border-t-2 border-foreground pt-3 lg:grid-cols-[10rem_1fr] lg:gap-8">
+        <p className="font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
           {eyebrow}
         </p>
-        <h2
-          id={`${id}-title`}
-          className="mt-3 max-w-3xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl"
-        >
-          {title}
-        </h2>
-        {description && (
-          <p className="mt-5 max-w-3xl text-xl text-pretty text-muted-foreground">
-            {description}
-          </p>
-        )}
-      </Reveal>
-      <div className="mt-10 sm:mt-12">{children}</div>
+        <div>
+          <h2
+            id={`${id}-title`}
+            className="font-display text-[clamp(2rem,4.2vw,3.2rem)] leading-none font-bold tracking-[-0.025em] text-balance"
+          >
+            {title}
+          </h2>
+          {description && (
+            <p className="mt-4 max-w-3xl text-[1.15rem] text-pretty text-muted-foreground">
+              {description}
+            </p>
+          )}
+        </div>
+      </div>
+      <div className="mt-8 sm:mt-10">{children}</div>
     </section>
   );
 }

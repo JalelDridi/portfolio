@@ -4,7 +4,7 @@ import { Experience } from "@/components/sections/experience";
 import { Flagship } from "@/components/sections/flagship";
 import { Hero } from "@/components/sections/hero";
 import { Leadership } from "@/components/sections/leadership";
-import { Metrics } from "@/components/sections/metrics";
+import { Playground } from "@/components/sections/playground";
 import { Skills } from "@/components/sections/skills";
 import { Work } from "@/components/sections/work";
 import { Writing } from "@/components/sections/writing";
@@ -49,7 +49,7 @@ export default function Home() {
         }}
       />
       <Hero />
-      <Metrics />
+      <Playground />
       <Flagship />
       <Work />
       <Writing />

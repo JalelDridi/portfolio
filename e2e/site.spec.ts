@@ -2,12 +2,10 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const PROJECTS = [
+  "Potluck",
   "tnpay",
   "Deal Grader",
-  "Potluck LIVE",
-  "Payments on Stripe Connect",
-  "Realtime messaging",
-  "Infrastructure and release pipeline",
+  "Kora",
   "Spyder",
   "Field-inspection platform",
   "Event Orchestrator",
@@ -35,6 +33,22 @@ test("shows who I am, the open-source project and every piece of work", async ({
   }
 });
 
+test("the account summary is in the HTML with its numbers before any JavaScript runs", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/");
+  const summary = page.getByRole("list", { name: "Account summary" });
+  await expect(summary).toContainText("99 tests · 8 design records");
+  await expect(summary).toContainText(
+    "14,000+ messages a week · 99.99% delivered",
+  );
+  await expect(summary).toContainText("Open to remote roles");
+  await expect(page.locator("body")).not.toContainText(/(^|\s)0\+|(^|\s)0%/);
+  await context.close();
+});
+
 test("a project card opens its case study, which links out", async ({
   page,
 }) => {
@@ -54,6 +68,55 @@ test("a project card opens its case study, which links out", async ({
 
   await page.getByRole("link", { name: "All work" }).click();
   await expect(page).toHaveURL(/\/#work$/);
+});
+
+test("hovering a work row changes the preview", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/");
+  const preview = page.locator("#work [data-preview]");
+  await expect(preview).toHaveAttribute("data-preview", "potluck");
+  await page.getByRole("link", { name: "Deal Grader", exact: true }).hover();
+  await expect(preview).toHaveAttribute("data-preview", "deal-grader");
+  // A keyboard user gets the same preview by focusing a row's link.
+  await page
+    .locator("#work")
+    .getByRole("link", { name: "Kora", exact: true })
+    .focus();
+  await expect(preview).toHaveAttribute("data-preview", "kora");
+});
+
+test("old Potluck case-study links redirect to the merged one", async ({
+  page,
+  request,
+}) => {
+  const response = await request.get("/work/payments", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+  for (const old of [
+    "/work/payments",
+    "/work/potluck-live",
+    "/work/realtime-messaging",
+    "/work/release-pipeline",
+  ]) {
+    await page.goto(old);
+    await expect(page).toHaveURL(/\/work\/potluck$/);
+  }
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Potluck" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Payments on Stripe Connect" }),
+  ).toBeVisible();
+});
+
+test("Kora has a case study with its live link", async ({ page }) => {
+  await page.goto("/work/kora");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Kora" }),
+  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Play Kora" })).toHaveAttribute(
+    "href",
+    "https://kora-tn.vercel.app",
+  );
 });
 
 test.describe("the pipeline playground", () => {
@@ -86,6 +149,18 @@ test.describe("the pipeline playground", () => {
     await expect(counters(page)).toContainText("Stored2");
     await expect(counters(page)).toContainText("Applied2");
     await expect(counters(page)).toContainText("$0.00");
+  });
+
+  test("each step posts an entry in the ledger book", async ({ page }) => {
+    await page.getByRole("button", { name: "Send it twice" }).click();
+    const rows = page
+      .getByRole("table", { name: "Ledger entries" })
+      .locator("tbody tr");
+    await expect(rows).toHaveCount(5);
+    await expect(rows.last()).toContainText("evt_001");
+    await expect(rows.last()).toContainText("skipped");
+    await expect(rows.last().locator("td").last()).toHaveText("skipped");
+    await expect(rows.nth(2)).toContainText("$25.00");
   });
 
   test("balances add up across several runs", async ({ page }) => {
@@ -147,8 +222,9 @@ test("the theme switch changes the colour scheme", async ({ page }) => {
 for (const colorScheme of ["light", "dark"] as const) {
   for (const path of [
     "/",
-    "/work/payments",
+    "/work/potluck",
     "/writing/webhooks-in-any-order",
+    "/changelog",
   ]) {
     test(`no detectable accessibility violations on ${path} in ${colorScheme} mode`, async ({
       page,
@@ -175,12 +251,21 @@ for (const colorScheme of ["light", "dark"] as const) {
 test("fits a phone screen without horizontal scrolling", async ({ page }) => {
   // Narrower than most phones, to leave a margin for font differences.
   await page.setViewportSize({ width: 340, height: 812 });
+  // The playground's steps are instant with motion reduced.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   for (const path of [
     "/",
     "/work/spyder",
+    "/work/potluck",
     "/writing/twenty-five-payouts-a-balance-for-ten",
+    "/changelog",
   ]) {
     await page.goto(path);
+    if (path === "/") {
+      // Fill the ledger book, its widest state, before measuring.
+      await page.getByRole("button", { name: "Send out of order" }).click();
+      await expect(page.getByRole("status")).toContainText("Retried");
+    }
 
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - window.innerWidth,
@@ -287,6 +372,20 @@ test("the leadership section lists the three JCI roles in order", async ({
   ]);
 });
 
+test("the copy button puts the email on the clipboard", async ({ browser }) => {
+  const context = await browser.newContext({
+    permissions: ["clipboard-read", "clipboard-write"],
+  });
+  const page = await context.newPage();
+  await page.goto("/#contact");
+  await page.getByRole("button", { name: "Copy email" }).click();
+  await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+    "med.jalel.dridi@gmail.com",
+  );
+  await context.close();
+});
+
 test("an article opens from the home page and links to its sources", async ({
   page,
 }) => {
@@ -307,4 +406,50 @@ test("an article opens from the home page and links to its sources", async ({
 
   await page.getByRole("link", { name: "All writing" }).click();
   await expect(page).toHaveURL(/\/#writing$/);
+});
+
+test("the status strip shows three live clocks, the site version and the deploy date", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const footer = page.getByRole("contentinfo");
+  await expect(footer.getByText(/^\d{2}:\d{2}$/)).toHaveCount(3);
+  await expect(footer).toContainText(/Site v\d+\.\d+\.\d+/);
+  await expect(footer).toContainText(/Last deploy \d{1,2} \w{3,4} \d{4}/);
+  await expect(footer).not.toContainText("Built with");
+});
+
+test("the changelog lists the current version first and is linked from the status strip", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page
+    .getByRole("contentinfo")
+    .getByRole("link", { name: "changelog" })
+    .click();
+  await expect(page).toHaveURL(/\/changelog$/);
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Changelog" }),
+  ).toBeVisible();
+  await expect(page.locator("main ol li").first()).toContainText("3.0.0");
+});
+
+test("with motion reduced the hero is visible at once", async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const h1 = page.getByRole("heading", {
+    level: 1,
+    name: "Mohamed Jalel Dridi",
+  });
+  await expect(h1).toBeVisible();
+  expect(
+    await h1.evaluate((el) => getComputedStyle(el.parentElement!).opacity),
+  ).toBe("1");
+  // The last entrance, the account summary, is not held back either.
+  const summary = page.getByRole("list", { name: "Account summary" });
+  expect(
+    await summary.evaluate(
+      (el) => getComputedStyle(el.closest(".animate-in")!).opacity,
+    ),
+  ).toBe("1");
 });

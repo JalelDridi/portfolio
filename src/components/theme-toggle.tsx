@@ -11,7 +11,7 @@ export function ThemeToggle() {
       type="button"
       onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
       aria-label="Switch between light and dark theme"
-      className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-background/60 text-foreground transition-colors hover:bg-muted"
+      className="inline-flex size-10 items-center justify-center border border-foreground text-foreground transition-colors hover:bg-foreground hover:text-background"
     >
       {/* Both icons render; CSS shows the right one, so there is no flash. */}
       <Sun className="size-4 dark:hidden" aria-hidden="true" />

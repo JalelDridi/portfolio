@@ -2,6 +2,71 @@
 
 export const SITE_URL = "https://jaleldridi.vercel.app";
 
+export const site = {
+  version: "3.0.0",
+  repo: "https://github.com/JalelDridi/portfolio",
+};
+
+/** Every version of the site, newest first; the first is `site.version`. */
+export const changelog: {
+  version: string;
+  date: string;
+  title: string;
+  items: string[];
+}[] = [
+  {
+    version: "3.0.0",
+    date: "2026-11-08",
+    title: "Statement",
+    items: [
+      "Bricolage Grotesque and IBM Plex replace Geist; cool paper with one cobalt accent, square corners, rules instead of cards.",
+      "An account summary with sourced numbers replaces the counting metrics.",
+      "The pipeline playground posts its steps into a ledger book.",
+      "Work is a table with hover previews; one Potluck case study with four parts; Kora added; earlier projects grouped.",
+      "Working hours and hiring setup in About; a copy button for the email.",
+      "A status strip with live clocks, the deploy date and this changelog.",
+    ],
+  },
+  {
+    version: "2.2.0",
+    date: "2026-10-03",
+    title: "About, leadership, writing",
+    items: [
+      "An About section with a portrait and four clocks.",
+      "A Leadership section.",
+      "Two articles drawn from Payout Ledger's design records.",
+      "A card and case study for tnpay.",
+    ],
+  },
+  {
+    version: "2.1.0",
+    date: "2026-10-02",
+    title: "Faster and shareable",
+    items: [
+      "Recordings load only near the screen.",
+      "A phone menu.",
+      "A share card per case study, structured data, a custom 404.",
+    ],
+  },
+  {
+    version: "2.0.0",
+    date: "2026-10-02",
+    title: "Second design",
+    items: [
+      "Dark theme with a green accent, animated diagrams, real screenshots and recordings.",
+      "The pipeline playground and the live time in Bizerte in the hero.",
+    ],
+  },
+  {
+    version: "1.0.0",
+    date: "2026-10-02",
+    title: "First version",
+    items: [
+      "A single-column page with the profile, the flagship project and five case studies.",
+    ],
+  },
+];
+
 export const profile = {
   name: "Mohamed Jalel Dridi",
   shortName: "Jalel Dridi",
@@ -23,26 +88,6 @@ export const profile = {
     cv: "/Jalel_Dridi_CV.pdf",
   },
 };
-
-/** Figures taken from the CV; each names where it comes from. */
-export const metrics = [
-  { value: 14000, suffix: "+", label: "messages a week", source: "Spyder" },
-  {
-    value: 99.99,
-    decimals: 2,
-    suffix: "%",
-    label: "delivery reliability",
-    source: "Spyder",
-  },
-  {
-    value: 750,
-    prefix: "~",
-    suffix: " ms",
-    label: "realtime latency",
-    source: "Potluck messaging",
-  },
-  { value: 99, label: "automated tests", source: "Payout Ledger" },
-];
 
 export const flagship = {
   name: "Payout Ledger",
@@ -153,13 +198,256 @@ export type Project = {
     | { kind: "image"; src: string; alt: string; width: number; height: number }
     | { kind: "diagram"; diagram: DiagramSpec };
   note?: string;
+  /** Sections of a case study that covers several pieces of work. */
+  parts?: {
+    title: string;
+    why?: string;
+    built: string[];
+    outcome?: string;
+    diagram?: DiagramSpec;
+  }[];
+  /** Older work, listed after an "Earlier" divider. */
+  earlier?: boolean;
   /** Picture for the card and the top of the case study. */
   cover?: Shot;
   clip?: Clip;
   gallery?: Shot[];
 };
 
+// The Potluck case study draws this twice: as its visual and beside its
+// payments part.
+const PAYMENTS_DIAGRAM: DiagramSpec = {
+  columns: [
+    [
+      { id: "checkout", label: "Checkout", icon: "card" },
+      { id: "webhooks", label: "Stripe webhooks", icon: "webhook" },
+    ],
+    [{ id: "verify", label: "Server verification", icon: "shield" }],
+    [
+      { id: "order", label: "Order and stock", icon: "box" },
+      { id: "recon", label: "Reconciliation", icon: "activity" },
+      { id: "alerts", label: "Payout alerts", icon: "bell" },
+    ],
+  ],
+  edges: [
+    ["checkout", "verify"],
+    ["webhooks", "verify"],
+    ["verify", "order"],
+    ["verify", "recon"],
+    ["verify", "alerts"],
+  ],
+  caption:
+    "Nothing the client sends is trusted: the server verifies with Stripe before an order is paid.",
+};
+
 export const projects: Project[] = [
+  {
+    slug: "potluck",
+    cover: {
+      src: "/work/potluck-how-it-works.jpg",
+      alt: "Potluck's How it works page, with four steps for customers and four for chefs",
+      caption:
+        "How Potluck works: customers pay when they order, and the chef is paid after pickup.",
+      width: 1440,
+      height: 900,
+      frame: "browser",
+      url: "bigpotluck.com/how-it-works",
+    },
+    clip: {
+      mp4: "/demo/potluck-mobile.mp4",
+      webm: "/demo/potluck-mobile.webm",
+      poster: "/demo/potluck-mobile-poster.jpg",
+      label:
+        "Screen recording of Potluck on a phone: scrolling the feed, opening a kitchen page, then a product page",
+      caption:
+        "Potluck on a phone: the feed, a kitchen page, then a product page.",
+      frame: "phone",
+    },
+    gallery: [
+      {
+        src: "/work/potluck-kitchen.jpg",
+        alt: "A kitchen page on Potluck with Follow and Message buttons and a menu",
+        caption:
+          "A kitchen page. Message opens a thread with the seller before any order exists.",
+        width: 1440,
+        height: 900,
+        frame: "browser",
+        url: "bigpotluck.com/profile",
+      },
+      {
+        src: "/work/potluck-feed.jpg",
+        alt: "The Potluck home feed: a grid of homemade baked goods with prices and seller names",
+        caption:
+          "The home feed. Server-rendering its first image is what removed the LCP delay.",
+        width: 1440,
+        height: 900,
+        frame: "browser",
+        url: "bigpotluck.com",
+      },
+      {
+        src: "/work/potluck-item-phone.jpg",
+        alt: "A product page on a phone: a chocolate chip cookie at five dollars, with pickup or delivery and an Add to cart button",
+        caption:
+          "A product page. The price shown is set on the server, never taken from the client.",
+        width: 780,
+        height: 1688,
+        frame: "phone",
+      },
+      {
+        src: "/work/potluck-live.jpg",
+        alt: "The Live shows page on Potluck, listing upcoming shows",
+        caption:
+          "The public Live shows page, where viewers save a spot for an upcoming show.",
+        width: 1440,
+        height: 900,
+        frame: "browser",
+        url: "bigpotluck.com/live",
+      },
+      {
+        src: "/work/potluck-kitchen-phone.jpg",
+        alt: "The same kitchen page on a phone",
+        caption: "The same page on a phone, where most buyers are.",
+        width: 780,
+        height: 1688,
+        frame: "phone",
+      },
+    ],
+    title: "Potluck",
+    company: "Potluck",
+    year: "2026",
+    summary:
+      "Founding engineer: the Stripe Connect payments stack, the live-shopping product, realtime messaging and the release pipeline of a US live-shopping marketplace.",
+    why: "Potluck is a US marketplace where home bakers sell on camera. I joined as its founding engineer in June 2026 and own the parts with the least room for error: payments, production infrastructure and the realtime systems.",
+    built: [],
+    parts: [
+      {
+        title: "Payments on Stripe Connect",
+        why: "I own the payments stack: checkout, transfers, payouts, webhooks and reconciliation. In a marketplace, every one of those has to be right for both the buyer and the seller.",
+        built: [
+          "An order is marked paid only after the payment is verified server-side against Stripe, with inventory decremented exactly once.",
+          "Checkout validation that rejects client-supplied prices, items no longer on sale and quantities above stock, covered by a suite of attack tests.",
+          "Alerts for failed and stuck payouts.",
+          "A daily reconciliation of the database against Stripe that classifies every mismatch by cause.",
+        ],
+        outcome:
+          "Payout Ledger is a from-scratch public rebuild of these ideas. It shares no code with Potluck.",
+        diagram: PAYMENTS_DIAGRAM,
+      },
+      {
+        title: "Potluck LIVE",
+        why: "Potluck's live-shopping product, where home bakers sell on camera. I built it end to end.",
+        built: [
+          "A public sign-up page per show, with one-field, phone-only signup.",
+          "A token ledger kept entirely on the server (earn, spend, referrals) whose balances can never go negative.",
+          "Show scheduling, a pre-show console for hosts, live sign-up analytics, giveaways and an admin console.",
+        ],
+        outcome:
+          "Shipped to production through idempotent migrations, with headless test suites covering the flows.",
+        diagram: {
+          columns: [
+            [{ id: "signup", label: "Show sign-up", icon: "phone" }],
+            [{ id: "ledger", label: "Token ledger", icon: "ticket" }],
+            [
+              { id: "console", label: "Host console", icon: "video" },
+              { id: "giveaway", label: "Giveaways", icon: "gift" },
+              { id: "analytics", label: "Live analytics", icon: "chart" },
+            ],
+          ],
+          edges: [
+            ["signup", "ledger"],
+            ["ledger", "console"],
+            ["ledger", "giveaway"],
+            ["ledger", "analytics"],
+          ],
+          caption:
+            "Sign-ups earn tokens in a server-only ledger that feeds the show console, giveaways and analytics.",
+        },
+      },
+      {
+        title: "Realtime messaging",
+        why: "Buyers and sellers needed to talk before and after an order, in real time, without the client ever being trusted with write access.",
+        built: [
+          "PostgreSQL is the system of record; messages are mirrored by the server to a realtime database.",
+          "Clients are read-only, using short-lived tokens that carry the threads the user belongs to.",
+          "Per-order threads, system messages at order events, pre-purchase direct messages and admin oversight.",
+        ],
+        outcome: "About 750 ms from send to display across browsers.",
+        diagram: {
+          columns: [
+            [{ id: "sender", label: "Sender", icon: "user" }],
+            [{ id: "api", label: "API server", icon: "server" }],
+            [
+              { id: "pg", label: "PostgreSQL", icon: "database" },
+              { id: "rtdb", label: "Realtime mirror", icon: "radio" },
+            ],
+            [{ id: "reader", label: "Read-only client", icon: "message" }],
+          ],
+          edges: [
+            ["sender", "api"],
+            ["api", "pg"],
+            ["api", "rtdb"],
+            ["rtdb", "reader"],
+          ],
+          caption:
+            "Writes go through the server to Postgres; clients only ever read the mirror.",
+        },
+      },
+      {
+        title: "Infrastructure and release pipeline",
+        why: "A three-person team needs to ship to production many times a week without anyone babysitting a deploy.",
+        built: [
+          "Postgres with backups, object storage with scoped permissions, and TLS.",
+          "Push-to-main auto-deploy that confirms the new version is serving before it runs migrations.",
+          "A Playwright visual and accessibility suite behind a 25-check smoke test.",
+          "Performance work: self-hosted fonts and a server-rendered first feed image removed 5.7 to 8.1 seconds of LCP load delay.",
+        ],
+        outcome:
+          "I also lead release engineering: cutting releases, reviewing PRs, setting review conventions and onboarding new engineers.",
+        diagram: {
+          columns: [
+            [{ id: "push", label: "Push to main", icon: "git" }],
+            [{ id: "deploy", label: "Build and deploy", icon: "rocket" }],
+            [{ id: "version", label: "Version check", icon: "check" }],
+            [
+              { id: "migrate", label: "Migrations", icon: "database" },
+              { id: "smoke", label: "Smoke tests", icon: "shield" },
+            ],
+          ],
+          edges: [
+            ["push", "deploy"],
+            ["deploy", "version"],
+            ["version", "migrate"],
+            ["version", "smoke"],
+          ],
+          caption:
+            "Migrations only run once the new version is confirmed to be serving.",
+        },
+      },
+    ],
+    stack: [
+      "Stripe Connect",
+      "Next.js",
+      "TypeScript",
+      "PostgreSQL",
+      "Playwright",
+      "Firebase Realtime Database",
+      "AWS",
+      "GitHub Actions",
+      "Sentry",
+    ],
+    links: [
+      { label: "Potluck", href: "https://www.bigpotluck.com" },
+      {
+        label: "Payout Ledger, the public rebuild",
+        href: "https://payout-ledger-gamma.vercel.app",
+      },
+      {
+        label: "Live shows on Potluck",
+        href: "https://www.bigpotluck.com/live",
+      },
+    ],
+    visual: { kind: "diagram", diagram: PAYMENTS_DIAGRAM },
+  },
   {
     slug: "tnpay",
     title: "tnpay",
@@ -282,257 +570,40 @@ export const projects: Project[] = [
     },
   },
   {
-    slug: "potluck-live",
-    gallery: [
-      {
-        src: "/work/potluck-live.jpg",
-        alt: "The Live shows page on Potluck, listing upcoming shows",
-        caption:
-          "The public Live shows page, where viewers save a spot for an upcoming show.",
-        width: 1440,
-        height: 900,
-        frame: "browser",
-        url: "bigpotluck.com/live",
-      },
-    ],
-    title: "Potluck LIVE",
-    company: "Potluck",
+    slug: "kora",
+    cover: {
+      src: "/work/kora-chkoun.png",
+      alt: "Chkoun?, Kora's daily puzzle, in French: a grid of guesses with some fields revealed",
+      caption: "Chkoun?, the daily puzzle, in French.",
+      width: 1280,
+      height: 1306,
+      frame: "browser",
+      url: "kora-tn.vercel.app/fr/chkoun",
+    },
+    title: "Kora",
+    company: "Open source · side project",
     year: "2026",
     summary:
-      "The company's live-shopping product, built end to end: sign-up, tokens, shows and giveaways.",
-    why: "Potluck's live-shopping product, where home bakers sell on camera. I built it end to end.",
+      "A daily guess-the-footballer game for Tunisia, in Arabic, French and English, with its own data pipeline.",
+    why: "Daily sports puzzles exist for the big leagues and not for Tunisian football. Kora is a hub of small daily games about the national team and Ligue 1, built to have real Tunisian players, not just code.",
     built: [
-      "A public sign-up page per show, with one-field, phone-only signup.",
-      "A token ledger kept entirely on the server (earn, spend, referrals) whose balances can never go negative.",
-      "Show scheduling, a pre-show console for hosts, live sign-up analytics, giveaways and an admin console.",
+      "Chkoun?, a daily guess-the-footballer puzzle in Arabic, French and English, with a result card, a share grid and streaks.",
+      "A data pipeline from Wikidata, English and French Wikipedia and Wikimedia Commons, with provenance and a confidence level for every field, synced into Postgres on deploy.",
+      "A nightly workflow that proposes a data pull request, an admin calendar, and Sources and privacy pages.",
+      "More than a thousand automated tests across unit, database and browser suites, with a Lighthouse budget in CI.",
     ],
-    outcome:
-      "Shipped to production through idempotent migrations, with headless test suites covering the flows.",
-    stack: ["Next.js", "TypeScript", "PostgreSQL", "Playwright"],
+    outcome: "Live since 6 October 2026, with a new puzzle every day.",
+    stack: ["Next.js", "TypeScript", "PostgreSQL", "Redis", "Playwright"],
     links: [
-      {
-        label: "Live shows on Potluck",
-        href: "https://www.bigpotluck.com/live",
-      },
+      { label: "Play Kora", href: "https://kora-tn.vercel.app" },
+      { label: "Source on GitHub", href: "https://github.com/JalelDridi/kora" },
     ],
     visual: {
-      kind: "diagram",
-      diagram: {
-        columns: [
-          [{ id: "signup", label: "Show sign-up", icon: "phone" }],
-          [{ id: "ledger", label: "Token ledger", icon: "ticket" }],
-          [
-            { id: "console", label: "Host console", icon: "video" },
-            { id: "giveaway", label: "Giveaways", icon: "gift" },
-            { id: "analytics", label: "Live analytics", icon: "chart" },
-          ],
-        ],
-        edges: [
-          ["signup", "ledger"],
-          ["ledger", "console"],
-          ["ledger", "giveaway"],
-          ["ledger", "analytics"],
-        ],
-        caption:
-          "Sign-ups earn tokens in a server-only ledger that feeds the show console, giveaways and analytics.",
-      },
-    },
-  },
-  {
-    slug: "payments",
-    cover: {
-      src: "/work/potluck-how-it-works.jpg",
-      alt: "Potluck's How it works page, with four steps for customers and four for chefs",
-      caption:
-        "How Potluck works: customers pay when they order, and the chef is paid after pickup.",
-      width: 1440,
-      height: 900,
-      frame: "browser",
-      url: "bigpotluck.com/how-it-works",
-    },
-    gallery: [
-      {
-        src: "/work/potluck-item-phone.jpg",
-        alt: "A product page on a phone: a chocolate chip cookie at five dollars, with pickup or delivery and an Add to cart button",
-        caption:
-          "A product page. The price shown is set on the server, never taken from the client.",
-        width: 780,
-        height: 1688,
-        frame: "phone",
-      },
-    ],
-    title: "Payments on Stripe Connect",
-    company: "Potluck",
-    year: "2026",
-    summary:
-      "Checkout, transfers, payouts, webhooks and reconciliation for a two-sided marketplace.",
-    why: "I own the payments stack: checkout, transfers, payouts, webhooks and reconciliation. In a marketplace, every one of those has to be right for both the buyer and the seller.",
-    built: [
-      "An order is marked paid only after the payment is verified server-side against Stripe, with inventory decremented exactly once.",
-      "Checkout validation that rejects client-supplied prices, items no longer on sale and quantities above stock, covered by a suite of attack tests.",
-      "Alerts for failed and stuck payouts.",
-      "A daily reconciliation of the database against Stripe that classifies every mismatch by cause.",
-    ],
-    outcome:
-      "Payout Ledger is a from-scratch public rebuild of these ideas. It shares no code with Potluck.",
-    stack: ["Stripe Connect", "Next.js", "TypeScript", "PostgreSQL"],
-    links: [
-      { label: "Potluck", href: "https://www.bigpotluck.com" },
-      {
-        label: "Payout Ledger, the public rebuild",
-        href: "https://payout-ledger-gamma.vercel.app",
-      },
-    ],
-    visual: {
-      kind: "diagram",
-      diagram: {
-        columns: [
-          [
-            { id: "checkout", label: "Checkout", icon: "card" },
-            { id: "webhooks", label: "Stripe webhooks", icon: "webhook" },
-          ],
-          [{ id: "verify", label: "Server verification", icon: "shield" }],
-          [
-            { id: "order", label: "Order and stock", icon: "box" },
-            { id: "recon", label: "Reconciliation", icon: "activity" },
-            { id: "alerts", label: "Payout alerts", icon: "bell" },
-          ],
-        ],
-        edges: [
-          ["checkout", "verify"],
-          ["webhooks", "verify"],
-          ["verify", "order"],
-          ["verify", "recon"],
-          ["verify", "alerts"],
-        ],
-        caption:
-          "Nothing the client sends is trusted: the server verifies with Stripe before an order is paid.",
-      },
-    },
-  },
-  {
-    slug: "realtime-messaging",
-    cover: {
-      src: "/work/potluck-kitchen.jpg",
-      alt: "A kitchen page on Potluck with Follow and Message buttons and a menu",
-      caption:
-        "A kitchen page. Message opens a thread with the seller before any order exists.",
-      width: 1440,
-      height: 900,
-      frame: "browser",
-      url: "bigpotluck.com/profile",
-    },
-    gallery: [
-      {
-        src: "/work/potluck-kitchen-phone.jpg",
-        alt: "The same kitchen page on a phone",
-        caption: "The same page on a phone, where most buyers are.",
-        width: 780,
-        height: 1688,
-        frame: "phone",
-      },
-    ],
-    title: "Realtime messaging",
-    company: "Potluck",
-    year: "2026",
-    summary:
-      "Buyer and seller chat with about 750 ms latency and read-only clients.",
-    why: "Buyers and sellers needed to talk before and after an order, in real time, without the client ever being trusted with write access.",
-    built: [
-      "PostgreSQL is the system of record; messages are mirrored by the server to a realtime database.",
-      "Clients are read-only, using short-lived tokens that carry the threads the user belongs to.",
-      "Per-order threads, system messages at order events, pre-purchase direct messages and admin oversight.",
-    ],
-    outcome: "About 750 ms from send to display across browsers.",
-    stack: [
-      "PostgreSQL",
-      "Firebase Realtime Database",
-      "Next.js",
-      "TypeScript",
-    ],
-    links: [{ label: "Potluck", href: "https://www.bigpotluck.com" }],
-    visual: {
-      kind: "diagram",
-      diagram: {
-        columns: [
-          [{ id: "sender", label: "Sender", icon: "user" }],
-          [{ id: "api", label: "API server", icon: "server" }],
-          [
-            { id: "pg", label: "PostgreSQL", icon: "database" },
-            { id: "rtdb", label: "Realtime mirror", icon: "radio" },
-          ],
-          [{ id: "reader", label: "Read-only client", icon: "message" }],
-        ],
-        edges: [
-          ["sender", "api"],
-          ["api", "pg"],
-          ["api", "rtdb"],
-          ["rtdb", "reader"],
-        ],
-        caption:
-          "Writes go through the server to Postgres; clients only ever read the mirror.",
-      },
-    },
-  },
-  {
-    slug: "release-pipeline",
-    cover: {
-      src: "/work/potluck-feed.jpg",
-      alt: "The Potluck home feed: a grid of homemade baked goods with prices and seller names",
-      caption:
-        "The home feed. Server-rendering its first image is what removed the LCP delay.",
-      width: 1440,
-      height: 900,
-      frame: "browser",
-      url: "bigpotluck.com",
-    },
-    clip: {
-      mp4: "/demo/potluck-mobile.mp4",
-      webm: "/demo/potluck-mobile.webm",
-      poster: "/demo/potluck-mobile-poster.jpg",
-      label:
-        "Screen recording of Potluck on a phone: scrolling the feed, opening a kitchen page, then a product page",
-      caption:
-        "Potluck on a phone: the feed, a kitchen page, then a product page.",
-      frame: "phone",
-    },
-    title: "Infrastructure and release pipeline",
-    company: "Potluck",
-    year: "2026",
-    summary:
-      "Production infrastructure and a deploy pipeline that checks itself, built from scratch.",
-    why: "A three-person team needs to ship to production many times a week without anyone babysitting a deploy.",
-    built: [
-      "Postgres with backups, object storage with scoped permissions, and TLS.",
-      "Push-to-main auto-deploy that confirms the new version is serving before it runs migrations.",
-      "A Playwright visual and accessibility suite behind a 25-check smoke test.",
-      "Performance work: self-hosted fonts and a server-rendered first feed image removed 5.7 to 8.1 seconds of LCP load delay.",
-    ],
-    outcome:
-      "I also lead release engineering: cutting releases, reviewing PRs, setting review conventions and onboarding new engineers.",
-    stack: ["AWS", "PostgreSQL", "GitHub Actions", "Playwright", "Sentry"],
-    links: [{ label: "Potluck", href: "https://www.bigpotluck.com" }],
-    visual: {
-      kind: "diagram",
-      diagram: {
-        columns: [
-          [{ id: "push", label: "Push to main", icon: "git" }],
-          [{ id: "deploy", label: "Build and deploy", icon: "rocket" }],
-          [{ id: "version", label: "Version check", icon: "check" }],
-          [
-            { id: "migrate", label: "Migrations", icon: "database" },
-            { id: "smoke", label: "Smoke tests", icon: "shield" },
-          ],
-        ],
-        edges: [
-          ["push", "deploy"],
-          ["deploy", "version"],
-          ["version", "migrate"],
-          ["version", "smoke"],
-        ],
-        caption:
-          "Migrations only run once the new version is confirmed to be serving.",
-      },
+      kind: "image",
+      src: "/work/kora-chkoun.png",
+      alt: "Chkoun?, Kora's daily puzzle, in French: a grid of guesses with some fields revealed",
+      width: 1280,
+      height: 1306,
     },
   },
   {
@@ -581,6 +652,7 @@ export const projects: Project[] = [
   },
   {
     slug: "inspection-platform",
+    earlier: true,
     title: "Field-inspection platform",
     company: "Pearls Consulting",
     year: "2025",
@@ -628,6 +700,7 @@ export const projects: Project[] = [
   },
   {
     slug: "event-orchestrator",
+    earlier: true,
     title: "Event Orchestrator",
     company: "ESPRIT · team project",
     year: "2024",
@@ -713,6 +786,45 @@ export const skills = [
   },
 ];
 
+/** The hero's account summary: one row per project, each value from the CV or the repo. */
+export const ledger = {
+  title: "Account summary",
+  asOf: "as of today",
+  rows: [
+    {
+      name: "Payout Ledger",
+      detail: "Open-source payout monitor with a live demo",
+      value: "99 tests · 8 design records",
+      href: flagship.repo,
+    },
+    {
+      name: "tnpay",
+      detail: "Typed SDKs for Tunisia's payment gateways",
+      value: "3 packages on npm · 75 tests",
+      href: "https://github.com/JalelDridi/tnpay",
+    },
+    {
+      name: "Kora",
+      detail: "Daily football puzzle in Arabic, French and English",
+      value: "live every day since 6 Oct 2026",
+      href: "https://kora-tn.vercel.app",
+    },
+    {
+      name: "Spyder",
+      detail: "Multi-provider messaging platform at Offa.com",
+      value: "14,000+ messages a week · 99.99% delivered",
+      href: "/work/spyder",
+    },
+    {
+      name: "Potluck",
+      detail: "Stripe Connect payments stack and production infrastructure",
+      value: "owned since Jun 2026",
+      href: "https://www.bigpotluck.com",
+    },
+  ] as { name: string; detail: string; value: string; href?: string }[],
+  total: { label: profile.availability, value: "Bizerte · UTC+1" },
+};
+
 export const experience = [
   {
     role: "Founding Engineer",
@@ -775,7 +887,14 @@ export const about = {
     },
     { label: "Speaks", value: "Arabic, English and French" },
     { label: "Studied", value: "IT architecture and cloud computing, ESPRIT" },
+    { label: "Hours", value: "Flexible: I adapt to the team's time zone." },
+    {
+      label: "Hiring setup",
+      value: "Contractor or employer of record; no visa sponsorship needed.",
+    },
   ],
+  /** The caption under the portrait. */
+  figure: { label: "fig. 1 · Bizerte", coordinates: "37°16′N 9°52′E" },
   clocksCaption: "The time right now at home and across the United States.",
   /** Shown as analogue clocks. The first is home. */
   clocks: [

@@ -29,7 +29,7 @@ export function MobileNav({
         aria-expanded={open}
         aria-controls="mobile-nav"
         aria-label={open ? "Close the menu" : "Open the menu"}
-        className="inline-flex size-9 items-center justify-center rounded-full border border-border bg-background/60 text-foreground transition-colors hover:bg-muted"
+        className="inline-flex size-10 items-center justify-center border border-foreground text-foreground transition-colors hover:bg-foreground hover:text-background"
       >
         {open ? (
           <X className="size-4" aria-hidden="true" />
@@ -41,7 +41,7 @@ export function MobileNav({
         <nav
           id="mobile-nav"
           aria-label="Sections"
-          className="absolute inset-x-0 top-16 animate-in border-b border-border bg-background duration-200 fade-in slide-in-from-top-2"
+          className="absolute inset-x-0 top-14 border-b border-foreground bg-background"
         >
           <ul className="mx-auto flex w-full max-w-6xl flex-col px-5 py-3">
             {items.map((item) => (
@@ -49,7 +49,7 @@ export function MobileNav({
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="block rounded-md px-3 py-3 text-lg font-medium transition-colors hover:bg-muted"
+                  className="block px-3 py-3 text-lg font-medium transition-colors hover:text-brand"
                 >
                   {item.label}
                 </Link>

@@ -1,47 +1,46 @@
 import Image from "next/image";
-import type { Project } from "@/content";
+import type { DiagramSpec, Project } from "@/content";
 import { Diagram } from "./diagram";
 
-/** A project's architecture sketch on a dotted background. */
+/** An architecture sketch, sized for a card or a page. */
 export function DiagramPanel({
-  project,
+  spec,
   size,
 }: {
-  project: Project;
+  spec: DiagramSpec;
   size: "card" | "page";
 }) {
-  if (project.visual.kind !== "diagram") return null;
   return (
     <div
       className={
         size === "card"
-          ? "relative flex h-64 w-full items-center overflow-hidden px-5"
+          ? "relative flex h-72 w-full items-center overflow-hidden px-5"
           : "relative flex w-full items-center overflow-hidden px-4 py-12 sm:px-12 sm:py-16"
       }
     >
-      <div
-        aria-hidden="true"
-        className="bg-dots pointer-events-none absolute inset-0 opacity-60"
-      />
-      <Diagram spec={project.visual.diagram} compact={size === "card"} />
+      <Diagram spec={spec} compact={size === "card"} />
     </div>
   );
 }
 
-/** The picture on a project card: a real screenshot when there is one. */
-export function CardVisual({ project }: { project: Project }) {
+/** The preview beside the work table: a real screenshot when there is one. */
+export function PreviewVisual({ project }: { project: Project }) {
   const image =
     project.cover ?? (project.visual.kind === "image" ? project.visual : null);
 
-  if (!image) return <DiagramPanel project={project} size="card" />;
+  if (!image) {
+    return project.visual.kind === "diagram" ? (
+      <DiagramPanel spec={project.visual.diagram} size="card" />
+    ) : null;
+  }
   return (
     <Image
       src={image.src}
       alt={image.alt}
       width={image.width}
       height={image.height}
-      sizes="(min-width: 1024px) 380px, (min-width: 640px) 50vw, 100vw"
-      className="h-64 w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+      sizes="(min-width: 1024px) 480px, 1px"
+      className="aspect-[4/3] w-full object-cover object-top"
     />
   );
 }
