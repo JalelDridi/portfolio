@@ -14,7 +14,7 @@ export function DiagramPanel({
     <div
       className={
         size === "card"
-          ? "relative flex h-64 w-full items-center overflow-hidden px-5"
+          ? "relative flex h-72 w-full items-center overflow-hidden px-5"
           : "relative flex w-full items-center overflow-hidden px-4 py-12 sm:px-12 sm:py-16"
       }
     >

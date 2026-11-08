@@ -117,7 +117,7 @@ export function Diagram({
                 <div
                   ref={refs[node.id]}
                   className={cn(
-                    "flex items-center justify-center rounded-xl border border-border bg-card text-brand shadow-sm",
+                    "flex items-center justify-center rounded-xl border border-border bg-card text-brand",
                     compact ? "size-11" : "size-12 sm:size-14",
                   )}
                 >
@@ -128,10 +128,11 @@ export function Diagram({
                 </div>
                 <span
                   className={cn(
-                    "leading-tight font-medium text-muted-foreground",
+                    "font-medium text-muted-foreground",
+                    // The line height comes after the size, or cn() drops it.
                     compact
-                      ? "max-w-20 text-xs"
-                      : "max-w-20 text-xs sm:max-w-28 sm:text-sm",
+                      ? "max-w-20 text-[0.85rem] leading-tight"
+                      : "max-w-20 text-[0.85rem] leading-tight sm:max-w-28",
                   )}
                 >
                   {node.label}
@@ -154,8 +155,8 @@ export function Diagram({
             pathColor="var(--border)"
             pathOpacity={1}
             pathWidth={1.5}
-            gradientStartColor="var(--brand-bright)"
-            gradientStopColor="var(--brand-2)"
+            gradientStartColor="var(--brand)"
+            gradientStopColor="color-mix(in oklch, var(--brand) 40%, transparent)"
           />
         ))}
     </div>

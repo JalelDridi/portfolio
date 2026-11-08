@@ -161,7 +161,7 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
         </p>
       </Rise>
 
-      <Rise delay={100} className="mt-10">
+      <div className="mt-10">
         {lead === "clip" && clip && <ClipFigure clip={clip} />}
         {lead === "cover" && cover && <ShotFigure shot={cover} priority />}
         {lead === "visual" && visual.kind === "diagram" && (
@@ -178,7 +178,7 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
             }}
           />
         )}
-      </Rise>
+      </div>
 
       <div className="mt-12 border-t-2 border-foreground">
         <Row label="Why it existed" id="why">

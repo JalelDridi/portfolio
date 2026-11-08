@@ -6,7 +6,6 @@ const STYLES = {
     "border-foreground bg-foreground text-background hover:border-brand hover:bg-brand",
   outline:
     "border-foreground bg-transparent hover:bg-foreground hover:text-background",
-  brand: "border-brand text-brand hover:bg-brand hover:text-background",
 };
 
 export function LinkButton({

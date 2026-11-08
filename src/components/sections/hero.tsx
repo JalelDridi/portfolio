@@ -1,4 +1,5 @@
 import { ArrowDown, FileDown, Mail, MapPin } from "lucide-react";
+import { Fragment } from "react";
 import { profile } from "@/content";
 import { AccountSummary } from "../account-summary";
 import { GitHubIcon, LinkedInIcon } from "../icons";
@@ -19,16 +20,18 @@ export function Hero() {
               className="font-display text-[clamp(3.4rem,8.4vw,7.6rem)] leading-[0.86] font-extrabold tracking-[-0.035em] [font-variation-settings:'opsz'_96,'wdth'_88]"
             >
               {nameLines.map((line, index) => (
-                <span
-                  key={line}
-                  className={
-                    index === nameLines.length - 1
-                      ? "block font-light"
-                      : "block"
-                  }
-                >
-                  {line}
-                </span>
+                <Fragment key={line}>
+                  {index > 0 && " "}
+                  <span
+                    className={
+                      index === nameLines.length - 1
+                        ? "block font-light"
+                        : "block"
+                    }
+                  >
+                    {line}
+                  </span>
+                </Fragment>
               ))}
             </h1>
           </Rise>

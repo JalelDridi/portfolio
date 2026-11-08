@@ -20,7 +20,7 @@ export function BrowserFrame({
         className,
       )}
     >
-      <div className="flex justify-between gap-3 border-b border-border px-3 py-2 font-mono text-[0.8rem] text-muted-foreground">
+      <div className="flex justify-between gap-3 border-b border-border px-3 py-2 font-mono text-[0.85rem] text-muted-foreground">
         <span className="min-w-0 truncate">{url}</span>
         {note && <span className="shrink-0">{note}</span>}
       </div>

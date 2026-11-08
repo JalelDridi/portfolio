@@ -7,8 +7,6 @@ import { LinkButton } from "../link-button";
 import { Section } from "../section";
 import { Tags } from "../tags";
 
-const LETTERS = ["a", "b", "c", "d"];
-
 export function Flagship() {
   return (
     <Section
@@ -45,7 +43,7 @@ export function Flagship() {
                 className="grid grid-cols-[1.6rem_1fr] border-b border-border py-3.5"
               >
                 <dt className="font-mono text-[0.85rem] text-brand">
-                  {LETTERS[index]}
+                  {String.fromCharCode(97 + index)}
                 </dt>
                 <dd>
                   <b className="block text-[1.1rem] font-semibold">

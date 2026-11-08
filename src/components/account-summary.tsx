@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { ledger } from "@/content";
 
 /** Wraps every number in a value (14,000+, 99.99%, 2026) in the brand colour. */
-export function highlightNumbers(value: string): ReactNode[] {
+function highlightNumbers(value: string): ReactNode[] {
   return value
     .split(/(\d[\d,.%+]*)/)
     .filter(Boolean)

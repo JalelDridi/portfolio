@@ -2,7 +2,17 @@ import type { Metadata } from "next";
 import { changelog } from "@/content";
 import { formatShortDate } from "@/lib/dates";
 
-export const metadata: Metadata = { title: "Changelog" };
+export const metadata: Metadata = {
+  title: "Changelog",
+  alternates: { canonical: "/changelog" },
+  // Without this a shared changelog would show the home page's card.
+  openGraph: {
+    title: "Changelog",
+    description: "Every version of this site, newest first.",
+    url: "/changelog",
+    type: "website",
+  },
+};
 
 const LABEL =
   "font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase";

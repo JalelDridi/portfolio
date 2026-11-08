@@ -77,6 +77,12 @@ test("hovering a work row changes the preview", async ({ page }) => {
   await expect(preview).toHaveAttribute("data-preview", "potluck");
   await page.getByRole("link", { name: "Deal Grader", exact: true }).hover();
   await expect(preview).toHaveAttribute("data-preview", "deal-grader");
+  // A keyboard user gets the same preview by focusing a row's link.
+  await page
+    .locator("#work")
+    .getByRole("link", { name: "Kora", exact: true })
+    .focus();
+  await expect(preview).toHaveAttribute("data-preview", "kora");
 });
 
 test("old Potluck case-study links redirect to the merged one", async ({
@@ -245,12 +251,21 @@ for (const colorScheme of ["light", "dark"] as const) {
 test("fits a phone screen without horizontal scrolling", async ({ page }) => {
   // Narrower than most phones, to leave a margin for font differences.
   await page.setViewportSize({ width: 340, height: 812 });
+  // The playground's steps are instant with motion reduced.
+  await page.emulateMedia({ reducedMotion: "reduce" });
   for (const path of [
     "/",
     "/work/spyder",
+    "/work/potluck",
     "/writing/twenty-five-payouts-a-balance-for-ten",
+    "/changelog",
   ]) {
     await page.goto(path);
+    if (path === "/") {
+      // Fill the ledger book, its widest state, before measuring.
+      await page.getByRole("button", { name: "Send out of order" }).click();
+      await expect(page.getByRole("status")).toContainText("Retried");
+    }
 
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - window.innerWidth,
@@ -400,7 +415,7 @@ test("the status strip shows three live clocks, the site version and the deploy 
   const footer = page.getByRole("contentinfo");
   await expect(footer.getByText(/^\d{2}:\d{2}$/)).toHaveCount(3);
   await expect(footer).toContainText(/Site v\d+\.\d+\.\d+/);
-  await expect(footer).toContainText(/Last deploy \d{1,2} \w{3} \d{4}/);
+  await expect(footer).toContainText(/Last deploy \d{1,2} \w{3,4} \d{4}/);
   await expect(footer).not.toContainText("Built with");
 });
 
@@ -429,5 +444,12 @@ test("with motion reduced the hero is visible at once", async ({ page }) => {
   await expect(h1).toBeVisible();
   expect(
     await h1.evaluate((el) => getComputedStyle(el.parentElement!).opacity),
+  ).toBe("1");
+  // The last entrance, the account summary, is not held back either.
+  const summary = page.getByRole("list", { name: "Account summary" });
+  expect(
+    await summary.evaluate(
+      (el) => getComputedStyle(el.closest(".animate-in")!).opacity,
+    ),
   ).toBe("1");
 });

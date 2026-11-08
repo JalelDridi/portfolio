@@ -71,10 +71,7 @@ function RowItem({
   return (
     <>
       {divider && (
-        <li
-          aria-hidden="true"
-          className="border-b border-border py-2 font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase"
-        >
+        <li className="border-b border-border py-2 font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
           Earlier
         </li>
       )}
