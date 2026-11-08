@@ -10,18 +10,21 @@ export function CopyButton({
   text: string;
   label?: string;
 }) {
+  // Counts successful copies; each one restarts the two-second "Copied".
+  const [copies, setCopies] = useState(0);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (!copied) return;
+    if (copies === 0) return;
     const timer = setTimeout(() => setCopied(false), 2000);
     return () => clearTimeout(timer);
-  }, [copied]);
+  }, [copies]);
 
   async function copy() {
     try {
       await navigator.clipboard.writeText(text);
       setCopied(true);
+      setCopies((count) => count + 1);
     } catch {
       // No clipboard access: the address is on screen to copy by hand.
     }

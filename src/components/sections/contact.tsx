@@ -35,6 +35,9 @@ export function Contact() {
             <CopyButton text={email} />
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
+            <LinkButton variant="primary" href={`mailto:${email}`}>
+              <Mail aria-hidden="true" /> Email me
+            </LinkButton>
             <LinkButton href={profile.links.cv}>
               <FileDown aria-hidden="true" /> Download CV
             </LinkButton>
@@ -43,9 +46,6 @@ export function Contact() {
             </LinkButton>
             <LinkButton href={profile.links.github}>
               <GitHubIcon /> GitHub
-            </LinkButton>
-            <LinkButton variant="primary" href={`mailto:${email}`}>
-              <Mail aria-hidden="true" /> Email me
             </LinkButton>
           </div>
         </div>

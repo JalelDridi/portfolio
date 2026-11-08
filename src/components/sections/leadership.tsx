@@ -3,9 +3,6 @@ import { leadership } from "@/content";
 import { cn } from "@/lib/utils";
 import { Section } from "../section";
 
-const lowerFirst = (text: string) =>
-  text.charAt(0).toLowerCase() + text.slice(1);
-
 export function Leadership() {
   const { organisation, roles, activity, also } = leadership;
   return (
@@ -17,6 +14,12 @@ export function Leadership() {
     >
       <div className="grid gap-10 *:min-w-0 lg:grid-cols-2">
         <div>
+          <p className="mb-4 text-[1.1rem]">
+            <span className="font-semibold">{organisation.name}</span>{" "}
+            <span className="text-muted-foreground">
+              · {organisation.detail}
+            </span>
+          </p>
           <ol className="flex flex-wrap gap-x-6 gap-y-2 text-[1.1rem]">
             {roles.map((item, index) => (
               <li
@@ -41,9 +44,18 @@ export function Leadership() {
 
         <div className="flex flex-col gap-4 text-[1.1rem] text-pretty">
           <p>{leadership.bridge}</p>
-          <p>
-            In 2026 the chapter ran {activity.items.map(lowerFirst).join(", ")}.
-          </p>
+          <div>
+            <h3 className="font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
+              {activity.label}
+            </h3>
+            <ul className="mt-2">
+              {activity.items.map((item) => (
+                <li key={item} className="border-t border-border py-2">
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
           {also.map((item) => (
             <p key={item.organisation} className="text-muted-foreground">
               {item.role} · {item.organisation}
