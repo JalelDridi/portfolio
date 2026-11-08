@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 const MAX_ENTRIES = 12;
 
 const LABEL =
-  "font-mono text-[0.8rem] font-normal tracking-[0.08em] text-muted-foreground uppercase";
+  "font-mono text-[0.85rem] font-normal tracking-[0.08em] text-muted-foreground uppercase";
 
 type Entry = Step & { id: number; result: string };
 
@@ -143,7 +143,13 @@ export function PipelinePlayground({
               <th scope="col" className={cn(LABEL, "py-2 pr-3")}>
                 Entry
               </th>
-              <th scope="col" className={cn(LABEL, "py-2 pr-3 text-right")}>
+              <th
+                scope="col"
+                className={cn(
+                  LABEL,
+                  "hidden py-2 pr-3 text-right sm:table-cell",
+                )}
+              >
                 Owed to seller
               </th>
               <th scope="col" className={cn(LABEL, "py-2 text-right")}>
@@ -169,7 +175,7 @@ export function PipelinePlayground({
                   </td>
                   <td className="py-2 pr-3 whitespace-nowrap">{entry.event}</td>
                   <td className="py-2 pr-3">{entry.text}</td>
-                  <td className="py-2 pr-3 text-right tabular-nums">
+                  <td className="hidden py-2 pr-3 text-right tabular-nums sm:table-cell">
                     {formatCents(entry.after.balance)}
                   </td>
                   <td

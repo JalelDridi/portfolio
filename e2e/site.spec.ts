@@ -112,6 +112,7 @@ test.describe("the pipeline playground", () => {
     await expect(rows).toHaveCount(5);
     await expect(rows.last()).toContainText("evt_001");
     await expect(rows.last()).toContainText("skipped");
+    await expect(rows.last().locator("td").last()).toHaveText("skipped");
     await expect(rows.nth(2)).toContainText("$25.00");
   });
 
