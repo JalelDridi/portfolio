@@ -49,9 +49,9 @@ export default function Home() {
         }}
       />
       <Hero />
-      <Playground />
-      <Flagship />
       <Work />
+      <Flagship />
+      <Playground />
       <Writing />
       <Skills />
       <About />

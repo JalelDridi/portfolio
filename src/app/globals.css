@@ -176,6 +176,27 @@
     transform: rotateY(-78deg);
     filter: brightness(0.82);
   }
+
+  /*
+   * The street's doors are links: they open while pointed at or focused, and
+   * stand ajar on touch screens, which cannot hover, so the picture shows.
+   */
+  .door-link:hover .door-leaf-l,
+  .door-link:focus-visible .door-leaf-l {
+    transform: rotateY(78deg);
+    filter: brightness(0.82);
+  }
+  .door-link:hover .door-leaf-r,
+  .door-link:focus-visible .door-leaf-r {
+    transform: rotateY(-78deg);
+    filter: brightness(0.82);
+  }
+  @media (hover: none) {
+    .door-link .door-leaf-r {
+      transform: rotateY(-76deg);
+      filter: brightness(0.82);
+    }
+  }
 }
 
 /* People who ask for less motion get a still page. */

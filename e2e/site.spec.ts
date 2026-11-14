@@ -34,19 +34,64 @@ test("shows who I am, the open-source project and every piece of work", async ({
   }
 });
 
-test("the account summary is in the HTML with its numbers before any JavaScript runs", async ({
+test("the hero door opens and closes with the keyboard", async ({ page }) => {
+  await page.goto("/");
+  const door = page.getByRole("button", { name: "Open the door" });
+  await expect(door).toHaveAttribute("aria-expanded", "false");
+  await expect(
+    page
+      .locator("#hero-room")
+      .getByRole("link", { name: "Read the case study" }),
+  ).toHaveCount(0);
+  await door.focus();
+  await page.keyboard.press("Enter");
+  const close = page.getByRole("button", { name: "Close the door" });
+  await expect(close).toHaveAttribute("aria-expanded", "true");
+  await expect(
+    page
+      .locator("#hero-room")
+      .getByRole("link", { name: "Read the case study" }),
+  ).toHaveAttribute("href", "/work/solvedblue");
+  await page.keyboard.press("Enter");
+  await expect(
+    page.getByRole("button", { name: "Open the door" }),
+  ).toBeVisible();
+});
+
+test("a project door swings open on hover and on keyboard focus", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const street = page.locator("#work");
+  const link = street.getByRole("link", { name: /Potluck/ }).first();
+  const leaf = link.locator(".door-leaf-r");
+  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).toBe(
+    "none",
+  );
+  await link.hover();
+  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).not.toBe(
+    "none",
+  );
+  await page.mouse.move(0, 0);
+  await link.focus();
+  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).not.toBe(
+    "none",
+  );
+});
+
+test("the street shows five doors with their numbers before any JavaScript runs", async ({
   browser,
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("/");
-  const summary = page.getByRole("list", { name: "Account summary" });
-  await expect(summary).toContainText("99 tests · 8 design records");
-  await expect(summary).toContainText(
-    "14,000+ messages a week · 99.99% delivered",
-  );
-  await expect(summary).toContainText("Open to remote roles");
-  await expect(page.locator("body")).not.toContainText(/(^|\s)0\+|(^|\s)0%/);
+  const doors = page.locator("#work ol > li");
+  await expect(doors).toHaveCount(5);
+  await expect(doors.first()).toContainText("N° 01");
+  await expect(doors.first()).toContainText("Solvedblue");
+  await expect(doors.nth(1)).toContainText("99 tests");
   await context.close();
 });
 
@@ -54,7 +99,10 @@ test("a project card opens its case study, which links out", async ({
   page,
 }) => {
   await page.goto("/");
-  await page.getByRole("link", { name: "Deal Grader", exact: true }).click();
+  await page
+    .getByRole("list", { name: /Also on this street/ })
+    .getByRole("link", { name: "Deal Grader", exact: true })
+    .click();
 
   await expect(page).toHaveURL(/\/work\/deal-grader$/);
   await expect(
@@ -69,21 +117,6 @@ test("a project card opens its case study, which links out", async ({
 
   await page.getByRole("link", { name: "All work" }).click();
   await expect(page).toHaveURL(/\/#work$/);
-});
-
-test("hovering a work row changes the preview", async ({ page }) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.goto("/");
-  const preview = page.locator("#work [data-preview]");
-  await expect(preview).toHaveAttribute("data-preview", "solvedblue");
-  await page.getByRole("link", { name: "Deal Grader", exact: true }).hover();
-  await expect(preview).toHaveAttribute("data-preview", "deal-grader");
-  // A keyboard user gets the same preview by focusing a row's link.
-  await page
-    .locator("#work")
-    .getByRole("link", { name: "Kora", exact: true })
-    .focus();
-  await expect(preview).toHaveAttribute("data-preview", "kora");
 });
 
 test("old Potluck case-study links redirect to the merged one", async ({
@@ -280,6 +313,11 @@ test("fits a phone screen without horizontal scrolling", async ({ page }) => {
   ]) {
     await page.goto(path);
     if (path === "/") {
+      // Open the hero door, its widest state, before measuring.
+      await page.getByRole("button", { name: "Open the door" }).click();
+      await expect(
+        page.getByRole("button", { name: "Close the door" }),
+      ).toBeVisible();
       // Fill the ledger book, its widest state, before measuring.
       await page.getByRole("button", { name: "Send out of order" }).click();
       await expect(page.getByRole("status")).toContainText("Retried");
@@ -464,10 +502,10 @@ test("with motion reduced the hero is visible at once", async ({ page }) => {
   expect(
     await h1.evaluate((el) => getComputedStyle(el.parentElement!).opacity),
   ).toBe("1");
-  // The last entrance, the account summary, is not held back either.
-  const summary = page.getByRole("list", { name: "Account summary" });
+  // The last entrance, the hero door, is not held back either.
+  const room = page.locator("#hero-room");
   expect(
-    await summary.evaluate(
+    await room.evaluate(
       (el) => getComputedStyle(el.closest(".animate-in")!).opacity,
     ),
   ).toBe("1");
