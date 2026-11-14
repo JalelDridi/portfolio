@@ -453,3 +453,44 @@ test("with motion reduced the hero is visible at once", async ({ page }) => {
     ),
   ).toBe("1");
 });
+
+test("the page is set in the Bab typefaces and ends on a band of tiles", async ({
+  page,
+}) => {
+  await page.goto("/");
+  const h1Font = await page
+    .getByRole("heading", { level: 1 })
+    .evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(h1Font).toMatch(/Alexandria/i);
+  const bodyFont = await page
+    .locator("body")
+    .evaluate((el) => getComputedStyle(el).fontFamily);
+  expect(bodyFont).toMatch(/Onest/i);
+  await expect(
+    page.getByRole("contentinfo").locator("svg pattern"),
+  ).toHaveCount(1);
+  await expect(page.getByRole("contentinfo")).toContainText("Bislema");
+});
+
+test("every Arabic word is marked as Arabic", async ({ page }) => {
+  await page.goto("/");
+  const unmarked = await page.evaluate(() => {
+    const walker = document.createTreeWalker(
+      document.body,
+      NodeFilter.SHOW_TEXT,
+    );
+    const bad: string[] = [];
+    while (walker.nextNode()) {
+      const node = walker.currentNode as Text;
+      // Skip the framework's inline scripts, which repeat the page's text.
+      if (node.parentElement?.closest("script, style")) continue;
+      if (
+        /[؀-ۿ]/.test(node.data) &&
+        !node.parentElement?.closest('[lang="ar"]')
+      )
+        bad.push(node.data.trim());
+    }
+    return bad;
+  });
+  expect(unmarked).toEqual([]);
+});

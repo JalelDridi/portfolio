@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
-/** A square frame around a screenshot or video, with its address in a bar. */
+/** A whitewashed frame around a screenshot or video, captioned with its address. */
 export function BrowserFrame({
   url,
   note,
@@ -16,11 +16,11 @@ export function BrowserFrame({
   return (
     <div
       className={cn(
-        "relative overflow-hidden border border-foreground bg-card",
+        "relative overflow-hidden bg-wall-2 px-[9px] pb-[9px] shadow-[0_0_0_1px_var(--border)]",
         className,
       )}
     >
-      <div className="flex justify-between gap-3 border-b border-border px-3 py-2 font-mono text-[0.85rem] text-muted-foreground">
+      <div className="flex justify-between gap-3 py-2 font-mono text-[0.8rem] text-muted-foreground">
         <span className="min-w-0 truncate">{url}</span>
         {note && <span className="shrink-0">{note}</span>}
       </div>

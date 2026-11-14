@@ -4,18 +4,29 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Statement: cool paper, ink, one cobalt accent, square corners. */
+/* Bab: a whitewashed street, Sidi Bou Said blue, painted doors. */
 :root {
   --radius: 0;
-  --background: oklch(0.967 0.004 150);
-  --card: oklch(1 0 0);
-  --foreground: oklch(0.19 0.012 240);
-  --muted-foreground: oklch(0.44 0.015 240);
-  --border: oklch(0.84 0.008 160);
-  /* The one accent: numbers, hover, focus. */
-  --brand: oklch(0.45 0.21 265);
-  /* Held or failed entries only. */
-  --debit: oklch(0.5 0.17 28);
+  /* The wall. */
+  --background: #faf9f4;
+  /* Frames and plaques. */
+  --card: #ffffff;
+  /* Door frames and quiet bands. */
+  --wall-2: #f1efe6;
+  --foreground: #101922;
+  --muted-foreground: #4b5764;
+  --border: #dedbd0;
+  /* Sidi Bou Said blue: links, accents, the flagship band. */
+  --brand: #1763b6;
+  --brand-deep: #0f4f96;
+  /* Door yellow: the one loud accent. */
+  --sun: #edb021;
+  --leaf: #23795a;
+  /* Door red; also "held" in the playground. */
+  --red: #c5352c;
+  --stud: #10151b;
+  /* The dark inside of a door. */
+  --room: #0c1520;
 
   /*
    * The shadcn tokens follow the ones above. They are declared once here:
@@ -27,24 +38,32 @@
   --popover-foreground: var(--foreground);
   --primary: var(--foreground);
   --primary-foreground: var(--background);
-  --secondary: color-mix(in oklch, var(--foreground) 4%, var(--background));
+  --secondary: var(--wall-2);
   --secondary-foreground: var(--foreground);
-  --muted: color-mix(in oklch, var(--foreground) 4%, var(--background));
-  --accent: color-mix(in oklch, var(--foreground) 4%, var(--background));
+  --muted: var(--wall-2);
+  --accent: var(--wall-2);
   --accent-foreground: var(--foreground);
-  --destructive: var(--debit);
+  --destructive: var(--red);
   --input: var(--border);
   --ring: var(--brand);
 }
 
+/* The street at night. Door paints do not change. */
 .dark {
-  --background: oklch(0.2 0.03 250);
-  --card: oklch(0.23 0.03 250);
-  --foreground: oklch(0.94 0.005 160);
-  --muted-foreground: oklch(0.75 0.01 220);
-  --border: oklch(0.32 0.025 240);
-  --brand: oklch(0.72 0.14 270);
-  --debit: oklch(0.72 0.17 28);
+  --background: #0d1621;
+  --card: #131f2c;
+  --wall-2: #172433;
+  --foreground: #f0eee7;
+  --muted-foreground: #a9b4c0;
+  --border: #263443;
+  --brand: #58a0ea;
+  /* The flagship band keeps a deep blue at night. */
+  --brand-deep: #12508f;
+  --sun: #f2bb3a;
+  --leaf: #3fa37c;
+  --red: #e2685e;
+  --stud: #0a0e13;
+  --room: #060b12;
 }
 
 @theme inline {
@@ -67,18 +86,25 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-brand: var(--brand);
-  --color-debit: var(--debit);
-  --font-sans: var(--font-plex-sans);
-  --font-mono: var(--font-plex-mono);
-  --font-display: var(--font-display);
-  --font-heading: var(--font-display);
+  --color-brand-deep: var(--brand-deep);
+  --color-sun: var(--sun);
+  --color-leaf: var(--leaf);
+  --color-red: var(--red);
+  --color-stud: var(--stud);
+  --color-room: var(--room);
+  --color-wall-2: var(--wall-2);
+  --font-display: var(--font-alexandria), system-ui, sans-serif;
+  --font-heading: var(--font-alexandria), system-ui, sans-serif;
+  --font-sans: var(--font-onest), system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
+  --font-kufi: var(--font-reem-kufi), var(--font-alexandria), sans-serif;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
-  /* A rule drawn from the left, once. */
+  /* A rule drawn from the left, once (the account summary). */
   --animate-draw: draw 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
   @keyframes draw {
@@ -107,10 +133,48 @@
     scroll-padding-top: 5rem;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
   }
   ::selection {
     background: color-mix(in oklch, var(--brand) 25%, transparent);
+  }
+}
+
+/*
+ * Doors. Leaves swing inward on the hinge side and darken a little as they
+ * open; the parent sets `perspective` and `data-state`.
+ */
+@layer components {
+  .door-leaf {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 50%;
+    backface-visibility: hidden;
+    transition:
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+      filter 0.9s;
+  }
+  .door-leaf-l {
+    left: 0;
+    transform-origin: left center;
+  }
+  .door-leaf-r {
+    right: 0;
+    transform-origin: right center;
+  }
+  [data-state="ajar"] .door-leaf-r {
+    transform: rotateY(-76deg);
+    filter: brightness(0.82);
+  }
+  [data-state="open"] .door-leaf-l {
+    transform: rotateY(78deg);
+    filter: brightness(0.82);
+  }
+  [data-state="open"] .door-leaf-r {
+    transform: rotateY(-78deg);
+    filter: brightness(0.82);
   }
 }
 

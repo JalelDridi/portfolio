@@ -1,32 +1,36 @@
 import type { Metadata } from "next";
-import {
-  Bricolage_Grotesque,
-  IBM_Plex_Mono,
-  IBM_Plex_Sans,
-} from "next/font/google";
+import { Alexandria, DM_Mono, Onest, Reem_Kufi } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { profile, SITE_URL } from "@/content";
 import "./globals.css";
 
-const display = Bricolage_Grotesque({
+const alexandria = Alexandria({
   subsets: ["latin"],
-  axes: ["opsz", "wdth"],
-  variable: "--font-display",
+  weight: ["500", "700", "800", "900"],
+  variable: "--font-alexandria",
 });
 
-const plexSans = IBM_Plex_Sans({
+const onest = Onest({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
-  variable: "--font-plex-sans",
+  variable: "--font-onest",
 });
 
 // Only labels, dates and numbers use the mono face, so it is not worth a preload.
-const plexMono = IBM_Plex_Mono({
+const dmMono = DM_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-plex-mono",
+  variable: "--font-dm-mono",
+  preload: false,
+});
+
+// A few Arabic words, each beside its meaning; not worth a preload either.
+const reemKufi = Reem_Kufi({
+  subsets: ["arabic"],
+  weight: ["500", "700"],
+  variable: "--font-reem-kufi",
   preload: false,
 });
 
@@ -56,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${display.variable} ${plexSans.variable} ${plexMono.variable}`}
+      className={`${alexandria.variable} ${onest.variable} ${dmMono.variable} ${reemKufi.variable}`}
     >
       <body>
         <Providers>

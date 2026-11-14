@@ -38,7 +38,7 @@ function resultOf(step: Step, before: Counters): string {
 const RESULT_TONE = {
   ok: "text-brand",
   skip: "text-muted-foreground",
-  wait: "text-debit",
+  wait: "text-red",
 };
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

@@ -1,42 +1,54 @@
 import Link from "next/link";
 import { profile } from "@/content";
 import { MobileNav } from "./mobile-nav";
+import { StatusClocks } from "./status-clocks";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
-  { href: "/#project", label: "Flagship" },
   { href: "/#work", label: "Work" },
+  { href: "/#project", label: "Flagship" },
   { href: "/#writing", label: "Notes" },
   { href: "/#about", label: "About" },
   { href: "/#experience", label: "Experience" },
   { href: "/#contact", label: "Contact" },
 ];
 
+const BIZERTE = [{ city: "Bizerte", zone: "Africa/Tunis" }];
+
 export function SiteHeader() {
   return (
-    <header className="sticky top-0 z-50 border-b border-foreground bg-background">
-      <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between gap-4 px-5">
+    <header className="sticky top-0 z-50 bg-background">
+      <div className="mx-auto flex h-16 w-full max-w-[1280px] items-center justify-between gap-4 px-5">
         <Link
           href="/"
-          className="font-display text-lg font-semibold whitespace-nowrap"
+          className="flex items-baseline gap-2.5 font-display text-[1.05rem] font-extrabold whitespace-nowrap"
         >
           {profile.shortName}
+          <span
+            lang="ar"
+            className="font-kufi text-[1.15rem] font-bold text-brand"
+          >
+            جلال
+          </span>
         </Link>
         <nav
           aria-label="Sections"
-          className="hidden items-center gap-6 md:flex"
+          className="hidden items-center gap-6 font-medium md:flex"
         >
           {NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="font-sans text-base transition-colors hover:text-brand"
+              className="transition-colors hover:text-brand"
             >
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          <span className="hidden font-mono text-[0.8rem] whitespace-nowrap text-muted-foreground xl:inline">
+            <StatusClocks zones={BIZERTE} /> · 37°16′N 9°51′E
+          </span>
           <ThemeToggle />
           <MobileNav items={NAV} />
         </div>

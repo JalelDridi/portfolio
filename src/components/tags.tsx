@@ -4,7 +4,7 @@ export function Tags({ items }: { items: string[] }) {
       {items.map((item) => (
         <li
           key={item}
-          className="border border-border px-2.5 py-1 font-mono text-[0.85rem] text-muted-foreground"
+          className="bg-sun px-2 py-0.5 font-mono text-[0.8rem] text-[#101922]"
         >
           {item}
         </li>

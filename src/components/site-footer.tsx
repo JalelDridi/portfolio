@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { site } from "@/content";
+import { TileBand } from "./motifs";
 import { StatusClocks } from "./status-clocks";
 
 const ZONES = [
@@ -16,11 +17,12 @@ const BUILT = new Intl.DateTimeFormat("en-GB", {
   timeZone: "UTC",
 }).format(new Date());
 
-/** The status strip: clocks, version, deploy date and source. */
+/** The ground line of tiles, then the status strip. */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-foreground">
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap gap-x-6 gap-y-2 px-5 py-5 font-mono text-[0.85rem] text-muted-foreground">
+    <footer className="mt-16">
+      <TileBand />
+      <div className="mx-auto flex w-full max-w-[1280px] flex-wrap gap-x-6 gap-y-2 px-5 pt-4 pb-6 font-mono text-[0.78rem] text-muted-foreground [&_time]:font-medium [&_time]:text-foreground">
         <StatusClocks zones={ZONES} />
         <span>
           Site v{site.version} ·{" "}
@@ -38,6 +40,15 @@ export function SiteFooter() {
         >
           Source on GitHub
         </a>
+        <span>
+          Tiles after the Qallaline workshops of Tunis · doors after the medina
+        </span>
+        <span className="flex items-baseline gap-2">
+          <span lang="ar" className="font-kufi text-[0.95rem] text-brand">
+            بالسلامة
+          </span>
+          Bislema · goodbye
+        </span>
       </div>
     </footer>
   );
