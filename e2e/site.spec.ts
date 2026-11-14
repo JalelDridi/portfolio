@@ -485,7 +485,7 @@ test("every Arabic word is marked as Arabic", async ({ page }) => {
       // Skip the framework's inline scripts, which repeat the page's text.
       if (node.parentElement?.closest("script, style")) continue;
       if (
-        /[؀-ۿ]/.test(node.data) &&
+        /[\u0600-\u06FF]/.test(node.data) &&
         !node.parentElement?.closest('[lang="ar"]')
       )
         bad.push(node.data.trim());

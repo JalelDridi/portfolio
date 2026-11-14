@@ -164,15 +164,15 @@
     right: 0;
     transform-origin: right center;
   }
-  [data-state="ajar"] .door-leaf-r {
+  [data-state="ajar"] > .door-leaf-r {
     transform: rotateY(-76deg);
     filter: brightness(0.82);
   }
-  [data-state="open"] .door-leaf-l {
+  [data-state="open"] > .door-leaf-l {
     transform: rotateY(78deg);
     filter: brightness(0.82);
   }
-  [data-state="open"] .door-leaf-r {
+  [data-state="open"] > .door-leaf-r {
     transform: rotateY(-78deg);
     filter: brightness(0.82);
   }

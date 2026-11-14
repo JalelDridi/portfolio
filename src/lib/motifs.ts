@@ -7,6 +7,12 @@
 export type DoorMotif = "star" | "sun" | "tree" | "lozenge" | "fish" | "rows";
 export type DoorPaint = "blue" | "green" | "yellow" | "sky" | "red" | "night";
 
+/** Nail heads, the same in both themes. */
+export const STUD = "#10151b";
+
+/** Ink on painted surfaces (the yellow button, tags), the same in both themes. */
+export const INK = "#101922";
+
 /** Door paints, the same in both themes. */
 export const DOOR_PAINTS: Record<DoorPaint, { fill: string; shade: string }> = {
   blue: { fill: "#1763b6", shade: "#0f4f96" },

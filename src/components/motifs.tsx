@@ -5,6 +5,7 @@ import {
   type DoorMotif,
   type DoorPaint,
   doorStuds,
+  STUD,
   studBandDots,
   TILE,
   TILE_CORNERS,
@@ -19,12 +20,22 @@ import { cn } from "@/lib/utils";
  * buttons by the sections that use them.
  */
 
-const STUD = "#10151b";
-
 /** A safe id for `url(#…)` references. */
 const svgId = (id: string) => id.replace(/[^a-zA-Z0-9_-]/g, "");
 
 const f = (n: number) => n.toFixed(1);
+
+/** Circles as one path's subpaths, with coordinates rounded to one decimal. */
+function circlesPath(circles: [cx: number, cy: number, r: number][]): string {
+  return circles
+    .map(([cx, cy, r]) => {
+      const x = Number(f(cx));
+      const y = Number(f(cy));
+      const rr = Number(f(r));
+      return `M${f(x - rr)} ${f(y)}a${rr} ${rr} 0 1 0 ${f(2 * rr)} 0a${rr} ${rr} 0 1 0 ${f(-2 * rr)} 0`;
+    })
+    .join("");
+}
 
 /** One leaf of a 400 × 620 double door, stretched to fill its box. */
 export function DoorLeaf({
@@ -43,6 +54,14 @@ export function DoorLeaf({
   // Only the studs that show in this half; the seam's studs show in both.
   const studs = doorStuds(motif).filter(([x, , k]) =>
     left ? x - 4.6 * k <= 200 : x + 4.6 * k >= 200,
+  );
+  // Every nail head as one path, and every highlight as a second one.
+  const heads = circlesPath(studs.map(([x, y, k]) => [x, y, 4.6 * k]));
+  const highlights = circlesPath(
+    studs.map(([x, y, k]) => {
+      const r = 4.6 * k;
+      return [x - r * 0.3, y - r * 0.3, r * 0.28];
+    }),
   );
   const planks = left ? [80, 140] : [260, 320];
   const knocker = left ? 164 : 236;
@@ -77,21 +96,8 @@ export function DoorLeaf({
         />
       ))}
       <line x1="200" y1="0" x2="200" y2="620" stroke={shade} strokeWidth="4" />
-      {studs.map(([x, y, k], index) => {
-        const r = 4.6 * k;
-        return (
-          <g key={index}>
-            <circle cx={f(x)} cy={f(y)} r={f(r)} fill={STUD} />
-            <circle
-              cx={f(x - r * 0.3)}
-              cy={f(y - r * 0.3)}
-              r={f(r * 0.28)}
-              fill="#fff"
-              opacity=".35"
-            />
-          </g>
-        );
-      })}
+      <path d={heads} fill={STUD} />
+      <path d={highlights} fill="#fff" opacity=".35" />
       <circle
         cx={knocker}
         cy="356"
