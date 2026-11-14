@@ -59,7 +59,13 @@ export function DoorStreet() {
       <ol className="grid grid-cols-2 items-start gap-[1.4rem] min-[920px]:grid-cols-5">
         {addresses().map((address) => (
           <li key={address.key}>
-            <Link href={address.href} className="door-link flex flex-col gap-2">
+            {/* Named by the title, described by the line; the door is decoration. */}
+            <Link
+              href={address.href}
+              aria-labelledby={`door-${address.key}-title`}
+              aria-describedby={`door-${address.key}-line`}
+              className="door-link flex flex-col gap-2"
+            >
               <DoorFrame small>
                 <Door motif={address.door.motif} paint={address.door.paint}>
                   {/* Inset by 2 px so the picture never shows along a closed leaf's edge. */}
@@ -93,10 +99,16 @@ export function DoorStreet() {
                 <span>{address.street.no}</span>
                 <span>{address.street.note}</span>
               </span>
-              <h3 className="font-display text-[1.35rem] leading-[1.1] font-extrabold tracking-[-0.02em]">
+              <h3
+                id={`door-${address.key}-title`}
+                className="font-display text-[1.35rem] leading-[1.1] font-extrabold tracking-[-0.02em]"
+              >
                 {address.title}
               </h3>
-              <span className="text-[0.95rem] text-muted-foreground">
+              <span
+                id={`door-${address.key}-line`}
+                className="text-[0.95rem] text-muted-foreground"
+              >
                 {address.street.line}
               </span>
             </Link>

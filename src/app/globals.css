@@ -126,6 +126,16 @@
     outline: 2px solid var(--brand);
     outline-offset: 2px;
   }
+  /* On painted bands the ring takes the band's text colour, or door yellow in the dark room. */
+  .focus-white :focus-visible {
+    outline-color: #ffffff;
+  }
+  .focus-ink :focus-visible {
+    outline-color: #101922;
+  }
+  .focus-sun :focus-visible {
+    outline-color: var(--sun);
+  }
   html {
     @apply scroll-smooth font-sans;
     /* One notch above the browser default, so every rem-based size grows. */

@@ -167,7 +167,10 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
   return (
     <main className="pb-16 sm:pb-24">
       {/* The head band, in the paint of the project's door. */}
-      <header style={{ backgroundColor: paint.fill, color: bandText }}>
+      <header
+        className={bandText === INK ? "focus-ink" : "focus-white"}
+        style={{ backgroundColor: paint.fill, color: bandText }}
+      >
         <div className="mx-auto grid w-full max-w-[1280px] items-end gap-12 px-5 *:min-w-0 md:grid-cols-[1fr_auto]">
           <Rise className="pt-10 pb-12 md:pt-12 md:pb-14">
             <Link
@@ -256,7 +259,7 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
           )}
 
           {project.note && (
-            <div className="grid gap-x-8 border-t border-border py-8 md:grid-cols-[10rem_1fr]">
+            <div className="grid gap-x-8 border-t border-border py-8 md:grid-cols-[11rem_1fr]">
               <p className="max-w-3xl text-base text-pretty text-muted-foreground md:col-start-2">
                 {project.note}
               </p>

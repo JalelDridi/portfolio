@@ -6,10 +6,10 @@ import { cn } from "@/lib/utils";
 import { Door, DoorFrame, Plaque } from "./motifs";
 
 /**
- * The big blue door in the hero. It stands ajar on a short teaser; the button
- * over it opens both leaves and shows the room with two links. The links only
- * exist while the door is open, so a closed room hides nothing from the
- * keyboard or a screen reader.
+ * The big blue door in the hero. It stands ajar on a short teaser whose
+ * "Step inside" link sits above the button; the button opens both leaves and
+ * shows the room with two links. Those two only exist while the door is open,
+ * so a half-open room hides nothing from the keyboard or a screen reader.
  */
 export function HeroDoor() {
   const [open, setOpen] = useState(false);
@@ -31,7 +31,7 @@ export function HeroDoor() {
           />
           <div
             id="hero-room"
-            className="absolute inset-0 flex items-center overflow-hidden bg-[radial-gradient(120%_60%_at_70%_40%,#1b2a3c,#0c1520_70%)] text-[#eef2f5]"
+            className="focus-sun absolute inset-0 flex items-center overflow-hidden bg-[radial-gradient(120%_60%_at_70%_40%,#1b2a3c,#0c1520_70%)] text-[#eef2f5]"
           >
             <div
               className={cn(
@@ -76,12 +76,14 @@ export function HeroDoor() {
                   </li>
                 </ul>
               ) : (
-                <span
-                  aria-hidden="true"
-                  className="border-b-2 border-sun font-mono text-[0.66rem] whitespace-nowrap text-white min-[480px]:text-[0.78rem]"
+                // A real link above the button, so it works without JavaScript;
+                // its padding makes it a 24 px target.
+                <Link
+                  href="/work/solvedblue"
+                  className="pointer-events-auto relative z-[4] inline-block py-[7px] font-mono text-[0.66rem] leading-none whitespace-nowrap text-white underline decoration-sun decoration-2 underline-offset-[5px] hover:text-sun min-[480px]:text-[0.78rem]"
                 >
-                  Step inside →
-                </span>
+                  Step inside <span aria-hidden="true">→</span>
+                </Link>
               )}
             </div>
           </div>

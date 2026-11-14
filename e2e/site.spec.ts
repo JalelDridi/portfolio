@@ -37,11 +37,16 @@ test("shows who I am, the open-source project and every piece of work", async ({
 test("the hero door opens and closes with the keyboard", async ({ page }) => {
   await page.goto("/");
   const door = page.getByRole("button", { name: "Open the door" });
+  const room = page.locator("#hero-room");
   await expect(door).toHaveAttribute("aria-expanded", "false");
+  // Ajar, the room has exactly one link, and it works without JavaScript.
+  await expect(room.getByRole("link")).toHaveCount(1);
+  await expect(room.getByRole("link", { name: "Step inside" })).toHaveAttribute(
+    "href",
+    "/work/solvedblue",
+  );
   await expect(
-    page
-      .locator("#hero-room")
-      .getByRole("link", { name: "Read the case study" }),
+    room.getByRole("link", { name: "Read the case study" }),
   ).toHaveCount(0);
   await door.focus();
   await page.keyboard.press("Enter");
@@ -53,9 +58,12 @@ test("the hero door opens and closes with the keyboard", async ({ page }) => {
       .getByRole("link", { name: "Read the case study" }),
   ).toHaveAttribute("href", "/work/solvedblue");
   await page.keyboard.press("Enter");
+  const reopen = page.getByRole("button", { name: "Open the door" });
+  await expect(reopen).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Open the door" }),
-  ).toBeVisible();
+    room.getByRole("link", { name: "Read the case study" }),
+  ).toHaveCount(0);
+  await expect(reopen).toBeFocused();
 });
 
 test("a project door swings open on hover and on keyboard focus", async ({
@@ -79,6 +87,36 @@ test("a project door swings open on hover and on keyboard focus", async ({
   expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).not.toBe(
     "none",
   );
+});
+
+test("on a touch screen the doors stand ajar and a tap opens the case study", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    hasTouch: true,
+    isMobile: true,
+    viewport: { width: 390, height: 844 },
+  });
+  const page = await context.newPage();
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  const link = page
+    .locator("#work")
+    .getByRole("link", { name: /Potluck/ })
+    .first();
+  await link.scrollIntoViewIfNeeded();
+  expect(
+    await page.evaluate(() => matchMedia("(hover: none)").matches),
+    "a touch context reports (hover: none)",
+  ).toBe(true);
+  expect(
+    await link
+      .locator(".door-leaf-r")
+      .evaluate((el) => getComputedStyle(el).transform),
+  ).not.toBe("none");
+  await link.tap();
+  await expect(page).toHaveURL(/\/work\/potluck$/);
+  await context.close();
 });
 
 test("the street shows five doors with their numbers before any JavaScript runs", async ({
@@ -144,7 +182,7 @@ test("old Potluck case-study links redirect to the merged one", async ({
 
 test("a case study opens on a band in its door's colour", async ({ page }) => {
   await page.goto("/work/potluck");
-  const band = page.locator("main > header, main > div").first();
+  const band = page.locator("main > header");
   expect(
     await band.evaluate((el) => getComputedStyle(el).backgroundColor),
   ).toBe("rgb(237, 176, 33)");

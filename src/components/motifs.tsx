@@ -253,7 +253,8 @@ export function TileBand({ className }: { className?: string }) {
 }
 
 const STUD_BAND_WIDTH = 1600;
-const STUD_BAND_DOTS = studBandDots(STUD_BAND_WIDTH);
+/** Every stud of the band as one path. */
+const STUD_BAND_PATH = circlesPath(studBandDots(STUD_BAND_WIDTH));
 
 /** A 44 px rail of studs: small lozenges and dots, for the blue band. */
 export function StudBand({ className }: { className?: string }) {
@@ -265,9 +266,7 @@ export function StudBand({ className }: { className?: string }) {
         aria-hidden="true"
         className="block h-11 w-full"
       >
-        {STUD_BAND_DOTS.map(([x, y, r], index) => (
-          <circle key={index} cx={f(x)} cy={f(y)} r={r} fill="currentColor" />
-        ))}
+        <path d={STUD_BAND_PATH} fill="currentColor" />
       </svg>
     </div>
   );
