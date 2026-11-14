@@ -320,7 +320,11 @@ const round = (n: number) => Number(n.toFixed(4));
  * width ÷ height is `ratio`. The arc has separate x and y radii so it stays
  * circular once the box is stretched to its real size.
  */
-export function archClipPath(ratio: number): string {
+export function archClipPath(
+  ratio: number,
+  shape: "horseshoe" | "segmental" = "horseshoe",
+): string {
+  if (shape === "segmental") return segmentalClipPath(ratio);
   // tn.js `archPath(w, h)` with w = ratio, h = 1, then x divided by ratio.
   const w = ratio;
   const h = 1;
@@ -340,6 +344,29 @@ export function archClipPath(ratio: number): string {
     `A ${round(r / ratio)} ${y(r)} 0 1 1 ${x(ex)} ${y(sy)}`,
     `L ${x(w - inset)} ${y(sy + r * 0.25)}`,
     `L ${x(w - inset)} ${y(h)}`,
+    "Z",
+  ].join(" ");
+}
+
+/** How far a segmental arch's crown rises above its sides, as a share of the height. */
+export const SEGMENTAL_RISE = 0.09;
+
+/**
+ * A segmental arch in object-bounding-box units: straight sides, and a top
+ * edge that is one circular arc rising `SEGMENTAL_RISE` of the height from
+ * the sides to the crown. Like the horseshoe, the arc has separate x and y
+ * radii so it stays circular in a box whose width ÷ height is `ratio`.
+ */
+function segmentalClipPath(ratio: number): string {
+  const half = ratio / 2;
+  const rise = SEGMENTAL_RISE;
+  // The radius of a circle through both springing points and the crown.
+  const r = (half * half + rise * rise) / (2 * rise);
+  return [
+    "M 0 1",
+    `L 0 ${round(rise)}`,
+    `A ${round(r / ratio)} ${round(r)} 0 0 1 1 ${round(rise)}`,
+    "L 1 1",
     "Z",
   ].join(" ");
 }

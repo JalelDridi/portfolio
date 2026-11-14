@@ -938,6 +938,7 @@ export const ledger = {
   total: { label: profile.availability, value: "Bizerte · UTC+1" },
 };
 
+/** Each role carries a small closed door in the paint of its work. */
 export const experience = [
   {
     role: "Founding Engineer",
@@ -945,6 +946,7 @@ export const experience = [
     href: "https://solvedblue.com",
     detail: "Business messaging platform · fully remote",
     period: "Nov 2026 – present",
+    door: { motif: "star", paint: "blue" } satisfies Door,
     summary:
       "Work on the engine that decides what is sent, from which line, and when: dispatch, per-line queues, fleet health, replies and calling.",
   },
@@ -954,6 +956,7 @@ export const experience = [
     href: "https://www.bigpotluck.com",
     detail: "US live-shopping marketplace · fully remote",
     period: "Jun 2026 – Oct 2026",
+    door: { motif: "tree", paint: "yellow" } satisfies Door,
     summary:
       "Owned the Stripe Connect payments stack and production infrastructure. Built the live-shopping product and realtime messaging. Led releases for a three-person team.",
   },
@@ -963,6 +966,7 @@ export const experience = [
     href: "https://offa.com",
     detail: "US real-estate marketplace · fully remote",
     period: "Jan 2026 – Jun 2026",
+    door: { motif: "rows", paint: "night" } satisfies Door,
     summary:
       "Built and launched Deal Grader and Spyder, a multi-provider messaging platform. Replaced polling with WebSocket notifications.",
   },
@@ -971,6 +975,7 @@ export const experience = [
     company: "Pearls Consulting",
     detail: "Tunis",
     period: "Feb 2025 – Aug 2025",
+    door: { motif: "lozenge", paint: "green" } satisfies Door,
     summary:
       "Built a field-inspection platform in Laravel, React and React Native, with CI/CD to Kubernetes and Terraform.",
   },
@@ -979,6 +984,7 @@ export const experience = [
     company: "Pearls Consulting",
     detail: "Tunis · alongside studies",
     period: "Jul 2024 – Jan 2025",
+    door: { motif: "lozenge", paint: "green" } satisfies Door,
     summary:
       "Laravel deployments with 30% better uptime; CI/CD automation that cut manual deploys by 60%.",
   },

@@ -1,9 +1,13 @@
 import { ArrowUpRight } from "lucide-react";
 import { flagship } from "@/content";
 import { LinkButton } from "../link-button";
+import { StudBand } from "../motifs";
 import { PipelinePlayground } from "../pipeline-playground";
 
-/** A quiet full-width band: the playground and its ledger book. */
+/**
+ * A quiet full-width band between two rails of studs, the next house on the
+ * street: the playground and its ledger book.
+ */
 export function Playground() {
   return (
     <section
@@ -11,7 +15,8 @@ export function Playground() {
       aria-labelledby="playground-title"
       className="bg-wall-2"
     >
-      <div className="mx-auto w-full max-w-[1280px] px-5 py-[4.2rem]">
+      <StudBand className="opacity-35 dark:opacity-80" />
+      <div className="mx-auto w-full max-w-[1280px] px-5 py-14">
         <PipelinePlayground
           intro={
             <div>
@@ -38,6 +43,7 @@ export function Playground() {
           }
         />
       </div>
+      <StudBand className="opacity-35 dark:opacity-80" />
     </section>
   );
 }

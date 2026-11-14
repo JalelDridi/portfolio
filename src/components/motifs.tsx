@@ -182,7 +182,8 @@ export function TileBand({ className }: { className?: string }) {
   const { size, ground, cobalt, green, ochre, line } = TILE;
 
   return (
-    <div className={cn("leading-[0]", className)}>
+    // Dimmed a little at night, so the cream ground is not the brightest thing on the page.
+    <div className={cn("leading-[0] dark:brightness-90", className)}>
       <svg width="100%" height={size} aria-hidden="true" className="block">
         <defs>
           <pattern
@@ -273,15 +274,92 @@ export function StudBand({ className }: { className?: string }) {
 }
 
 /**
- * A horseshoe arch around a picture. `ratio` is the box's width ÷ height; the
- * box keeps that aspect so the arch stays circular.
+ * A closed door's studs, light enough to repeat: whole-number coordinates,
+ * no highlights, and each nail head a zero-length stroke with round caps,
+ * one path per nail size.
+ */
+const closedStuds = (() => {
+  const cache = new Map<DoorMotif, [width: number, d: string][]>();
+  return (motif: DoorMotif) => {
+    let paths = cache.get(motif);
+    if (!paths) {
+      const bySize = new Map<number, string[]>();
+      for (const [x, y, k] of doorStuds(motif)) {
+        const width = Math.round(9.2 * k);
+        const list = bySize.get(width) ?? [];
+        list.push(`M${Math.round(x)} ${Math.round(y)}h0`);
+        bySize.set(width, list);
+      }
+      paths = [...bySize].map(([width, list]) => [width, list.join("")]);
+      cache.set(motif, paths);
+    }
+    return paths;
+  };
+})();
+
+/**
+ * A small closed door that does not open (the notes, the experience rail):
+ * one SVG, its leaves drawn flat, in a thin whitewashed frame.
+ */
+export function ClosedDoor({
+  motif,
+  paint,
+  className,
+}: {
+  motif: DoorMotif;
+  paint: DoorPaint;
+  className?: string;
+}) {
+  const { fill, shade } = DOOR_PAINTS[paint];
+  return (
+    <div
+      className={cn(
+        "bg-wall-2 p-[3px] shadow-[0_0_0_1px_var(--border)]",
+        className,
+      )}
+    >
+      <svg viewBox="0 0 400 620" aria-hidden="true" className="block w-full">
+        <rect width="400" height="620" fill={fill} />
+        <path
+          d="M10 10h380v600H10z"
+          fill="none"
+          stroke={shade}
+          strokeWidth="6"
+        />
+        <path
+          d="M80 12v596M140 12v596M260 12v596M320 12v596"
+          stroke={shade}
+          strokeWidth="4"
+          opacity=".55"
+        />
+        <path d="M200 0v620" stroke={shade} strokeWidth="8" />
+        {closedStuds(motif).map(([width, d]) => (
+          <path
+            key={width}
+            d={d}
+            stroke={STUD}
+            strokeWidth={width}
+            strokeLinecap="round"
+          />
+        ))}
+      </svg>
+    </div>
+  );
+}
+
+/**
+ * An arch around a picture. `ratio` is the box's width ÷ height; the box
+ * keeps that aspect so the arch stays circular. A horseshoe by default; a
+ * segmental arch (straight sides, a shallow arc on top) for wide pictures.
  */
 export function ArchFrame({
   ratio,
+  shape = "horseshoe",
   className,
   children,
 }: {
   ratio: number;
+  shape?: "horseshoe" | "segmental";
   className?: string;
   children: ReactNode;
 }) {
@@ -290,12 +368,13 @@ export function ArchFrame({
   return (
     <div
       data-arch={ratio}
+      data-arch-shape={shape}
       className={cn("relative overflow-hidden", className)}
       style={{ aspectRatio: ratio, clipPath: `url(#${id})` }}
     >
       <svg aria-hidden="true" width="0" height="0" className="absolute">
         <clipPath id={id} clipPathUnits="objectBoundingBox">
-          <path d={archClipPath(ratio)} />
+          <path d={archClipPath(ratio, shape)} />
         </clipPath>
       </svg>
       {children}

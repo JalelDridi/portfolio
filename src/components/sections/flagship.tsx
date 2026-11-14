@@ -8,17 +8,17 @@ import { Tags } from "../tags";
 
 /**
  * The flagship on a full-bleed blue band between two rails of studs: the
- * story on the left, the recording in a horseshoe arch on the right.
+ * story on the left, the whole recording under a shallow arch on the right.
  */
 export function Flagship() {
   return (
     <section
       id="project"
       aria-labelledby="project-title"
-      className="mt-[4.4rem] bg-brand text-white dark:bg-brand-deep"
+      className="focus-white mt-[4.4rem] bg-brand text-white dark:bg-brand-deep"
     >
       <StudBand />
-      <div className="mx-auto grid w-full max-w-[1280px] items-center gap-12 px-5 pt-[2.6rem] pb-[3.2rem] *:min-w-0 min-[920px]:grid-cols-[0.9fr_1.1fr]">
+      <div className="mx-auto grid w-full max-w-[1280px] items-center gap-x-12 gap-y-6 px-5 pt-[2.6rem] pb-[3.2rem] *:min-w-0 min-[920px]:grid-cols-[0.9fr_1.1fr]">
         <div>
           <p className="font-mono text-[0.8rem] tracking-[0.1em] text-[#dce8f6] uppercase">
             Flagship · open source
@@ -49,23 +49,41 @@ export function Flagship() {
             ))}
           </ul>
           <Tags items={flagship.stack} />
-          <div className="mt-6 flex flex-wrap gap-2.5">
-            <LinkButton variant="sun" href={flagship.demo}>
-              Try the live demo <ArrowUpRight aria-hidden="true" />
-            </LinkButton>
-            <LinkButton variant="light" href={flagship.repo}>
-              <GitHubIcon /> Read the code
-            </LinkButton>
-            <LinkButton variant="light" href={flagship.decisions}>
-              <BookOpen aria-hidden="true" /> Design decisions
-            </LinkButton>
-          </div>
         </div>
 
-        <figure className="mx-auto w-full max-w-[470px]">
-          <ArchFrame ratio={5 / 6} className="w-full bg-room">
+        {/*
+         * The buttons are their own row so that on wide screens they can run
+         * under both columns and stay on one line.
+         */}
+        <div className="flex flex-wrap gap-2 min-[920px]:col-span-2 min-[920px]:row-start-2">
+          <LinkButton variant="sun" href={flagship.demo}>
+            Try the live demo <ArrowUpRight aria-hidden="true" />
+          </LinkButton>
+          <LinkButton variant="light" href={flagship.repo} className="px-4">
+            <GitHubIcon /> Read the code
+          </LinkButton>
+          <LinkButton
+            variant="light"
+            href={flagship.decisions}
+            className="px-4"
+          >
+            <BookOpen aria-hidden="true" /> Design decisions
+          </LinkButton>
+        </div>
+
+        <figure className="mx-auto mt-6 w-full min-[920px]:col-start-2 min-[920px]:row-start-1 min-[920px]:mt-0">
+          {/*
+           * A wide segmental arch over the whole 16:10 recording. The recording
+           * stands on the sill, 2% in from each side, so the arc (9% of the
+           * height) clears its top corners: nothing of it is cut.
+           */}
+          <ArchFrame
+            ratio={16 / 10.6}
+            shape="segmental"
+            className="w-full bg-room"
+          >
             <LazyVideo
-              className="size-full object-cover object-[12%_top]"
+              className="absolute inset-x-[2%] bottom-0 aspect-[16/10] w-[96%] object-contain"
               webm={flagship.video.webm}
               mp4={flagship.video.mp4}
               poster={flagship.video.poster}

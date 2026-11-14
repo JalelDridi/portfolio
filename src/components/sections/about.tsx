@@ -25,7 +25,7 @@ export function About() {
       title={title}
       accent={accent}
     >
-      <div className="grid items-start gap-[3.2rem] *:min-w-0 min-[920px]:grid-cols-[0.8fr_1.2fr]">
+      <div className="grid items-start gap-[3.2rem] *:min-w-0 min-[920px]:grid-cols-[0.8fr_1.2fr] min-[920px]:grid-rows-[auto_1fr] min-[920px]:gap-y-8">
         <figure className="relative">
           <ArchFrame ratio={4 / 5} className="w-full bg-wall-2">
             <Image
@@ -41,7 +41,7 @@ export function About() {
           </figcaption>
         </figure>
 
-        <div>
+        <div className="min-[920px]:col-start-2 min-[920px]:row-span-2 min-[920px]:row-start-1">
           {about.paragraphs.map((paragraph, index) => (
             <p
               key={paragraph}
@@ -65,13 +65,20 @@ export function About() {
               </div>
             ))}
           </dl>
+        </div>
 
-          <div className="mt-8 bg-wall-2 px-4 py-6 sm:px-6">
-            <WorldClocks clocks={about.clocks} />
-            <p className="mt-5 text-center text-[0.95rem] text-muted-foreground">
-              {about.clocksCaption}
-            </p>
-          </div>
+        {/*
+         * Under the portrait on wide screens, after the story on phones. Only
+         * `min-[…]` breakpoints here: Tailwind emits them before `sm:`.
+         */}
+        <div className="bg-wall-2 px-4 py-6 sm:px-6 min-[920px]:col-start-1 min-[920px]:row-start-2">
+          <WorldClocks
+            clocks={about.clocks}
+            className="grid-cols-2 min-[640px]:grid-cols-4 min-[920px]:grid-cols-2 min-[1280px]:grid-cols-4"
+          />
+          <p className="mt-5 text-center text-[0.95rem] text-muted-foreground">
+            {about.clocksCaption}
+          </p>
         </div>
       </div>
     </Section>

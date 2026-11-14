@@ -1,8 +1,15 @@
 import Link from "next/link";
 import { formatShortDate } from "@/lib/dates";
+import { flagship } from "@/content";
 import { articles } from "@/writing";
+import { ClosedDoor } from "../motifs";
 import { Section } from "../section";
 
+/**
+ * A row per note, each behind a small closed door: the flagship's, since every
+ * note is about Payout Ledger. The door sits beside the date on wide screens
+ * and to the left of the title on phones.
+ */
 export function Writing() {
   return (
     <Section
@@ -16,11 +23,16 @@ export function Writing() {
         {articles.map((article) => (
           <li
             key={article.slug}
-            className="group relative grid grid-cols-1 items-baseline gap-x-8 gap-y-1.5 border-t border-dashed py-6 sm:grid-cols-[9rem_1fr_auto]"
+            className="group relative grid grid-cols-[2.75rem_1fr] items-start gap-x-5 gap-y-1.5 border-t py-6 sm:grid-cols-[3.5rem_7rem_1fr_auto] sm:gap-x-8"
           >
+            <ClosedDoor
+              motif={flagship.door.motif}
+              paint={flagship.door.paint}
+              className="row-span-3 sm:row-span-1"
+            />
             <time
               dateTime={article.date}
-              className="font-mono text-[0.8rem] tracking-[0.04em] text-muted-foreground"
+              className="font-mono text-[0.8rem] tracking-[0.04em] text-muted-foreground sm:pt-1.5"
             >
               {formatShortDate(article.date)}
             </time>
@@ -37,7 +49,7 @@ export function Writing() {
                 {article.summary}
               </p>
             </div>
-            <span className="font-mono text-[0.8rem] whitespace-nowrap text-muted-foreground">
+            <span className="font-mono text-[0.8rem] whitespace-nowrap text-muted-foreground sm:pt-1.5">
               {article.minutes} min{" "}
               <span
                 aria-hidden="true"

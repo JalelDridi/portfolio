@@ -103,7 +103,14 @@ function Face({
  * Analogue clocks for home and the places I work with. The hands sweep into
  * place once the browser knows the time; the server cannot.
  */
-export function WorldClocks({ clocks }: { clocks: Clock[] }) {
+export function WorldClocks({
+  clocks,
+  className,
+}: {
+  clocks: Clock[];
+  /** The grid's columns; two, then four from `sm`, by default. */
+  className?: string;
+}) {
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -114,7 +121,12 @@ export function WorldClocks({ clocks }: { clocks: Clock[] }) {
   }, []);
 
   return (
-    <ul className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4">
+    <ul
+      className={cn(
+        "grid gap-x-4 gap-y-6",
+        className ?? "grid-cols-2 sm:grid-cols-4",
+      )}
+    >
       {clocks.map((clock, index) => {
         const time = now ? partsIn(clock.zone, now) : { hour: 0, minute: 0 };
         const label = now

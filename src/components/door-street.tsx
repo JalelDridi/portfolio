@@ -58,7 +58,10 @@ export function DoorStreet() {
     <>
       <ol className="grid grid-cols-2 items-start gap-[1.4rem] min-[920px]:grid-cols-5">
         {addresses().map((address) => (
-          <li key={address.key}>
+          <li
+            key={address.key}
+            className="last:odd:col-span-2 last:odd:w-[calc(50%-0.7rem)] last:odd:justify-self-center min-[920px]:last:odd:col-span-1 min-[920px]:last:odd:w-auto"
+          >
             {/* Named by the title, described by the line; the door is decoration. */}
             <Link
               href={address.href}
@@ -125,18 +128,22 @@ export function DoorStreet() {
         </span>
         <ul
           aria-labelledby="also-on-this-street"
-          className="flex flex-wrap gap-x-8 gap-y-2"
+          className="flex flex-col gap-y-2 sm:flex-row sm:flex-wrap sm:gap-x-8"
         >
           {others.map((project) => (
-            <li key={project.slug} className="flex items-baseline gap-1.5">
-              <h3 className="font-semibold text-foreground">
+            <li
+              key={project.slug}
+              className="sm:flex sm:items-baseline sm:gap-1.5"
+            >
+              {/* On phones the title and its company run on as one line of text. */}
+              <h3 className="inline font-semibold text-foreground sm:block">
                 <Link
                   href={`/work/${project.slug}`}
                   className="transition-colors hover:text-brand"
                 >
                   {project.title}
                 </Link>
-              </h3>
+              </h3>{" "}
               <span>
                 · {project.company} · {project.year}
               </span>

@@ -8,6 +8,7 @@ import { Playground } from "@/components/sections/playground";
 import { Skills } from "@/components/sections/skills";
 import { Work } from "@/components/sections/work";
 import { Writing } from "@/components/sections/writing";
+import { TileBand } from "@/components/motifs";
 import { experience, flagship, profile, SITE_URL, skills } from "@/content";
 
 // Tells search engines who this page is about, in their own vocabulary.
@@ -53,6 +54,8 @@ export default function Home() {
       <Flagship />
       <Playground />
       <Writing />
+      {/* A ground line of tiles under the notes, before the skills. */}
+      <TileBand className="mt-[4.2rem]" />
       <Skills />
       <About />
       <Experience />
