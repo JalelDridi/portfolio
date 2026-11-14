@@ -13,8 +13,14 @@ export type Counters = {
   balance: number;
 };
 
-/** One visible step: which stage lights up, what it reports, and the totals after it. */
-export type Step = { stage: Stage; tone: Tone; text: string; after: Counters };
+/** One visible step: which stage lights up, the event it is about, what it reports, and the totals after it. */
+export type Step = {
+  stage: Stage;
+  event: string;
+  tone: Tone;
+  text: string;
+  after: Counters;
+};
 
 export type SimState = Counters & { nextId: number };
 
@@ -51,6 +57,7 @@ export function play(
   };
   const steps: Step[] = [];
   const step = (
+    event: string,
     stage: Stage,
     tone: Tone,
     text: string,
@@ -59,21 +66,22 @@ export function play(
     totals.stored += change.stored ?? 0;
     totals.applied += change.applied ?? 0;
     totals.balance += change.balance ?? 0;
-    steps.push({ stage, tone, text, after: { ...totals } });
+    steps.push({ stage, event, tone, text, after: { ...totals } });
   };
   const id = eventId(state.nextId);
   let used = 1;
 
   if (scenario === "once" || scenario === "twice") {
-    step("webhook", "ok", `${id} arrives, signature verified`);
-    step("inbox", "ok", `${id} stored`, { stored: 1 });
-    step("ledger", "ok", "Applied: $25.00 to the seller", {
+    step(id, "webhook", "ok", `${id} arrives, signature verified`);
+    step(id, "inbox", "ok", `${id} stored`, { stored: 1 });
+    step(id, "ledger", "ok", "Applied: $25.00 to the seller", {
       applied: 1,
       balance: AMOUNT,
     });
     if (scenario === "twice") {
-      step("webhook", "ok", `${id} arrives again`);
+      step(id, "webhook", "ok", `${id} arrives again`);
       step(
+        id,
         "inbox",
         "skip",
         `${id} is already stored: skipped, nothing applied twice`,
@@ -86,28 +94,30 @@ export function play(
     used = 2;
     const funded = state.balance >= AMOUNT;
 
-    step("webhook", "ok", `Payout ${payout} arrives first`);
-    step("inbox", "ok", `${payout} stored`, { stored: 1 });
+    step(payout, "webhook", "ok", `Payout ${payout} arrives first`);
+    step(payout, "inbox", "ok", `${payout} stored`, { stored: 1 });
     if (funded) {
-      step("ledger", "ok", "Applied: $25.00 paid out", {
+      step(payout, "ledger", "ok", "Applied: $25.00 paid out", {
         applied: 1,
         balance: -AMOUNT,
       });
     } else {
       step(
+        payout,
         "ledger",
         "wait",
         "No funds yet: the payout waits, the balance stays at zero",
       );
     }
-    step("webhook", "ok", `Transfer ${transfer} arrives late`);
-    step("inbox", "ok", `${transfer} stored`, { stored: 1 });
-    step("ledger", "ok", "Applied: $25.00 to the seller", {
+    step(transfer, "webhook", "ok", `Transfer ${transfer} arrives late`);
+    step(transfer, "inbox", "ok", `${transfer} stored`, { stored: 1 });
+    step(transfer, "ledger", "ok", "Applied: $25.00 to the seller", {
       applied: 1,
       balance: AMOUNT,
     });
     if (!funded) {
       step(
+        payout,
         "ledger",
         "ok",
         `Retried ${payout}: $25.00 paid out. Same result as the right order`,

@@ -1,62 +1,72 @@
 import { FileDown, Mail } from "lucide-react";
 import { profile } from "@/content";
+import { CopyButton } from "../copy-button";
 import { GitHubIcon, LinkedInIcon } from "../icons";
 import { LinkButton } from "../link-button";
-import { Reveal } from "../reveal";
-import { BorderBeam } from "../ui/border-beam";
+import { Door, DoorFrame } from "../motifs";
 
+/**
+ * The last house on the street: the invitation on the left, a small yellow
+ * door on the right whose step rests on the footer's tiles.
+ */
 export function Contact() {
+  const { email } = profile.links;
   return (
     <section
       id="contact"
       aria-labelledby="contact-title"
-      className="mx-auto w-full max-w-6xl px-5 py-16 sm:py-24"
+      // The footer opens with a 4 rem margin; pull the door's step down onto its tiles.
+      className="mx-auto -mb-16 grid w-full max-w-[1280px] items-end gap-12 px-5 pt-[4.4rem] *:min-w-0 min-[920px]:grid-cols-[1.3fr_0.7fr]"
     >
-      <Reveal>
-        <div className="relative overflow-hidden rounded-3xl border border-border bg-card px-6 py-14 text-center sm:px-12 sm:py-20">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -bottom-40 left-1/2 size-[32rem] -translate-x-1/2 rounded-full bg-brand-bright/15 blur-3xl"
-          />
-          <div className="relative">
-            <p className="font-mono text-sm font-medium tracking-widest text-brand uppercase">
-              Contact
-            </p>
-            <h2
-              id="contact-title"
-              className="mx-auto mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-balance sm:text-5xl"
-            >
-              Hiring for payments or full-stack TypeScript?
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-xl text-pretty text-muted-foreground">
-              I am open to remote roles. Email is the quickest way to reach me.
-            </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <LinkButton
-                variant="primary"
-                href={`mailto:${profile.links.email}`}
-              >
-                <Mail aria-hidden="true" /> {profile.links.email}
-              </LinkButton>
-              <LinkButton href={profile.links.cv}>
-                <FileDown aria-hidden="true" /> Download CV
-              </LinkButton>
-              <LinkButton href={profile.links.linkedin}>
-                <LinkedInIcon /> LinkedIn
-              </LinkButton>
-              <LinkButton href={profile.links.github}>
-                <GitHubIcon /> GitHub
-              </LinkButton>
-            </div>
-          </div>
-          <BorderBeam
-            size={200}
-            duration={12}
-            colorFrom="var(--brand-bright)"
-            colorTo="var(--brand-2)"
-          />
+      <div className="min-[920px]:pb-10">
+        <p className="flex items-center gap-3">
+          <span
+            lang="ar"
+            className="font-kufi text-[1.2rem] font-bold text-brand"
+          >
+            مرحبا
+          </span>
+          <span className="font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase">
+            Marhba · welcome
+          </span>
+        </p>
+        <h2
+          id="contact-title"
+          className="mt-2 mb-5 font-display text-[clamp(2.6rem,6.4vw,5.6rem)] leading-[0.92] font-black tracking-[-0.04em] text-balance"
+        >
+          Hiring for payments or full-stack TypeScript?{" "}
+          <span className="text-brand">Knock.</span>
+        </h2>
+        <p className="max-w-[33rem] text-[1.12rem] text-pretty text-muted-foreground">
+          I am open to remote roles. Email is the quickest way to reach me.
+        </p>
+        <p className="mt-5 inline-flex max-w-full flex-wrap items-center gap-x-3 gap-y-2 border-b-[3px] border-sun pb-1">
+          <span className="font-mono text-[clamp(0.95rem,2.6vw,1.1rem)] break-all">
+            {email}
+          </span>
+          <CopyButton text={email} />
+        </p>
+        <div className="mt-7 flex flex-wrap gap-2.5">
+          <LinkButton variant="primary" href={`mailto:${email}`}>
+            <Mail aria-hidden="true" /> Email me
+          </LinkButton>
+          <LinkButton href={profile.links.cv}>
+            <FileDown aria-hidden="true" /> Download CV
+          </LinkButton>
+          <LinkButton href={profile.links.linkedin}>
+            <LinkedInIcon /> LinkedIn
+          </LinkButton>
+          <LinkButton href={profile.links.github}>
+            <GitHubIcon /> GitHub
+          </LinkButton>
         </div>
-      </Reveal>
+      </div>
+
+      <div className="w-[min(100%,250px)] min-[920px]:justify-self-end">
+        <DoorFrame small>
+          <Door motif="sun" paint="yellow" />
+        </DoorFrame>
+      </div>
     </section>
   );
 }

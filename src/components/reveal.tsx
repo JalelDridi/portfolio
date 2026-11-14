@@ -1,19 +1,21 @@
 import type { ReactNode } from "react";
-import { BlurFade } from "./ui/blur-fade";
 
-/** Fades content in the first time it scrolls into view. */
+/**
+ * Was a fade-in on scroll; the Statement design keeps the page still, so this
+ * only passes its children through until the sections stop using it.
+ */
 export function Reveal({
   children,
-  delay = 0,
   className,
 }: {
   children: ReactNode;
+  /** Accepted for the callers that still pass it; ignored. */
   delay?: number;
   className?: string;
 }) {
-  return (
-    <BlurFade inView delay={delay} className={className} inViewMargin="-60px">
-      {children}
-    </BlurFade>
+  return className ? (
+    <div className={className}>{children}</div>
+  ) : (
+    <>{children}</>
   );
 }

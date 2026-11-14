@@ -4,10 +4,11 @@ import { Experience } from "@/components/sections/experience";
 import { Flagship } from "@/components/sections/flagship";
 import { Hero } from "@/components/sections/hero";
 import { Leadership } from "@/components/sections/leadership";
-import { Metrics } from "@/components/sections/metrics";
+import { Playground } from "@/components/sections/playground";
 import { Skills } from "@/components/sections/skills";
 import { Work } from "@/components/sections/work";
 import { Writing } from "@/components/sections/writing";
+import { TileBand } from "@/components/motifs";
 import { experience, flagship, profile, SITE_URL, skills } from "@/content";
 
 // Tells search engines who this page is about, in their own vocabulary.
@@ -49,10 +50,12 @@ export default function Home() {
         }}
       />
       <Hero />
-      <Metrics />
-      <Flagship />
       <Work />
+      <Flagship />
+      <Playground />
       <Writing />
+      {/* A ground line of tiles under the notes, before the skills. */}
+      <TileBand className="mt-[4.2rem]" />
       <Skills />
       <About />
       <Experience />

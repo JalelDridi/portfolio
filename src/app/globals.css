@@ -4,54 +4,66 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Bab: a whitewashed street, Sidi Bou Said blue, painted doors. */
 :root {
-  --radius: 0.75rem;
-  --background: oklch(0.99 0.003 160);
-  --foreground: oklch(0.2 0.02 200);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.02 200);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.02 200);
-  --primary: oklch(0.2 0.02 200);
-  --primary-foreground: oklch(0.99 0 0);
-  --secondary: oklch(0.96 0.006 180);
-  --secondary-foreground: oklch(0.2 0.02 200);
-  --muted: oklch(0.96 0.006 180);
-  --muted-foreground: oklch(0.38 0.02 200);
-  --accent: oklch(0.96 0.006 180);
-  --accent-foreground: oklch(0.2 0.02 200);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0.008 180);
-  --input: oklch(0.9 0.008 180);
-  --ring: oklch(0.55 0.13 165);
-  /* Brand: the green of a balanced ledger. */
-  --brand: oklch(0.48 0.12 165);
-  --brand-bright: oklch(0.62 0.15 165);
-  --brand-2: oklch(0.5 0.12 225);
+  --radius: 0;
+  /* The wall. */
+  --background: #faf9f4;
+  /* Frames and plaques. */
+  --card: #ffffff;
+  /* Door frames and quiet bands. */
+  --wall-2: #f1efe6;
+  --foreground: #101922;
+  --muted-foreground: #4b5764;
+  --border: #dedbd0;
+  /* Sidi Bou Said blue: links, accents, the flagship band. */
+  --brand: #1763b6;
+  --brand-deep: #0f4f96;
+  /* Door yellow: the one loud accent. */
+  --sun: #edb021;
+  --leaf: #23795a;
+  /* Door red; also "held" in the playground. */
+  --red: #c5352c;
+  --stud: #10151b;
+  /* The dark inside of a door. */
+  --room: #0c1520;
+
+  /*
+   * The shadcn tokens follow the ones above. They are declared once here:
+   * `.dark` sits on the same <html> element, so these resolve against
+   * whichever theme's values apply.
+   */
+  --card-foreground: var(--foreground);
+  --popover: var(--card);
+  --popover-foreground: var(--foreground);
+  --primary: var(--foreground);
+  --primary-foreground: var(--background);
+  --secondary: var(--wall-2);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--wall-2);
+  --accent: var(--wall-2);
+  --accent-foreground: var(--foreground);
+  --destructive: var(--red);
+  --input: var(--border);
+  --ring: var(--brand);
 }
 
+/* The street at night. Door paints do not change. */
 .dark {
-  --background: oklch(0.155 0.012 220);
-  --foreground: oklch(0.96 0.005 180);
-  --card: oklch(0.195 0.014 220);
-  --card-foreground: oklch(0.96 0.005 180);
-  --popover: oklch(0.195 0.014 220);
-  --popover-foreground: oklch(0.96 0.005 180);
-  --primary: oklch(0.96 0.005 180);
-  --primary-foreground: oklch(0.17 0.012 220);
-  --secondary: oklch(0.24 0.015 220);
-  --secondary-foreground: oklch(0.96 0.005 180);
-  --muted: oklch(0.24 0.015 220);
-  --muted-foreground: oklch(0.8 0.012 200);
-  --accent: oklch(0.24 0.015 220);
-  --accent-foreground: oklch(0.96 0.005 180);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 11%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.7 0.14 165);
-  --brand: oklch(0.8 0.15 165);
-  --brand-bright: oklch(0.8 0.15 165);
-  --brand-2: oklch(0.78 0.12 215);
+  --background: #0d1621;
+  --card: #131f2c;
+  --wall-2: #172433;
+  --foreground: #f0eee7;
+  --muted-foreground: #a9b4c0;
+  --border: #263443;
+  --brand: #58a0ea;
+  /* The flagship band keeps a deep blue at night. */
+  --brand-deep: #12508f;
+  --sun: #f2bb3a;
+  --leaf: #3fa37c;
+  --red: #e2685e;
+  --stud: #0a0e13;
+  --room: #060b12;
 }
 
 @theme inline {
@@ -74,41 +86,55 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-brand: var(--brand);
-  --color-brand-bright: var(--brand-bright);
-  --color-brand-2: var(--brand-2);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-geist-sans);
+  --color-brand-deep: var(--brand-deep);
+  --color-sun: var(--sun);
+  --color-leaf: var(--leaf);
+  --color-red: var(--red);
+  --color-stud: var(--stud);
+  --color-room: var(--room);
+  --color-wall-2: var(--wall-2);
+  --font-display: var(--font-alexandria), system-ui, sans-serif;
+  --font-heading: var(--font-alexandria), system-ui, sans-serif;
+  --font-sans: var(--font-onest), system-ui, sans-serif;
+  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
+  --font-kufi: var(--font-reem-kufi), var(--font-alexandria), sans-serif;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
-  --animate-marquee: marquee var(--duration) infinite linear;
-  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  /* A rule drawn from the left, once (the account summary). */
+  --animate-draw: draw 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
 
-  @keyframes marquee {
+  @keyframes draw {
     from {
-      transform: translateX(0);
+      transform: scaleX(0);
     }
     to {
-      transform: translateX(calc(-100% - var(--gap)));
-    }
-  }
-  @keyframes marquee-vertical {
-    from {
-      transform: translateY(0);
-    }
-    to {
-      transform: translateY(calc(-100% - var(--gap)));
+      transform: scaleX(1);
     }
   }
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
+  }
+  /* One visible keyboard focus ring on every control. */
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+  /* On painted bands the ring takes the band's text colour, or door yellow in the dark room. */
+  .focus-white :focus-visible {
+    outline-color: #ffffff;
+  }
+  .focus-ink :focus-visible {
+    outline-color: #101922;
+  }
+  .focus-sun :focus-visible {
+    outline-color: var(--sun);
   }
   html {
     @apply scroll-smooth font-sans;
@@ -117,31 +143,70 @@
     scroll-padding-top: 5rem;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
   }
   ::selection {
-    background: color-mix(in oklch, var(--brand-bright) 35%, transparent);
+    background: color-mix(in oklch, var(--brand) 25%, transparent);
   }
 }
 
-/* A dot grid drawn by CSS: no DOM nodes and no JavaScript. */
-@utility bg-dots {
-  background-image: radial-gradient(
-    color-mix(in oklch, var(--foreground) 16%, transparent) 1px,
-    transparent 1px
-  );
-  background-size: 22px 22px;
-}
+/*
+ * Doors. Leaves swing inward on the hinge side and darken a little as they
+ * open; the parent sets `perspective` and `data-state`.
+ */
+@layer components {
+  .door-leaf {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 2;
+    width: 50%;
+    backface-visibility: hidden;
+    transition:
+      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+      filter 0.9s;
+  }
+  .door-leaf-l {
+    left: 0;
+    transform-origin: left center;
+  }
+  .door-leaf-r {
+    right: 0;
+    transform-origin: right center;
+  }
+  [data-state="ajar"] > .door-leaf-r {
+    transform: rotateY(-76deg);
+    filter: brightness(0.82);
+  }
+  [data-state="open"] > .door-leaf-l {
+    transform: rotateY(78deg);
+    filter: brightness(0.82);
+  }
+  [data-state="open"] > .door-leaf-r {
+    transform: rotateY(-78deg);
+    filter: brightness(0.82);
+  }
 
-@utility text-gradient {
-  background-image: linear-gradient(
-    100deg,
-    var(--brand) 0%,
-    var(--brand-2) 100%
-  );
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
+  /*
+   * The street's doors are links: they open while pointed at or focused, and
+   * stand ajar on touch screens, which cannot hover, so the picture shows.
+   */
+  .door-link:hover .door-leaf-l,
+  .door-link:focus-visible .door-leaf-l {
+    transform: rotateY(78deg);
+    filter: brightness(0.82);
+  }
+  .door-link:hover .door-leaf-r,
+  .door-link:focus-visible .door-leaf-r {
+    transform: rotateY(-78deg);
+    filter: brightness(0.82);
+  }
+  @media (hover: none) {
+    .door-link .door-leaf-r {
+      transform: rotateY(-76deg);
+      filter: brightness(0.82);
+    }
+  }
 }
 
 /* People who ask for less motion get a still page. */
@@ -153,6 +218,7 @@
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }

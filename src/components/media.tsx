@@ -5,11 +5,13 @@ import { cn } from "@/lib/utils";
 import { BrowserFrame } from "./browser-frame";
 import { LazyVideo } from "./lazy-video";
 
-/** A phone outline around a tall screenshot or recording. */
+/** A phone outline around a tall screenshot or recording, on a whitewashed ground. */
 function PhoneFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="mx-auto w-full max-w-[17rem] overflow-hidden rounded-[2.25rem] border-[6px] border-foreground/85 bg-black shadow-2xl shadow-black/15 dark:border-foreground/25 dark:shadow-black/50">
-      {children}
+    <div className="bg-wall-2 px-5 py-8 shadow-[0_0_0_1px_var(--border)]">
+      <div className="mx-auto w-full max-w-[17rem] overflow-hidden rounded-[2.25rem] border-[6px] border-stud bg-black">
+        {children}
+      </div>
     </div>
   );
 }
@@ -56,7 +58,7 @@ export function ShotFigure({
           className="w-full"
         />
       </Frame>
-      <figcaption className="text-center text-base text-pretty text-muted-foreground">
+      <figcaption className="text-left font-mono text-[0.8rem] text-pretty text-muted-foreground">
         {shot.caption}
       </figcaption>
     </figure>
@@ -85,7 +87,7 @@ export function ClipFigure({
           label={clip.label}
         />
       </Frame>
-      <figcaption className="text-center text-base text-pretty text-muted-foreground">
+      <figcaption className="text-left font-mono text-[0.8rem] text-pretty text-muted-foreground">
         {clip.caption}
       </figcaption>
     </figure>

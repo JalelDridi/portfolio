@@ -47,7 +47,7 @@ function Face({
         r="46"
         className={cn(
           "stroke-border",
-          day ? "fill-card" : "fill-muted",
+          day ? "fill-card" : "fill-background",
           home && "stroke-brand",
         )}
         strokeWidth={home ? 3 : 2}
@@ -103,7 +103,14 @@ function Face({
  * Analogue clocks for home and the places I work with. The hands sweep into
  * place once the browser knows the time; the server cannot.
  */
-export function WorldClocks({ clocks }: { clocks: Clock[] }) {
+export function WorldClocks({
+  clocks,
+  className,
+}: {
+  clocks: Clock[];
+  /** The grid's columns; two, then four from `sm`, by default. */
+  className?: string;
+}) {
   const [now, setNow] = useState<Date | null>(null);
 
   useEffect(() => {
@@ -114,7 +121,12 @@ export function WorldClocks({ clocks }: { clocks: Clock[] }) {
   }, []);
 
   return (
-    <ul className="grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-4">
+    <ul
+      className={cn(
+        "grid gap-x-4 gap-y-6",
+        className ?? "grid-cols-2 sm:grid-cols-4",
+      )}
+    >
       {clocks.map((clock, index) => {
         const time = now ? partsIn(clock.zone, now) : { hour: 0, minute: 0 };
         const label = now
@@ -124,8 +136,10 @@ export function WorldClocks({ clocks }: { clocks: Clock[] }) {
           <li key={clock.zone} className="flex flex-col items-center gap-2">
             <Face hour={time.hour} minute={time.minute} home={index === 0} />
             <p className="text-center">
-              <span className="block text-base font-medium">{clock.city}</span>
-              <span className="block font-mono text-sm text-muted-foreground">
+              <span className="block font-display text-base font-bold tracking-[-0.01em]">
+                {clock.city}
+              </span>
+              <span className="block font-mono text-[0.8rem] text-muted-foreground">
                 {label}
               </span>
             </p>

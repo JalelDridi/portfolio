@@ -1,57 +1,56 @@
 import Link from "next/link";
 import { profile } from "@/content";
 import { MobileNav } from "./mobile-nav";
+import { StatusClocks } from "./status-clocks";
 import { ThemeToggle } from "./theme-toggle";
 
 const NAV = [
-  { href: "/#project", label: "Project" },
   { href: "/#work", label: "Work" },
-  { href: "/#writing", label: "Writing" },
+  { href: "/#project", label: "Flagship" },
+  { href: "/#writing", label: "Notes" },
   { href: "/#about", label: "About" },
   { href: "/#experience", label: "Experience" },
+  { href: "/#contact", label: "Contact" },
 ];
+
+const BIZERTE = [{ city: "Bizerte", zone: "Africa/Tunis" }];
 
 export function SiteHeader() {
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-border/60 bg-background/75 backdrop-blur-md">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-5">
+    <header className="sticky top-0 z-50 bg-background">
+      <div className="mx-auto flex h-16 w-full max-w-[1280px] items-center justify-between gap-4 px-5">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold tracking-tight whitespace-nowrap"
+          className="flex items-baseline gap-2.5 font-display text-[1.05rem] font-extrabold whitespace-nowrap"
         >
-          <span
-            aria-hidden="true"
-            className="flex size-7 items-center justify-center rounded-md bg-foreground font-mono text-xs text-background"
-          >
-            JD
-          </span>
           {profile.shortName}
+          <span
+            lang="ar"
+            className="font-kufi text-[1.15rem] font-bold text-brand"
+          >
+            جلال
+          </span>
         </Link>
         <nav
           aria-label="Sections"
-          className="hidden items-center gap-1 md:flex"
+          className="hidden items-center gap-6 font-medium md:flex"
         >
           {NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-md px-3 py-1.5 text-base text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="transition-colors hover:text-brand"
             >
               {item.label}
             </Link>
           ))}
         </nav>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
+          <span className="hidden font-mono text-[0.8rem] whitespace-nowrap text-muted-foreground xl:inline">
+            <StatusClocks zones={BIZERTE} /> · {profile.coordinates}
+          </span>
           <ThemeToggle />
-          <Link
-            href="/#contact"
-            className="hidden h-9 items-center rounded-full bg-foreground sm:inline-flex px-4 text-base font-medium text-background transition-opacity hover:opacity-85"
-          >
-            Contact
-          </Link>
-          <MobileNav
-            items={[...NAV, { href: "/#contact", label: "Contact" }]}
-          />
+          <MobileNav items={NAV} />
         </div>
       </div>
     </header>

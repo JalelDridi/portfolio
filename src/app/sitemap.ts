@@ -5,6 +5,11 @@ import { articles } from "@/writing";
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: SITE_URL, changeFrequency: "monthly", priority: 1 },
+    {
+      url: `${SITE_URL}/changelog`,
+      changeFrequency: "monthly",
+      priority: 0.3,
+    },
     ...projects.map((project) => ({
       url: `${SITE_URL}/work/${project.slug}`,
       changeFrequency: "monthly" as const,

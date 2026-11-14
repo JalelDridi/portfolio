@@ -1,20 +1,36 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Alexandria, DM_Mono, Onest, Reem_Kufi } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { profile, SITE_URL } from "@/content";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const alexandria = Alexandria({
   subsets: ["latin"],
+  weight: ["500", "700", "800", "900"],
+  variable: "--font-alexandria",
 });
 
-// Only small labels use the mono face, so it is not worth a preload.
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const onest = Onest({
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-onest",
+});
+
+// Only labels, dates and numbers use the mono face, so it is not worth a preload.
+const dmMono = DM_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-dm-mono",
+  preload: false,
+});
+
+// A few Arabic words, each beside its meaning; not worth a preload either.
+const reemKufi = Reem_Kufi({
+  subsets: ["arabic"],
+  weight: ["500", "700"],
+  variable: "--font-reem-kufi",
   preload: false,
 });
 
@@ -44,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable}`}
+      className={`${alexandria.variable} ${onest.variable} ${dmMono.variable} ${reemKufi.variable}`}
     >
       <body>
         <Providers>

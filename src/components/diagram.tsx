@@ -95,7 +95,8 @@ export function Diagram({
       aria-label={spec.caption}
       className={cn(
         "relative flex w-full items-stretch justify-between",
-        compact ? "gap-3" : "gap-4 sm:gap-8",
+        // Phones get a tighter row so five columns fit a 340 px screen.
+        compact ? "gap-3" : "gap-1.5 sm:gap-8",
         className,
       )}
     >
@@ -117,21 +118,23 @@ export function Diagram({
                 <div
                   ref={refs[node.id]}
                   className={cn(
-                    "flex items-center justify-center rounded-xl border border-border bg-card text-brand shadow-sm",
-                    compact ? "size-11" : "size-12 sm:size-14",
+                    // A painted square, like a door stud: the icon is cut out of it.
+                    "flex items-center justify-center bg-brand text-card",
+                    compact ? "size-11" : "size-10 sm:size-16",
                   )}
                 >
                   <Icon
-                    className={compact ? "size-5" : "size-5 sm:size-6"}
+                    className={compact ? "size-5" : "size-4 sm:size-7"}
                     aria-hidden="true"
                   />
                 </div>
                 <span
                   className={cn(
-                    "leading-tight font-medium text-muted-foreground",
+                    "font-medium text-foreground",
+                    // The line height comes after the size, or cn() drops it.
                     compact
-                      ? "max-w-20 text-xs"
-                      : "max-w-20 text-xs sm:max-w-28 sm:text-sm",
+                      ? "max-w-20 text-[0.85rem] leading-tight"
+                      : "max-w-20 text-[0.72rem] leading-tight sm:max-w-28 sm:text-[0.85rem]",
                   )}
                 >
                   {node.label}
@@ -151,11 +154,11 @@ export function Diagram({
             toRef={refs[to]}
             duration={4}
             delay={index * 0.35}
-            pathColor="var(--border)"
-            pathOpacity={1}
+            pathColor="var(--brand)"
+            pathOpacity={0.35}
             pathWidth={1.5}
-            gradientStartColor="var(--brand-bright)"
-            gradientStopColor="var(--brand-2)"
+            gradientStartColor="var(--brand)"
+            gradientStopColor="color-mix(in oklch, var(--brand) 40%, transparent)"
           />
         ))}
     </div>

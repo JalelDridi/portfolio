@@ -2,11 +2,13 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 import { LinkButton } from "@/components/link-button";
-import { Reveal } from "@/components/reveal";
 import { Rise } from "@/components/rise";
 import { Tags } from "@/components/tags";
 import { profile, SITE_URL } from "@/content";
+import { formatShortDate } from "@/lib/dates";
+import { cn } from "@/lib/utils";
 import { articles, type Block } from "@/writing";
 
 export function generateStaticParams() {
@@ -37,38 +39,61 @@ export async function generateMetadata(
   };
 }
 
-function formatDate(iso: string) {
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(iso));
+const LABEL =
+  "font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase";
+
+/** A row under a hairline: the label in its own column, the content beside it. */
+function Row({
+  label,
+  id,
+  children,
+}: {
+  label: string;
+  id?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section
+      aria-labelledby={id}
+      className="grid gap-x-8 gap-y-4 border-t border-border py-9 first:border-t-0 md:grid-cols-[11rem_1fr]"
+    >
+      {id ? (
+        <h2 id={id} className={cn(LABEL, "text-brand")}>
+          {label}
+        </h2>
+      ) : (
+        <p className={LABEL}>{label}</p>
+      )}
+      <div className="min-w-0">{children}</div>
+    </section>
+  );
 }
 
 function BlockView({ block }: { block: Block }) {
   switch (block.kind) {
     case "h2":
       return (
-        <h2 className="mt-6 text-3xl font-semibold tracking-tight text-balance">
+        <h2 className="mt-8 font-display text-[clamp(1.7rem,3.4vw,2.3rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance">
           {block.text}
         </h2>
       );
     case "p":
       return (
-        <p className="text-xl leading-relaxed text-pretty">{block.text}</p>
+        <p className="text-[1.2rem] leading-relaxed text-pretty">
+          {block.text}
+        </p>
       );
     case "list":
       return (
-        <ol className="flex flex-col gap-4">
+        <ol className="border-y border-border">
           {block.items.map((item, index) => (
             <li
               key={item.lead}
-              className="flex gap-4 rounded-xl border border-border bg-card p-5"
+              className="grid grid-cols-[2rem_1fr] border-b border-border py-4 last:border-b-0"
             >
               <span
                 aria-hidden="true"
-                className="flex size-8 shrink-0 items-center justify-center rounded-full bg-muted font-mono text-sm font-medium text-brand"
+                className="pt-1 font-mono text-[0.85rem] text-brand"
               >
                 {index + 1}
               </span>
@@ -82,8 +107,8 @@ function BlockView({ block }: { block: Block }) {
       );
     case "code":
       return (
-        <figure className="overflow-hidden rounded-xl border border-border bg-card">
-          <figcaption className="flex items-center justify-between gap-3 border-b border-border bg-muted/60 px-4 py-2.5 font-mono text-sm text-muted-foreground">
+        <figure className="overflow-hidden bg-wall-2 px-[9px] pb-[9px] shadow-[0_0_0_1px_var(--border)]">
+          <figcaption className="flex items-center justify-between gap-3 py-2 font-mono text-[0.8rem] text-muted-foreground">
             <span className="truncate">{block.caption ?? block.language}</span>
             {block.caption && <span>{block.language}</span>}
           </figcaption>
@@ -91,7 +116,7 @@ function BlockView({ block }: { block: Block }) {
           <pre
             tabIndex={0}
             aria-label={`${block.language} code`}
-            className="overflow-x-auto p-4 font-mono text-[0.9rem] leading-relaxed"
+            className="overflow-x-auto bg-card p-4 font-mono text-[0.9rem] leading-relaxed"
           >
             <code>{block.code}</code>
           </pre>
@@ -119,7 +144,7 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-3xl px-5 pt-28 pb-16 sm:pb-24">
+    <main className="mx-auto w-full max-w-[1280px] px-5 pt-[4.2rem] pb-16 sm:pb-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -129,18 +154,18 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
       <Rise>
         <Link
           href="/#writing"
-          className="inline-flex items-center gap-1.5 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
+          className="inline-flex items-center gap-1.5 text-base font-medium text-muted-foreground transition-colors hover:text-brand"
         >
           <ArrowLeft className="size-4" aria-hidden="true" /> All writing
         </Link>
-        <p className="mt-8 font-mono text-sm font-medium tracking-widest text-brand uppercase">
-          <time dateTime={article.date}>{formatDate(article.date)}</time> ·{" "}
+        <p className={`mt-10 ${LABEL}`}>
+          <time dateTime={article.date}>{formatShortDate(article.date)}</time> ·{" "}
           {article.minutes} minute read
         </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
+        <h1 className="mt-3 max-w-5xl font-display text-[clamp(2.6rem,6.4vw,5.4rem)] leading-[0.92] font-black tracking-[-0.04em] text-balance">
           {article.title}
         </h1>
-        <p className="mt-5 text-xl text-pretty text-muted-foreground sm:text-2xl">
+        <p className="mt-6 max-w-3xl text-[1.25rem] text-pretty text-muted-foreground">
           {article.summary}
         </p>
         <div className="mt-6">
@@ -148,23 +173,18 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
         </div>
       </Rise>
 
-      <div className="mt-12 flex flex-col gap-6">
-        {article.blocks.map((block, blockIndex) => (
-          <Reveal key={blockIndex}>
-            <BlockView block={block} />
-          </Reveal>
-        ))}
+      {/* The body sits in the content column, under a hairline. */}
+      <div className="mt-12 border-t border-border pt-9 md:pl-[13rem]">
+        <div className="flex max-w-3xl flex-col gap-6">
+          {article.blocks.map((block, blockIndex) => (
+            <BlockView key={blockIndex} block={block} />
+          ))}
+        </div>
       </div>
 
-      <Reveal>
-        <section aria-labelledby="sources" className="mt-14">
-          <h2
-            id="sources"
-            className="font-mono text-sm font-medium tracking-widest text-brand uppercase"
-          >
-            In the repository
-          </h2>
-          <ul className="mt-4 flex flex-wrap gap-3">
+      <div className="mt-12 border-t border-border">
+        <Row label="In the repository" id="sources">
+          <ul className="flex flex-wrap gap-3">
             {article.links.map((link) => (
               <li key={link.href}>
                 <LinkButton href={link.href} className="h-auto min-h-11 py-2">
@@ -174,26 +194,22 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
               </li>
             ))}
           </ul>
-        </section>
-      </Reveal>
+        </Row>
+      </div>
 
       {next.slug !== article.slug && (
         <Link
           href={`/writing/${next.slug}`}
-          className="group mt-16 flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-brand/50"
+          className="group grid gap-x-8 gap-y-2 border-y border-border py-7 transition-colors hover:text-brand md:grid-cols-[11rem_1fr]"
         >
-          <span>
-            <span className="block font-mono text-sm text-muted-foreground">
-              Next
-            </span>
-            <span className="mt-1 block text-2xl font-semibold tracking-tight text-balance">
-              {next.title}
-            </span>
+          <span className={`pt-2 ${LABEL}`}>Next</span>
+          <span className="flex items-center justify-between gap-4 font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-extrabold tracking-[-0.03em] text-balance">
+            {next.title}
+            <ArrowRight
+              className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
+              aria-hidden="true"
+            />
           </span>
-          <ArrowRight
-            className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
-            aria-hidden="true"
-          />
         </Link>
       )}
     </main>

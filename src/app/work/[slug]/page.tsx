@@ -2,13 +2,16 @@ import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { ReactNode } from "react";
 import { LinkButton } from "@/components/link-button";
 import { ClipFigure, ShotFigure } from "@/components/media";
+import { ClosedDoor, Door, DoorFrame } from "@/components/motifs";
 import { DiagramPanel } from "@/components/project-visual";
-import { Reveal } from "@/components/reveal";
 import { Rise } from "@/components/rise";
 import { Tags } from "@/components/tags";
-import { type Project, projects, type Shot } from "@/content";
+import { type DiagramSpec, projects, type Shot } from "@/content";
+import { DOOR_PAINTS, type DoorPaint, INK } from "@/lib/motifs";
+import { cn } from "@/lib/utils";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
@@ -37,26 +40,105 @@ export async function generateMetadata(
   };
 }
 
-function DiagramFigure({ project }: { project: Project }) {
-  if (project.visual.kind !== "diagram") return null;
+const LABEL =
+  "font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase";
+
+/*
+ * Text on the head band. White passes AA on the dark paints; on yellow and on
+ * sky (white on #3d8bc9 is 3.7:1, short of 4.5:1) the text is ink.
+ */
+const BAND_TEXT: Record<DoorPaint, string> = {
+  blue: "#ffffff",
+  green: "#ffffff",
+  yellow: INK,
+  sky: INK,
+  red: "#ffffff",
+  night: "#ffffff",
+};
+
+/** An architecture sketch in a whitewashed frame, captioned below. */
+function DiagramFigure({ spec }: { spec: DiagramSpec }) {
   return (
-    <figure className="overflow-hidden rounded-2xl border border-border bg-card">
-      <DiagramPanel project={project} size="page" />
-      <figcaption className="border-t border-border px-5 py-3 text-base text-muted-foreground">
-        {project.visual.diagram.caption}
+    <figure className="flex flex-col gap-3">
+      <div className="bg-wall-2 p-[9px] shadow-[0_0_0_1px_var(--border)]">
+        <div className="bg-card">
+          <DiagramPanel spec={spec} size="page" />
+        </div>
+      </div>
+      <figcaption className="font-mono text-[0.8rem] text-pretty text-muted-foreground">
+        {spec.caption}
       </figcaption>
     </figure>
   );
 }
 
-function SectionLabel({ id, children }: { id: string; children: string }) {
+/** What was built, as a list with a lozenge stud before each line. */
+function BuiltList({ items }: { items: string[] }) {
   return (
-    <h2
-      id={id}
-      className="font-mono text-sm font-medium tracking-widest text-brand uppercase"
+    <ol className="max-w-3xl">
+      {items.map((item) => (
+        <li
+          key={item}
+          className="grid grid-cols-[1.6rem_1fr] border-b border-border py-3 text-lg leading-relaxed last:border-b-0"
+        >
+          <span
+            aria-hidden="true"
+            className="mt-[0.72em] size-2 rotate-45 bg-brand"
+          />
+          <span className="text-pretty">{item}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+/** An id for a part's heading, from its title. */
+function partId(title: string) {
+  return `part-${title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")}`;
+}
+
+/** A row under a hairline: the label in its own column, the content beside it. */
+function Row({
+  label,
+  id,
+  number,
+  children,
+}: {
+  label: string;
+  id?: string;
+  /** A part of a case study: its number, and its title set as a heading. */
+  number?: number;
+  children: ReactNode;
+}) {
+  return (
+    <section
+      aria-labelledby={id}
+      className="grid gap-x-8 gap-y-4 border-t border-border py-9 first:border-t-0 md:grid-cols-[11rem_1fr]"
     >
-      {children}
-    </h2>
+      {id && number ? (
+        <div>
+          <p aria-hidden="true" className={cn(LABEL, "text-brand")}>
+            N° {String(number).padStart(2, "0")}
+          </p>
+          <h2
+            id={id}
+            className="mt-2 font-display text-[1.45rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance"
+          >
+            {label}
+          </h2>
+        </div>
+      ) : id ? (
+        <h2 id={id} className={cn(LABEL, "text-brand")}>
+          {label}
+        </h2>
+      ) : (
+        <p className={LABEL}>{label}</p>
+      )}
+      <div className="min-w-0">{children}</div>
+    </section>
   );
 }
 
@@ -68,6 +150,8 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
   const project = projects[index];
   const next = projects[(index + 1) % projects.length];
   const { visual, clip, cover } = project;
+  const paint = DOOR_PAINTS[project.door.paint];
+  const bandText = BAND_TEXT[project.door.paint];
 
   // The lead picture is the most vivid thing available: a recording, then a
   // screenshot, then the architecture sketch.
@@ -75,7 +159,9 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
   // Everything not used as the lead goes in the gallery.
   const stills: Shot[] = [
     ...(cover && lead !== "cover" ? [cover] : []),
-    ...(visual.kind === "image" && (lead !== "visual" || cover)
+    ...(visual.kind === "image" &&
+    (lead !== "visual" || cover) &&
+    visual.src !== cover?.src
       ? [
           {
             ...visual,
@@ -87,165 +173,178 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
       : []),
     ...(project.gallery ?? []),
   ];
-  const showDiagramBelow = visual.kind === "diagram" && lead !== "visual";
+  // A case study in parts draws each part's diagram beside it instead.
+  const showDiagramBelow =
+    visual.kind === "diagram" && lead !== "visual" && !project.parts;
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-5 pt-28 pb-16 sm:pb-24">
-      <Rise>
-        <Link
-          href="/#work"
-          className="inline-flex items-center gap-1.5 text-base font-medium text-muted-foreground transition-colors hover:text-foreground"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" /> All work
-        </Link>
-        <p className="mt-8 font-mono text-sm font-medium tracking-widest text-brand uppercase">
-          {project.company} · {project.year}
-        </p>
-        <h1 className="mt-3 text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
-          {project.title}
-        </h1>
-        <p className="mt-5 max-w-3xl text-xl text-pretty text-muted-foreground sm:text-2xl">
-          {project.summary}
-        </p>
-      </Rise>
-
-      <Rise delay={100} className="mt-10">
-        {lead === "clip" && clip && <ClipFigure clip={clip} />}
-        {lead === "cover" && cover && <ShotFigure shot={cover} priority />}
-        {lead === "visual" && visual.kind === "diagram" && (
-          <DiagramFigure project={project} />
-        )}
-        {lead === "visual" && visual.kind === "image" && (
-          <ShotFigure
-            priority
-            shot={{
-              ...visual,
-              caption: "",
-              frame: "browser",
-              url: "grade.offa.com",
-            }}
-          />
-        )}
-      </Rise>
-
-      <div className="mt-14 grid gap-12 md:grid-cols-[1fr_16rem]">
-        <div className="flex flex-col gap-12">
-          <Reveal>
-            <section aria-labelledby="why">
-              <SectionLabel id="why">Why it existed</SectionLabel>
-              <p className="mt-4 text-xl leading-relaxed text-pretty">
-                {project.why}
-              </p>
-            </section>
-          </Reveal>
-
-          <Reveal>
-            <section aria-labelledby="built">
-              <SectionLabel id="built">What I built</SectionLabel>
-              <ul className="mt-5 flex flex-col gap-4">
-                {project.built.map((item) => (
-                  <li key={item} className="flex gap-3 text-lg leading-relaxed">
-                    <span
-                      aria-hidden="true"
-                      className="mt-3 size-1.5 shrink-0 rounded-full bg-brand"
-                    />
-                    <span className="text-pretty">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          </Reveal>
-
-          {project.outcome && (
-            <Reveal>
-              <section aria-labelledby="outcome">
-                <SectionLabel id="outcome">Outcome</SectionLabel>
-                <p className="mt-4 text-xl leading-relaxed text-pretty">
-                  {project.outcome}
-                </p>
-              </section>
-            </Reveal>
-          )}
-
-          {project.note && (
-            <p className="rounded-xl border border-border bg-muted/50 p-4 text-base text-muted-foreground">
-              {project.note}
+    <main className="pb-16 sm:pb-24">
+      {/* The head band, in the paint of the project's door. */}
+      <header
+        className={bandText === INK ? "focus-ink" : "focus-white"}
+        style={{ backgroundColor: paint.fill, color: bandText }}
+      >
+        <div className="mx-auto grid w-full max-w-[1280px] items-end gap-12 px-5 *:min-w-0 md:grid-cols-[1fr_auto]">
+          <Rise className="pt-10 pb-12 md:pt-12 md:pb-14">
+            <Link
+              href="/#work"
+              className="inline-flex items-center gap-1.5 text-base font-medium underline-offset-4 hover:underline focus-visible:outline-current"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" /> All work
+            </Link>
+            <p className="mt-8 font-mono text-[0.8rem] tracking-[0.1em] uppercase">
+              {project.company} · {project.year}
             </p>
+            <h1 className="mt-3 font-display text-[clamp(2.6rem,6.4vw,5.4rem)] leading-[0.92] font-black tracking-[-0.04em] text-balance">
+              {project.title}
+            </h1>
+            <p className="mt-6 max-w-3xl text-[1.25rem] text-pretty">
+              {project.summary}
+            </p>
+          </Rise>
+          {/* The project's door, closed, its step resting on the band's edge. */}
+          <div className="hidden w-[170px] pt-10 md:block lg:w-[190px]">
+            <DoorFrame small>
+              <Door motif={project.door.motif} paint={project.door.paint} />
+            </DoorFrame>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto w-full max-w-[1280px] px-5 pt-12">
+        <div>
+          {lead === "clip" && clip && <ClipFigure clip={clip} />}
+          {lead === "cover" && cover && <ShotFigure shot={cover} priority />}
+          {lead === "visual" && visual.kind === "diagram" && (
+            <DiagramFigure spec={visual.diagram} />
+          )}
+          {lead === "visual" && visual.kind === "image" && (
+            <ShotFigure
+              priority
+              shot={{
+                ...visual,
+                caption: "",
+                frame: "browser",
+                url: "grade.offa.com",
+              }}
+            />
           )}
         </div>
 
-        <Reveal delay={0.1}>
-          <aside className="flex flex-col gap-7">
-            <div>
-              <h2 className="mb-3 text-base font-semibold">Stack</h2>
-              <Tags items={project.stack} />
-            </div>
-            {project.links.length > 0 && (
-              <div>
-                <h2 className="mb-3 text-base font-semibold">Links</h2>
-                <ul className="flex flex-col items-start gap-2">
-                  {project.links.map((link, linkIndex) => (
-                    <li key={link.href}>
-                      <LinkButton
-                        href={link.href}
-                        variant={linkIndex === 0 ? "primary" : "outline"}
-                        className="h-auto min-h-11 py-2 text-left"
-                      >
-                        {link.label}
-                        <ArrowUpRight className="shrink-0" aria-hidden="true" />
-                      </LinkButton>
-                    </li>
-                  ))}
-                </ul>
+        <div className="mt-12 border-t border-border">
+          <Row label="Why it existed" id="why">
+            <p className="max-w-4xl font-display text-[clamp(1.25rem,2.1vw,1.6rem)] leading-[1.35] font-bold tracking-[-0.015em] text-pretty">
+              {project.why}
+            </p>
+          </Row>
+
+          {project.parts?.map((part, partIndex) => (
+            <Row
+              key={part.title}
+              label={part.title}
+              id={partId(part.title)}
+              number={partIndex + 1}
+            >
+              <div className="flex flex-col gap-8">
+                {part.why && (
+                  <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
+                    {part.why}
+                  </p>
+                )}
+                <BuiltList items={part.built} />
+                {part.outcome && (
+                  <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
+                    {part.outcome}
+                  </p>
+                )}
+                {part.diagram && <DiagramFigure spec={part.diagram} />}
               </div>
-            )}
-          </aside>
-        </Reveal>
-      </div>
+            </Row>
+          ))}
 
-      {stills.length > 0 && (
-        <section aria-labelledby="screens" className="mt-16">
-          <Reveal>
-            <SectionLabel id="screens">On screen</SectionLabel>
-          </Reveal>
-          <div className="mt-6 flex flex-col gap-12">
-            {stills.map((shot) => (
-              <Reveal key={shot.src}>
-                <ShotFigure shot={shot} />
-              </Reveal>
-            ))}
-          </div>
-        </section>
-      )}
+          {project.built.length > 0 && (
+            <Row label="What I built" id="built">
+              <BuiltList items={project.built} />
+            </Row>
+          )}
 
-      {showDiagramBelow && (
-        <section aria-labelledby="architecture" className="mt-16">
-          <Reveal>
-            <SectionLabel id="architecture">How it fits together</SectionLabel>
-            <div className="mt-6">
-              <DiagramFigure project={project} />
+          {project.outcome && (
+            <Row label="Outcome" id="outcome">
+              <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
+                {project.outcome}
+              </p>
+            </Row>
+          )}
+
+          {project.note && (
+            <div className="grid gap-x-8 border-t border-border py-8 md:grid-cols-[11rem_1fr]">
+              <p className="max-w-3xl text-base text-pretty text-muted-foreground md:col-start-2">
+                {project.note}
+              </p>
             </div>
-          </Reveal>
-        </section>
-      )}
+          )}
 
-      <Link
-        href={`/work/${next.slug}`}
-        className="group mt-16 flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-6 transition-colors hover:border-brand/50"
-      >
-        <span>
-          <span className="block font-mono text-sm text-muted-foreground">
-            Next
+          <Row label="Stack" id="stack">
+            <Tags items={project.stack} />
+          </Row>
+
+          {project.links.length > 0 && (
+            <Row label="Links" id="links">
+              <ul className="flex flex-wrap gap-3">
+                {project.links.map((link, linkIndex) => (
+                  <li key={link.href}>
+                    <LinkButton
+                      href={link.href}
+                      variant={linkIndex === 0 ? "primary" : "outline"}
+                      className="h-auto min-h-11 py-2 text-left"
+                    >
+                      {link.label}
+                      <ArrowUpRight className="shrink-0" aria-hidden="true" />
+                    </LinkButton>
+                  </li>
+                ))}
+              </ul>
+            </Row>
+          )}
+
+          {stills.length > 0 && (
+            <Row label="On screen" id="screens">
+              <div className="flex flex-col gap-12">
+                {stills.map((shot) => (
+                  <ShotFigure key={shot.src} shot={shot} />
+                ))}
+              </div>
+            </Row>
+          )}
+
+          {showDiagramBelow && (
+            <Row label="How it fits together" id="architecture">
+              <DiagramFigure spec={visual.diagram} />
+            </Row>
+          )}
+        </div>
+
+        <Link
+          href={`/work/${next.slug}`}
+          className="group mt-12 grid gap-x-8 gap-y-2 border-y border-border py-7 transition-colors hover:text-brand md:grid-cols-[11rem_1fr]"
+        >
+          <span className={`pt-2 ${LABEL}`}>Next</span>
+          <span className="flex items-center justify-between gap-4 font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-extrabold tracking-[-0.03em] text-balance">
+            <span className="flex items-center gap-5">
+              <ClosedDoor
+                motif={next.door.motif}
+                paint={next.door.paint}
+                className="w-14 shrink-0"
+              />
+              {next.title}
+            </span>
+            <ArrowRight
+              className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
+              aria-hidden="true"
+            />
           </span>
-          <span className="mt-1 block text-2xl font-semibold tracking-tight">
-            {next.title}
-          </span>
-        </span>
-        <ArrowRight
-          className="size-5 transition-transform group-hover:translate-x-1"
-          aria-hidden="true"
-        />
-      </Link>
+        </Link>
+      </div>
     </main>
   );
 }
