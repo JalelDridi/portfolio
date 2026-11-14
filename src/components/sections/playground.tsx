@@ -5,8 +5,9 @@ import { StudBand } from "../motifs";
 import { PipelinePlayground } from "../pipeline-playground";
 
 /**
- * A quiet full-width band between two rails of studs, the next house on the
- * street: the playground and its ledger book.
+ * A quiet full-width band, the next house on the street: the playground and
+ * its ledger book. The flagship's rail closes the band above, so this one
+ * carries a rail of studs only along its foot.
  */
 export function Playground() {
   return (
@@ -15,7 +16,6 @@ export function Playground() {
       aria-labelledby="playground-title"
       className="bg-wall-2"
     >
-      <StudBand className="opacity-35 dark:opacity-80" />
       <div className="mx-auto w-full max-w-[1280px] px-5 py-14">
         <PipelinePlayground
           intro={
