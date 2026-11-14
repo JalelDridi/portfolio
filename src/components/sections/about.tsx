@@ -1,11 +1,11 @@
 import Image from "next/image";
-import { about } from "@/content";
+import { about, profile } from "@/content";
 import { ArchFrame } from "../motifs";
 import { Section } from "../section";
 import { WorldClocks } from "../world-clocks";
 
 /** The same place and coordinates the header shows. */
-const TAG = "Bizerte · 37°16′N 9°51′E";
+const TAG = `Bizerte · ${profile.coordinates}`;
 
 /** Splits the title so its last words can be set in blue. */
 const ACCENT = "to moving money";
@@ -58,7 +58,7 @@ export function About() {
           <dl className="mt-7 grid grid-cols-2 gap-x-[1.4rem] gap-y-4 border-t pt-5 min-[920px]:grid-cols-3">
             {about.facts.map((fact) => (
               <div key={fact.label}>
-                <dt className="font-mono text-[0.74rem] tracking-[0.1em] text-brand uppercase">
+                <dt className="font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase">
                   {fact.label}
                 </dt>
                 <dd className="mt-1 font-medium text-pretty">{fact.value}</dd>

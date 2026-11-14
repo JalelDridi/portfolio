@@ -5,13 +5,13 @@ import { Section } from "../section";
 
 /**
  * One row per role along a dashed line of studs, newest first; the current
- * role's stud is painted door yellow.
+ * role's stud (the one whose period runs to the present) is door yellow.
  */
 export function Experience() {
   return (
     <Section id="experience" eyebrow="Experience" title="Where I have worked">
       <ol>
-        {experience.map((job, index) => (
+        {experience.map((job) => (
           <li
             key={`${job.company}-${job.period}`}
             className="grid gap-x-8 sm:grid-cols-[10rem_1fr]"
@@ -24,7 +24,7 @@ export function Experience() {
                 aria-hidden="true"
                 className={cn(
                   "absolute top-[0.95rem] rounded-full sm:top-[2.1rem]",
-                  index === 0
+                  job.period.endsWith("present")
                     ? "-left-[7px] size-[13px] bg-sun shadow-[0_0_0_3px_var(--background)]"
                     : "-left-[5px] size-[9px] bg-foreground/80 shadow-[inset_-1px_-1px_0_rgba(255,255,255,0.3)]",
                 )}

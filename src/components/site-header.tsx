@@ -47,7 +47,7 @@ export function SiteHeader() {
         </nav>
         <div className="flex items-center gap-4">
           <span className="hidden font-mono text-[0.8rem] whitespace-nowrap text-muted-foreground xl:inline">
-            <StatusClocks zones={BIZERTE} /> · 37°16′N 9°51′E
+            <StatusClocks zones={BIZERTE} /> · {profile.coordinates}
           </span>
           <ThemeToggle />
           <MobileNav items={NAV} />

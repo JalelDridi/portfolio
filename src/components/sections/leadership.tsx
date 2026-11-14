@@ -70,7 +70,7 @@ export function Leadership() {
 
         <div className="flex flex-col gap-5 text-[1.08rem] text-pretty">
           <div>
-            <h3 className="font-mono text-[0.78rem] tracking-[0.1em] text-brand uppercase">
+            <h3 className="font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase">
               {activity.label}
             </h3>
             <ul className="mt-3 grid gap-2">

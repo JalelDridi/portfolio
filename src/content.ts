@@ -76,6 +76,8 @@ export const profile = {
   headline: "Full-stack TypeScript, payments and reliability",
   availability: "Open to remote roles",
   location: "Bizerte, Tunisia · UTC+1",
+  /** Bizerte's coordinates, shown in the header and on the portrait. */
+  coordinates: "37°16′N 9°52′E",
   intro:
     "I build the parts of a product where money, reliability and trust meet. I am one of the founding engineers of Solvedblue, a business messaging platform, where I work on the engine that decides what is sent, from which line, and when. Before that I owned the Stripe Connect payments stack and the production infrastructure at Potluck, a US live-shopping marketplace.",
   heroLine:
@@ -1014,7 +1016,7 @@ export const about = {
     },
   ],
   /** The caption under the portrait. */
-  figure: { label: "fig. 1 · Bizerte", coordinates: "37°16′N 9°52′E" },
+  figure: { label: "fig. 1 · Bizerte", coordinates: profile.coordinates },
   clocksCaption: "The time right now at home and across the United States.",
   /** Shown as analogue clocks. The first is home. */
   clocks: [

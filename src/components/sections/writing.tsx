@@ -25,7 +25,7 @@ export function Writing() {
               {formatShortDate(article.date)}
             </time>
             <div>
-              <h3 className="font-display text-[clamp(1.35rem,2.4vw,1.75rem)] leading-[1.1] font-extrabold tracking-[-0.025em] text-balance transition-colors group-hover:text-brand">
+              <h3 className="font-display text-[clamp(1.35rem,2.4vw,1.75rem)] leading-[1.1] font-extrabold tracking-[-0.025em] text-balance transition-colors group-focus-within:text-brand group-hover:text-brand">
                 <Link
                   href={`/writing/${article.slug}`}
                   className="after:absolute after:inset-0"

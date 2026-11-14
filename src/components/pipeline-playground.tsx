@@ -21,7 +21,7 @@ const LABEL =
   "font-display text-[0.85rem] font-bold tracking-[-0.01em] text-muted-foreground";
 
 /** Labels of the totals under the book. */
-const TOTAL = "font-mono text-[0.74rem] tracking-[0.1em] text-brand uppercase";
+const TOTAL = "font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase";
 
 type Entry = Step & { id: number; result: string };
 
