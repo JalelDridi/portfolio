@@ -130,6 +130,10 @@ test("the street shows five doors with their numbers before any JavaScript runs"
   await expect(doors.first()).toContainText("N° 01");
   await expect(doors.first()).toContainText("Solvedblue");
   await expect(doors.nth(1)).toContainText("99 tests");
+  // The hero door's teaser is a real link, so it works without the button.
+  await expect(
+    page.locator("#hero-room").getByRole("link", { name: "Step inside" }),
+  ).toHaveAttribute("href", "/work/solvedblue");
   await context.close();
 });
 
@@ -461,6 +465,10 @@ test("the flagship sits on the blue band with its recording in an arch", async (
       .locator("video")
       .evaluate((el) => getComputedStyle(el.closest("[data-arch]")!).clipPath),
   ).toContain("url(");
+  await expect(band.locator("[data-arch]")).toHaveAttribute(
+    "data-arch-shape",
+    "segmental",
+  );
 });
 
 test("the about section shows the portrait, the story and live clocks", async ({

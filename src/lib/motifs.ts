@@ -349,7 +349,7 @@ export function archClipPath(
 }
 
 /** How far a segmental arch's crown rises above its sides, as a share of the height. */
-export const SEGMENTAL_RISE = 0.09;
+const SEGMENTAL_RISE = 0.09;
 
 /**
  * A segmental arch in object-bounding-box units: straight sides, and a top
