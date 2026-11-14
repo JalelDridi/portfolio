@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { leadership } from "@/content";
 import { cn } from "@/lib/utils";
+import { Plaque } from "../motifs";
 import { Section } from "../section";
 
 /** Splits the title so its last words can be set in blue. */
@@ -91,7 +92,11 @@ export function Leadership() {
               {item.role} · {item.organisation}
             </p>
           ))}
-          <p className="text-muted-foreground">{leadership.place}</p>
+          {/* The column closes on the town's street plaque, as the hero opens on Bizerte's. */}
+          <div className="mt-2 flex flex-wrap items-center gap-x-6 gap-y-4 bg-wall-2 px-5 py-6 shadow-[0_0_0_1px_var(--border)] sm:px-6">
+            <Plaque arabic="العالية" latin="EL ALIA · BIZERTE" />
+            <p className="min-w-[14rem] flex-1">{leadership.place}</p>
+          </div>
         </div>
       </div>
     </Section>

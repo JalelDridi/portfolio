@@ -97,15 +97,9 @@ export function Hero() {
               </LinkButton>
             </div>
             <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 font-mono text-[0.82rem] text-muted-foreground">
-              <li>
-                Remote with US teams{" "}
-                <b className="font-medium text-foreground">since Jan 2026</b>
-              </li>
-              <li>
-                <b className="font-medium text-foreground">
-                  English C2 · French C1 · Arabic
-                </b>
-              </li>
+              {profile.facts.map((fact) => (
+                <li key={fact}>{fact}</li>
+              ))}
               <li>{availability}</li>
             </ul>
             <p className="mt-2 mb-10 font-mono text-[0.82rem] text-muted-foreground">

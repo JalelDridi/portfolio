@@ -419,7 +419,7 @@ export const projects: Project[] = [
     parts: [
       {
         title: "Payments on Stripe Connect",
-        why: "I own the payments stack: checkout, transfers, payouts, webhooks and reconciliation. In a marketplace, every one of those has to be right for both the buyer and the seller.",
+        why: "I owned the payments stack: checkout, transfers, payouts, webhooks and reconciliation. In a marketplace, every one of those has to be right for both the buyer and the seller.",
         built: [
           "An order is marked paid only after the payment is verified server-side against Stripe, with inventory decremented exactly once.",
           "Checkout validation that rejects client-supplied prices, items no longer on sale and quantities above stock, covered by a suite of attack tests.",
@@ -499,7 +499,7 @@ export const projects: Project[] = [
           "Performance work: self-hosted fonts and a server-rendered first feed image removed 5.7 to 8.1 seconds of LCP load delay.",
         ],
         outcome:
-          "I also lead release engineering: cutting releases, reviewing PRs, setting review conventions and onboarding new engineers.",
+          "I also led release engineering: cutting releases, reviewing PRs, setting review conventions and onboarding new engineers.",
         diagram: {
           columns: [
             [{ id: "push", label: "Push to main", icon: "git" }],
@@ -1063,5 +1063,5 @@ export const leadership = {
   place:
     "El Alia is the hill town near Bizerte that grows the teasel used to card Tunisia's chechias.",
   bridge:
-    "It is the same job as leading releases at Potluck: agree a plan, split the work, keep people informed and make sure it ships.",
+    "It is the same job as leading releases: agree a plan, split the work, keep people informed and make sure it ships.",
 };

@@ -64,7 +64,7 @@ Qallaline tile: ground `#f3ecdb`, cobalt `#1f4e9c`, green `#2e7d4f`, ochre `#d4a
 - Text: **Onest** 400/500/600. `html` stays at 106.25 %. Body 1.12–1.15 rem.
 - Labels: **DM Mono** 400/500, .8 rem, uppercase, .1em tracking (not preloaded).
 - Arabic: **Reem Kufi** 500/700 (subset `arabic`, not preloaded), always in `--brand`, always with `lang="ar"`, always next to its transliteration and English meaning.
-- Allowed Arabic strings (checked): عسلامة (Aslema, hello), باب (Bab, door), دار (Dar, home), مرحبا (Marhba, welcome), بالسلامة (Bislema, goodbye), بنزرت (Bizerte), جلال (Jalel), محمد جلال الدريدي (his full name, confirmed by him).
+- Allowed Arabic strings (checked): عسلامة (Aslema, hello), باب (Bab, door), دار (Dar, home), مرحبا (Marhba, welcome), بالسلامة (Bislema, goodbye), بنزرت (Bizerte), جلال (Jalel), محمد جلال الدريدي (his full name, confirmed by him), العالية (El Alia).
 
 ### Motifs
 
@@ -80,14 +80,14 @@ Qallaline tile: ground `#f3ecdb`, cobalt `#1f4e9c`, green `#2e7d4f`, ochre `#d4a
 
 Header → Hero (name left, big door right, then the tile band) → Work: "the street" (`#work`) → Flagship on a full-bleed blue band (`#project`) → Playground on a quiet band (`#playground`) → Notes (`#writing`) → Skills → About (`#about`) → Experience (`#experience`) → Leadership (`#leadership`) → Contact (`#contact`) → tile band → status strip.
 
-- **Header**: wall colour, no rule; "Jalel Dridi" in Alexandria 800 with جلال beside it; nav Work, Flagship, Notes, About, Experience, Contact; "Bizerte HH:MM · 37°16′N 9°51′E" in mono on wide screens; theme toggle; phone menu.
+- **Header**: wall colour, no rule; "Jalel Dridi" in Alexandria 800 with جلال beside it; nav Work, Flagship, Notes, About, Experience, Contact; "Bizerte HH:MM · 37°16′N 9°52′E" in mono on wide screens; theme toggle; phone menu.
 - **Hero**: as the mockup. Greeting عسلامة with "Aslema · hello from Tunisia"; h1 with "Mohamed" small above "Jalel / Dridi" and a yellow full stop (accessible name "Mohamed Jalel Dridi"); role line; the short hero line; three buttons (Open a door ↓, Email me, CV) plus GitHub and LinkedIn icon links; three facts in mono; the local-time line. Right: the Bizerte plaque, the frame, the blue `star` door standing ajar with the room behind it ("Now · Solvedblue · iMessage for business. · Step inside →"), the threshold step. Clicking the door (a real button) opens both leaves and shows the room in full: the same block plus two links, "Read the case study" (`/work/solvedblue`) and "Break my pipeline ↓" (`#playground`).
 - **Work**: head "Behind each door, something I shipped." with the باب kicker. Five doors in a row (two per row on phones): Solvedblue (blue, star), Payout Ledger (green, sun; links to `#project`), Potluck (yellow, tree), tnpay (sky, lozenge), Kora (red, fish). Each: frame, door, step, "N° 0x" and a short note in mono, title (h3), one line. Hover, keyboard focus or (on touch screens, by default) ajar shows the screenshot inside with "Read the case study →". Below: "Also on this street:" with Deal Grader, Spyder, Field-inspection platform, Event Orchestrator as h3 links in a row.
 - **Flagship**: the blue band between two stud bands, as the mockup: label, title, summary, three points with stud bullets, buttons (Try the live demo ↗ in yellow, Read the code, Design decisions), and the recording in a 5:6 horseshoe arch with its caption.
 - **Playground**: a `--wall-2` band. Left: label "Try it", title "Break my pipeline.", the sentence, the three arch-topped buttons, the status line. Right: the entries table and totals, restyled (hairline rules, Alexandria headings, results: applied in `--brand`, skipped muted, held in `--red`), then "Open the real demo".
 - **Notes**: a row per article: date in mono, title in Alexandria 800, summary, minutes; the row lifts its title to blue on hover.
 - **Skills**: six groups in a three-column grid: group name in mono blue, items joined by " · ". No boxes.
-- **About**: as the mockup: portrait in a 4:5 horseshoe arch with the yellow "Bizerte · 37°16′N 9°51′E" tag, the paragraphs (first one in Alexandria 700), the six facts, the four clocks.
+- **About**: as the mockup: portrait in a 4:5 horseshoe arch with the yellow "Bizerte · 37°16′N 9°52′E" tag, the paragraphs (first one in Alexandria 700), the six facts, the four clocks.
 - **Experience**: a row per role: period in mono, role in Alexandria 800, company link, detail, summary; the current role carries a small yellow dot.
 - **Leadership**: compact: intro, the three roles in order, the chapter line and link, the 2026 activities list, the bridge sentence, the El Alia sentence.
 - **Contact**: as the mockup: مرحبا kicker, "Hiring for payments or full-stack TypeScript? Knock.", the email with copy button, Email me / CV / LinkedIn / GitHub, and a small yellow `sun` door to the right.
