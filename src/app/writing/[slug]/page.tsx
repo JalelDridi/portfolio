@@ -8,6 +8,7 @@ import { Rise } from "@/components/rise";
 import { Tags } from "@/components/tags";
 import { profile, SITE_URL } from "@/content";
 import { formatShortDate } from "@/lib/dates";
+import { cn } from "@/lib/utils";
 import { articles, type Block } from "@/writing";
 
 export function generateStaticParams() {
@@ -39,9 +40,9 @@ export async function generateMetadata(
 }
 
 const LABEL =
-  "font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase";
+  "font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase";
 
-/** A ruled row: the label in its own column, the content beside it. */
+/** A row under a hairline: the label in its own column, the content beside it. */
 function Row({
   label,
   id,
@@ -54,10 +55,10 @@ function Row({
   return (
     <section
       aria-labelledby={id}
-      className="grid gap-x-8 gap-y-4 border-t border-border py-8 first:border-t-0 md:grid-cols-[10rem_1fr]"
+      className="grid gap-x-8 gap-y-4 border-t border-border py-9 first:border-t-0 md:grid-cols-[11rem_1fr]"
     >
       {id ? (
-        <h2 id={id} className={LABEL}>
+        <h2 id={id} className={cn(LABEL, "text-brand")}>
           {label}
         </h2>
       ) : (
@@ -72,7 +73,7 @@ function BlockView({ block }: { block: Block }) {
   switch (block.kind) {
     case "h2":
       return (
-        <h2 className="mt-8 font-display text-3xl font-bold tracking-[-0.02em] text-balance">
+        <h2 className="mt-8 font-display text-[clamp(1.7rem,3.4vw,2.3rem)] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance">
           {block.text}
         </h2>
       );
@@ -84,15 +85,15 @@ function BlockView({ block }: { block: Block }) {
       );
     case "list":
       return (
-        <ol className="border-t border-border">
+        <ol className="border-y border-border">
           {block.items.map((item, index) => (
             <li
               key={item.lead}
-              className="grid grid-cols-[2rem_1fr] border-b border-border py-4"
+              className="grid grid-cols-[2rem_1fr] border-b border-border py-4 last:border-b-0"
             >
               <span
                 aria-hidden="true"
-                className="pt-1 font-mono text-[0.85rem] text-muted-foreground"
+                className="pt-1 font-mono text-[0.85rem] text-brand"
               >
                 {index + 1}
               </span>
@@ -106,8 +107,8 @@ function BlockView({ block }: { block: Block }) {
       );
     case "code":
       return (
-        <figure className="overflow-hidden border border-foreground bg-card">
-          <figcaption className="flex items-center justify-between gap-3 border-b border-border px-4 py-2 font-mono text-[0.85rem] text-muted-foreground">
+        <figure className="overflow-hidden bg-wall-2 px-[9px] pb-[9px] shadow-[0_0_0_1px_var(--border)]">
+          <figcaption className="flex items-center justify-between gap-3 py-2 font-mono text-[0.8rem] text-muted-foreground">
             <span className="truncate">{block.caption ?? block.language}</span>
             {block.caption && <span>{block.language}</span>}
           </figcaption>
@@ -115,7 +116,7 @@ function BlockView({ block }: { block: Block }) {
           <pre
             tabIndex={0}
             aria-label={`${block.language} code`}
-            className="overflow-x-auto p-4 font-mono text-[0.9rem] leading-relaxed"
+            className="overflow-x-auto bg-card p-4 font-mono text-[0.9rem] leading-relaxed"
           >
             <code>{block.code}</code>
           </pre>
@@ -143,7 +144,7 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 pt-24 pb-16 sm:pb-24">
+    <main className="mx-auto w-full max-w-[1280px] px-5 pt-[4.2rem] pb-16 sm:pb-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -157,14 +158,14 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
         >
           <ArrowLeft className="size-4" aria-hidden="true" /> All writing
         </Link>
-        <p className={`mt-8 ${LABEL}`}>
+        <p className={`mt-10 ${LABEL}`}>
           <time dateTime={article.date}>{formatShortDate(article.date)}</time> ·{" "}
           {article.minutes} minute read
         </p>
-        <h1 className="mt-3 max-w-5xl font-display text-[clamp(2.6rem,6vw,5rem)] leading-[0.95] font-extrabold tracking-[-0.03em] text-balance">
+        <h1 className="mt-3 max-w-5xl font-display text-[clamp(2.6rem,6.4vw,5.4rem)] leading-[0.92] font-black tracking-[-0.04em] text-balance">
           {article.title}
         </h1>
-        <p className="mt-6 max-w-3xl text-[1.3rem] text-pretty text-muted-foreground">
+        <p className="mt-6 max-w-3xl text-[1.25rem] text-pretty text-muted-foreground">
           {article.summary}
         </p>
         <div className="mt-6">
@@ -172,8 +173,8 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
         </div>
       </Rise>
 
-      {/* The body sits in the content column, under the strong rule. */}
-      <div className="mt-12 border-t-2 border-foreground pt-8 md:pl-[12rem]">
+      {/* The body sits in the content column, under a hairline. */}
+      <div className="mt-12 border-t border-border pt-9 md:pl-[13rem]">
         <div className="flex max-w-3xl flex-col gap-6">
           {article.blocks.map((block, blockIndex) => (
             <BlockView key={blockIndex} block={block} />
@@ -181,7 +182,7 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
         </div>
       </div>
 
-      <div className="mt-12 border-t-2 border-foreground">
+      <div className="mt-12 border-t border-border">
         <Row label="In the repository" id="sources">
           <ul className="flex flex-wrap gap-3">
             {article.links.map((link) => (
@@ -199,10 +200,10 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
       {next.slug !== article.slug && (
         <Link
           href={`/writing/${next.slug}`}
-          className="group grid gap-x-8 gap-y-2 border-y-2 border-foreground py-6 transition-colors hover:text-brand md:grid-cols-[10rem_1fr]"
+          className="group grid gap-x-8 gap-y-2 border-y border-border py-7 transition-colors hover:text-brand md:grid-cols-[11rem_1fr]"
         >
           <span className={`pt-2 ${LABEL}`}>Next</span>
-          <span className="flex items-center justify-between gap-4 font-display text-2xl font-bold tracking-[-0.02em] text-balance">
+          <span className="flex items-center justify-between gap-4 font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-extrabold tracking-[-0.03em] text-balance">
             {next.title}
             <ArrowRight
               className="size-5 shrink-0 transition-transform group-hover:translate-x-1"

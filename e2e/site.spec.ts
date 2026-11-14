@@ -142,6 +142,14 @@ test("old Potluck case-study links redirect to the merged one", async ({
   ).toBeVisible();
 });
 
+test("a case study opens on a band in its door's colour", async ({ page }) => {
+  await page.goto("/work/potluck");
+  const band = page.locator("main > header, main > div").first();
+  expect(
+    await band.evaluate((el) => getComputedStyle(el).backgroundColor),
+  ).toBe("rgb(237, 176, 33)");
+});
+
 test("Kora has a case study with its live link", async ({ page }) => {
   await page.goto("/work/kora");
   await expect(
@@ -274,6 +282,7 @@ for (const colorScheme of ["light", "dark"] as const) {
   for (const path of [
     "/",
     "/work/potluck",
+    "/work/solvedblue",
     "/writing/webhooks-in-any-order",
     "/changelog",
   ]) {
