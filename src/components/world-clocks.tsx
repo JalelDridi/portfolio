@@ -47,7 +47,7 @@ function Face({
         r="46"
         className={cn(
           "stroke-border",
-          day ? "fill-card" : "fill-muted",
+          day ? "fill-card" : "fill-background",
           home && "stroke-brand",
         )}
         strokeWidth={home ? 3 : 2}
@@ -124,8 +124,10 @@ export function WorldClocks({ clocks }: { clocks: Clock[] }) {
           <li key={clock.zone} className="flex flex-col items-center gap-2">
             <Face hour={time.hour} minute={time.minute} home={index === 0} />
             <p className="text-center">
-              <span className="block text-base font-medium">{clock.city}</span>
-              <span className="block font-mono text-sm text-muted-foreground">
+              <span className="block font-display text-base font-bold tracking-[-0.01em]">
+                {clock.city}
+              </span>
+              <span className="block font-mono text-[0.8rem] text-muted-foreground">
                 {label}
               </span>
             </p>

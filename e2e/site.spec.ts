@@ -400,6 +400,22 @@ test("recordings wait until they are near the screen", async ({ page }) => {
   await expect(video).toHaveAttribute("poster", /payout-ledger-poster/);
 });
 
+test("the flagship sits on the blue band with its recording in an arch", async ({
+  page,
+}) => {
+  await page.emulateMedia({ colorScheme: "light" });
+  await page.goto("/");
+  const band = page.locator("#project");
+  const bg = await band.evaluate((el) => getComputedStyle(el).backgroundColor);
+  expect(bg).toBe("rgb(23, 99, 182)");
+  await expect(band.locator("video")).toHaveAttribute("preload", "none");
+  expect(
+    await band
+      .locator("video")
+      .evaluate((el) => getComputedStyle(el.closest("[data-arch]")!).clipPath),
+  ).toContain("url(");
+});
+
 test("the about section shows the portrait, the story and live clocks", async ({
   page,
 }) => {

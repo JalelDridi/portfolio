@@ -1,48 +1,64 @@
 import Image from "next/image";
 import { about } from "@/content";
+import { ArchFrame } from "../motifs";
 import { Section } from "../section";
 import { WorldClocks } from "../world-clocks";
 
+/** The same place and coordinates the header shows. */
+const TAG = "Bizerte · 37°16′N 9°51′E";
+
+/** Splits the title so its last words can be set in blue. */
+const ACCENT = "to moving money";
+
 export function About() {
-  const { portrait, figure } = about;
+  const { portrait } = about;
+  const title = about.title.endsWith(ACCENT)
+    ? about.title.slice(0, -ACCENT.length).trim()
+    : about.title;
+  const accent = about.title.endsWith(ACCENT) ? ACCENT : undefined;
+
   return (
-    <Section id="about" eyebrow="About" title={about.title}>
-      <div className="grid items-start gap-10 *:min-w-0 lg:grid-cols-[0.7fr_1.3fr]">
-        <figure className="mx-auto w-full max-w-sm lg:mx-0 lg:max-w-none">
-          <div className="border border-foreground">
+    <Section
+      id="about"
+      arabic="دار"
+      eyebrow="Dar · at home"
+      title={title}
+      accent={accent}
+    >
+      <div className="grid items-start gap-[3.2rem] *:min-w-0 min-[920px]:grid-cols-[0.8fr_1.2fr]">
+        <figure className="relative">
+          <ArchFrame ratio={4 / 5} className="w-full bg-wall-2">
             <Image
               src={portrait.src}
               alt={portrait.alt}
-              width={portrait.width}
-              height={portrait.height}
-              sizes="(min-width: 1024px) 400px, 384px"
-              className="aspect-square w-full object-cover"
+              fill
+              sizes="(min-width: 920px) 480px, 92vw"
+              className="object-cover"
             />
-          </div>
-          <figcaption className="mt-2 flex justify-between font-mono text-[0.85rem] text-muted-foreground">
-            <span>{figure.label}</span>
-            <span>{figure.coordinates}</span>
+          </ArchFrame>
+          <figcaption className="absolute -right-4 bottom-[1.4rem] bg-sun px-[0.7rem] py-[0.4rem] font-mono text-[0.76rem] text-[#101922]">
+            {TAG}
           </figcaption>
         </figure>
 
-        <div className="flex flex-col gap-6">
+        <div>
           {about.paragraphs.map((paragraph, index) => (
             <p
               key={paragraph}
               className={
                 index === 0
-                  ? "text-[1.45rem] leading-snug text-pretty"
-                  : "text-[1.15rem] leading-relaxed text-pretty text-muted-foreground"
+                  ? "mb-5 font-display text-[clamp(1.25rem,1.9vw,1.45rem)] leading-[1.25] font-bold tracking-[-0.02em] text-pretty"
+                  : "mb-4 text-[1.15rem] text-pretty"
               }
             >
               {paragraph}
             </p>
           ))}
 
-          <dl className="grid gap-x-5 gap-y-4 border-t border-border pt-4 sm:grid-cols-3">
+          <dl className="mt-7 grid grid-cols-2 gap-x-[1.4rem] gap-y-4 border-t pt-5 min-[920px]:grid-cols-3">
             {about.facts.map((fact) => (
               <div key={fact.label}>
-                <dt className="font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
+                <dt className="font-mono text-[0.74rem] tracking-[0.1em] text-brand uppercase">
                   {fact.label}
                 </dt>
                 <dd className="mt-1 font-medium text-pretty">{fact.value}</dd>
@@ -50,9 +66,9 @@ export function About() {
             ))}
           </dl>
 
-          <div className="border-y border-border py-5">
+          <div className="mt-8 bg-wall-2 px-4 py-6 sm:px-6">
             <WorldClocks clocks={about.clocks} />
-            <p className="mt-5 text-center text-base text-muted-foreground">
+            <p className="mt-5 text-center text-[0.95rem] text-muted-foreground">
               {about.clocksCaption}
             </p>
           </div>

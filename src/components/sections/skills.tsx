@@ -9,16 +9,13 @@ export function Skills() {
       title="The stack I work in"
       description="TypeScript end to end, PostgreSQL underneath, and the infrastructure to ship it."
     >
-      <dl className="border-t-2 border-foreground">
+      <dl className="grid gap-x-10 gap-y-8 sm:grid-cols-2 min-[920px]:grid-cols-3">
         {skills.map((group) => (
-          <div
-            key={group.group}
-            className="grid gap-x-6 border-b border-border py-3.5 sm:grid-cols-[10rem_1fr]"
-          >
-            <dt className="font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
+          <div key={group.group}>
+            <dt className="font-mono text-[0.78rem] tracking-[0.1em] text-brand uppercase">
               {group.group}
             </dt>
-            <dd className="text-[1.1rem] text-pretty">
+            <dd className="mt-2 font-display text-[1.25rem] leading-[1.35] font-bold tracking-[-0.015em] text-pretty">
               {group.items.join(" · ")}
             </dd>
           </div>

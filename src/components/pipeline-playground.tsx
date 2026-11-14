@@ -16,8 +16,12 @@ import { cn } from "@/lib/utils";
 /** The book keeps only the latest entries so it never grows past a screen. */
 const MAX_ENTRIES = 12;
 
+/** Column heads of the ledger book. */
 const LABEL =
-  "font-mono text-[0.85rem] font-normal tracking-[0.08em] text-muted-foreground uppercase";
+  "font-display text-[0.85rem] font-bold tracking-[-0.01em] text-muted-foreground";
+
+/** Labels of the totals under the book. */
+const TOTAL = "font-mono text-[0.74rem] tracking-[0.1em] text-brand uppercase";
 
 type Entry = Step & { id: number; result: string };
 
@@ -94,11 +98,11 @@ export function PipelinePlayground({
   }
 
   return (
-    <div className="grid items-start gap-10 lg:grid-cols-[0.8fr_1.2fr]">
-      <div className="flex flex-col gap-6 lg:max-w-[22rem]">
+    <div className="grid items-start gap-12 min-[920px]:grid-cols-[0.8fr_1.2fr]">
+      <div className="flex flex-col gap-6 min-[920px]:max-w-[26rem]">
         {intro}
 
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2.5">
           {SCENARIOS.map((scenario, index) => (
             <button
               key={scenario.id}
@@ -106,8 +110,10 @@ export function PipelinePlayground({
               onClick={() => run(scenario.id)}
               disabled={busy}
               className={cn(
-                "inline-flex h-11 items-center border border-foreground px-4 font-sans text-base font-medium transition-colors hover:border-brand hover:bg-brand hover:text-background disabled:opacity-50",
-                index === 0 && "border-brand text-brand",
+                "inline-flex h-12 items-center rounded-[999px_999px_10px_10px] border-2 px-[1.3rem] font-sans text-base font-semibold transition-colors disabled:opacity-50",
+                index === 0
+                  ? "border-brand bg-brand text-white hover:border-brand-deep hover:bg-brand-deep dark:border-brand-deep dark:bg-brand-deep dark:hover:border-brand"
+                  : "border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background",
               )}
             >
               {scenario.label}
@@ -118,19 +124,19 @@ export function PipelinePlayground({
         <p
           role="status"
           aria-live="polite"
-          className="min-h-[3.25rem] font-mono text-[0.9rem] leading-snug"
+          className="min-h-[3.25rem] border-l-[3px] border-sun pl-3 font-mono text-[0.88rem] leading-snug"
         >
           {message}
         </p>
       </div>
 
-      <div className="min-w-0">
+      <div className="min-w-0 bg-card px-4 pt-3 pb-5 shadow-[0_0_0_1px_var(--border)] sm:px-6">
         <table
           aria-label="Ledger entries"
-          className="w-full border-t-2 border-foreground font-mono text-[0.9rem]"
+          className="w-full font-mono text-[0.85rem]"
         >
           <thead>
-            <tr className="border-b border-border text-left">
+            <tr className="border-b border-foreground/25 text-left">
               <th
                 scope="col"
                 className={cn(LABEL, "hidden py-2 pr-3 sm:table-cell")}
@@ -189,15 +195,17 @@ export function PipelinePlayground({
           </tbody>
         </table>
 
-        <dl className="grid grid-cols-3 border-b-2 border-foreground py-3">
+        <dl className="grid grid-cols-3 gap-3 pt-5">
           {[
             ["Stored", state.stored],
             ["Applied", state.applied],
             ["Owed to seller", formatCents(state.balance)],
           ].map(([label, value]) => (
-            <div key={label}>
-              <dt className={LABEL}>{label}</dt>
-              <dd className="font-mono text-xl tabular-nums">{value}</dd>
+            <div key={label} className="min-w-0">
+              <dt className={TOTAL}>{label}</dt>
+              <dd className="mt-1 font-display text-[clamp(1.25rem,4vw,1.9rem)] leading-none font-black tracking-[-0.03em] tabular-nums">
+                {value}
+              </dd>
             </div>
           ))}
         </dl>

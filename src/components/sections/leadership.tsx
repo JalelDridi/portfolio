@@ -3,64 +3,95 @@ import { leadership } from "@/content";
 import { cn } from "@/lib/utils";
 import { Section } from "../section";
 
+/** Splits the title so its last words can be set in blue. */
+const ACCENT = "outside of code";
+
 export function Leadership() {
   const { organisation, roles, activity, also } = leadership;
+  const title = leadership.title.endsWith(ACCENT)
+    ? leadership.title.slice(0, -ACCENT.length).trim()
+    : leadership.title;
+  const accent = leadership.title.endsWith(ACCENT) ? ACCENT : undefined;
+
   return (
     <Section
       id="leadership"
       eyebrow="Leadership"
-      title={leadership.title}
+      title={title}
+      accent={accent}
       description={leadership.intro}
     >
-      <div className="grid gap-10 *:min-w-0 lg:grid-cols-2">
+      <div className="grid gap-12 *:min-w-0 min-[920px]:grid-cols-[1.1fr_0.9fr]">
         <div>
-          <p className="mb-4 text-[1.1rem]">
+          {/* Three steps up, one per role; the last is the one I hold now. */}
+          <ol className="grid grid-cols-3 items-end gap-3 sm:gap-4">
+            {roles.map((item, index) => (
+              <li
+                key={item.year}
+                className={cn(
+                  "flex flex-col justify-end border-t-4 px-2.5 pt-3 pb-4 sm:px-4",
+                  index === roles.length - 1
+                    ? "min-h-[9.5rem] border-sun bg-brand text-white dark:bg-brand-deep"
+                    : "border-brand bg-wall-2",
+                  index === 0 && "min-h-[6.5rem]",
+                  index === 1 && "min-h-[8rem]",
+                )}
+              >
+                <span
+                  className={cn(
+                    "font-mono text-[0.8rem]",
+                    index === roles.length - 1
+                      ? "text-[#dce8f6]"
+                      : "text-muted-foreground",
+                  )}
+                >
+                  {item.year}
+                </span>{" "}
+                <span className="mt-1 font-display text-[clamp(0.92rem,2vw,1.3rem)] leading-[1.1] font-extrabold tracking-[-0.02em] [overflow-wrap:anywhere]">
+                  {item.role}
+                </span>
+              </li>
+            ))}
+          </ol>
+          <p className="mt-6 text-[1.08rem] text-pretty">
             <span className="font-semibold">{organisation.name}</span>{" "}
             <span className="text-muted-foreground">
               · {organisation.detail}
             </span>
           </p>
-          <ol className="flex flex-wrap gap-x-6 gap-y-2 text-[1.1rem]">
-            {roles.map((item, index) => (
-              <li
-                key={item.year}
-                className={cn(index === roles.length - 1 && "font-semibold")}
-              >
-                <span className="font-mono text-[0.85rem] text-muted-foreground">
-                  {item.year}
-                </span>{" "}
-                {item.role}
-              </li>
-            ))}
-          </ol>
           <a
             href={organisation.href}
-            className="mt-6 inline-flex items-center gap-1 text-base font-medium underline decoration-border underline-offset-4 transition-colors hover:text-brand hover:decoration-brand"
+            className="mt-3 inline-flex items-center gap-1 border-b-[3px] border-sun pb-0.5 font-mono text-[0.9rem] transition-colors hover:text-brand"
           >
             {organisation.linkLabel}
             <ArrowUpRight className="size-4" aria-hidden="true" />
           </a>
         </div>
 
-        <div className="flex flex-col gap-4 text-[1.1rem] text-pretty">
-          <p>{leadership.bridge}</p>
+        <div className="flex flex-col gap-5 text-[1.08rem] text-pretty">
           <div>
-            <h3 className="font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
+            <h3 className="font-mono text-[0.78rem] tracking-[0.1em] text-brand uppercase">
               {activity.label}
             </h3>
-            <ul className="mt-2">
+            <ul className="mt-3 grid gap-2">
               {activity.items.map((item) => (
-                <li key={item} className="border-t border-border py-2">
-                  {item}
+                <li key={item} className="grid grid-cols-[1.2rem_1fr] gap-2">
+                  <span
+                    aria-hidden="true"
+                    className="mt-[0.5rem] size-[0.55rem] rounded-full bg-foreground/80"
+                  />
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
           </div>
+          <p>{leadership.bridge}</p>
           {also.map((item) => (
             <p key={item.organisation} className="text-muted-foreground">
               {item.role} · {item.organisation}
             </p>
           ))}
+          <p className="text-muted-foreground">{leadership.place}</p>
         </div>
       </div>
     </Section>

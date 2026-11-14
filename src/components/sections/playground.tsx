@@ -3,28 +3,28 @@ import { flagship } from "@/content";
 import { LinkButton } from "../link-button";
 import { PipelinePlayground } from "../pipeline-playground";
 
-/** A full-width band between two rules: the playground and its ledger book. */
+/** A quiet full-width band: the playground and its ledger book. */
 export function Playground() {
   return (
     <section
       id="playground"
       aria-labelledby="playground-title"
-      className="border-y border-foreground"
+      className="bg-wall-2"
     >
-      <div className="mx-auto w-full max-w-6xl px-5 py-12 sm:py-16">
+      <div className="mx-auto w-full max-w-[1280px] px-5 py-[4.2rem]">
         <PipelinePlayground
           intro={
-            <div className="flex flex-col gap-4">
-              <p className="font-mono text-[0.85rem] tracking-[0.08em] text-muted-foreground uppercase">
+            <div>
+              <p className="font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase">
                 Try it
               </p>
               <h2
                 id="playground-title"
-                className="font-display text-[clamp(2rem,4.2vw,3.2rem)] leading-none font-bold tracking-[-0.025em] text-balance"
+                className="mt-2 mb-4 font-display text-[clamp(2.2rem,5vw,4rem)] leading-[0.95] font-black tracking-[-0.035em] text-balance"
               >
                 Break my pipeline.
               </h2>
-              <p className="text-[1.1rem] text-pretty text-muted-foreground">
+              <p className="text-[1.08rem] text-pretty text-muted-foreground">
                 A small model of Payout Ledger, my open-source payout monitor.
                 Send it the webhooks that break payment systems and watch the
                 ledger take only what it should.
