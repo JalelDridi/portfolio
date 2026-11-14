@@ -1,5 +1,7 @@
 // All copy for the site lives here, so wording can be reviewed in one place.
 
+import type { DoorMotif, DoorPaint } from "@/lib/motifs";
+
 export const SITE_URL = "https://jaleldridi.vercel.app";
 
 export const site = {
@@ -16,14 +18,14 @@ export const changelog: {
 }[] = [
   {
     version: "3.0.0",
-    date: "2026-11-08",
-    title: "Statement",
+    date: "2026-11-14",
+    title: "Bab",
     items: [
-      "Bricolage Grotesque and IBM Plex replace Geist; cool paper with one cobalt accent, square corners, rules instead of cards.",
-      "An account summary with sourced numbers replaces the counting metrics.",
-      "The pipeline playground posts its steps into a ledger book.",
-      "Work is a table with hover previews; one Potluck case study with four parts; Kora added; earlier projects grouped.",
-      "Working hours and hiring setup in About; a copy button for the email.",
+      "A whitewashed street: every project is a studded medina door that opens.",
+      "A band of Qallaline tiles as the ground line, horseshoe arches around pictures, and a few Derja words with their meaning.",
+      "Alexandria and Onest replace Geist; one blue, one yellow.",
+      "Solvedblue added as the current job; one Potluck case study with four parts; Kora added.",
+      "The pipeline playground posts its steps into a ledger of entries.",
       "A status strip with live clocks, the deploy date and this changelog.",
     ],
   },
@@ -75,7 +77,9 @@ export const profile = {
   availability: "Open to remote roles",
   location: "Bizerte, Tunisia · UTC+1",
   intro:
-    "I build the parts of a product where money, reliability and trust meet. As founding engineer at Potluck, a US live-shopping marketplace, I own the Stripe Connect payments stack and the production infrastructure, and I built the realtime messaging system and the live-shopping product end to end.",
+    "I build the parts of a product where money, reliability and trust meet. I am one of the founding engineers of Solvedblue, a business messaging platform, where I work on the engine that decides what is sent, from which line, and when. Before that I owned the Stripe Connect payments stack and the production infrastructure at Potluck, a US live-shopping marketplace.",
+  heroLine:
+    "I build the parts of a product where money, reliability and trust meet. Every door on this street opens on something I built and shipped.",
   facts: [
     "About two years' experience",
     "Fully remote with US teams since January 2026",
@@ -88,6 +92,12 @@ export const profile = {
     cv: "/Jalel_Dridi_CV.pdf",
   },
 };
+
+/** The medina door a project is drawn as. */
+export type Door = { motif: DoorMotif; paint: DoorPaint };
+
+/** A door on the home page's street: its number, a note and one line. */
+export type Street = { no: string; note: string; line: string };
 
 export const flagship = {
   name: "Payout Ledger",
@@ -124,6 +134,12 @@ export const flagship = {
     label:
       "Screen recording of the Payout Ledger demo: a dropped webhook is sent, the checks run, and reconciliation flags the mismatch",
   },
+  door: { motif: "sun", paint: "green" } satisfies Door,
+  street: {
+    no: "N° 02",
+    note: "Open source",
+    line: "A payout monitor on a double-entry ledger that cannot go negative. 99 tests.",
+  } satisfies Street,
 };
 
 export type DiagramSpec = {
@@ -212,6 +228,9 @@ export type Project = {
   cover?: Shot;
   clip?: Clip;
   gallery?: Shot[];
+  door: Door;
+  /** Set for the doors shown on the home page's street. */
+  street?: Street;
 };
 
 // The Potluck case study draws this twice: as its visual and beside its
@@ -242,7 +261,83 @@ const PAYMENTS_DIAGRAM: DiagramSpec = {
 
 export const projects: Project[] = [
   {
+    slug: "solvedblue",
+    title: "Solvedblue",
+    company: "Solvedblue",
+    year: "2026",
+    door: { motif: "star", paint: "blue" },
+    street: {
+      no: "N° 01",
+      note: "2026 · now",
+      line: "iMessage for business: the engine that decides what is sent, from which line, and when.",
+    },
+    summary:
+      "A business messaging platform that sends real iMessages, with workflows, one inbox for every reply and an API.",
+    why: "Solvedblue lets a business send real iMessages from real numbers: one conversation at a time, to a whole list, or as a multi-step workflow, with every reply in one inbox and SMS as a fallback. I am one of its founding engineers and work on the engine underneath: what is sent, from which line, and when.",
+    built: [
+      "A dispatcher that checks every message before it goes out: opt-outs, quiet hours in the customer's time zone and a daily limit for each sending line.",
+      "One queue per sending line, paced so that a line never sends in bursts, with each contact kept on the line that first reached them.",
+      "Fleet health: every line reports in each minute; a line that goes quiet is marked offline, its messages wait for it, and new contacts move to another line.",
+      "A line that pauses itself when opt-outs spike, with an alert to us and a webhook to the customer.",
+      "Replies, delivery and read receipts, pictures and voice messages brought back into one inbox, retried until the server has them.",
+      "A public API and webhooks with retries, and a one-command setup for a new line that uses a single-use token.",
+      "Calling from the conversation, in testing: calls in the browser, ringing for the whole team, voicemail with a transcript and a call card in the thread.",
+    ],
+    stack: [
+      "TypeScript",
+      "Node.js",
+      "PostgreSQL",
+      "Redis",
+      "BullMQ",
+      "WebSockets",
+      "Twilio",
+      "AWS",
+    ],
+    links: [{ label: "Solvedblue", href: "https://solvedblue.com" }],
+    cover: {
+      src: "/work/solvedblue-home.png",
+      alt: "The Solvedblue home page: the headline 'Stop sending texts people ignore! Send iMessages they answer.' beside an example iMessage conversation",
+      caption: "The public home page.",
+      width: 1440,
+      height: 900,
+      frame: "browser",
+      url: "solvedblue.com",
+    },
+    visual: {
+      kind: "diagram",
+      diagram: {
+        columns: [
+          [{ id: "apps", label: "Web app and API", icon: "user" }],
+          [{ id: "dispatch", label: "Dispatcher", icon: "shield" }],
+          [{ id: "queues", label: "One queue per line", icon: "layers" }],
+          [{ id: "lines", label: "Sending lines", icon: "send" }],
+          [
+            { id: "inbox", label: "Inbox", icon: "message" },
+            { id: "hooks", label: "Customer webhooks", icon: "webhook" },
+            { id: "health", label: "Fleet health", icon: "activity" },
+          ],
+        ],
+        edges: [
+          ["apps", "dispatch"],
+          ["dispatch", "queues"],
+          ["queues", "lines"],
+          ["lines", "inbox"],
+          ["lines", "hooks"],
+          ["lines", "health"],
+        ],
+        caption:
+          "Every send passes the dispatcher's checks and waits its turn in its line's queue. Replies and receipts come back to one inbox and to the customer's webhooks.",
+      },
+    },
+  },
+  {
     slug: "potluck",
+    door: { motif: "tree", paint: "yellow" },
+    street: {
+      no: "N° 03",
+      note: "2026",
+      line: "Stripe Connect payments, live shopping and realtime chat for a US marketplace.",
+    },
     cover: {
       src: "/work/potluck-how-it-works.jpg",
       alt: "Potluck's How it works page, with four steps for customers and four for chefs",
@@ -317,7 +412,7 @@ export const projects: Project[] = [
     year: "2026",
     summary:
       "Founding engineer: the Stripe Connect payments stack, the live-shopping product, realtime messaging and the release pipeline of a US live-shopping marketplace.",
-    why: "Potluck is a US marketplace where home bakers sell on camera. I joined as its founding engineer in June 2026 and own the parts with the least room for error: payments, production infrastructure and the realtime systems.",
+    why: "Potluck is a US marketplace where home bakers sell on camera. I was its founding engineer from June to October 2026 and owned the parts with the least room for error: payments, production infrastructure and the realtime systems.",
     built: [],
     parts: [
       {
@@ -450,6 +545,12 @@ export const projects: Project[] = [
   },
   {
     slug: "tnpay",
+    door: { motif: "lozenge", paint: "sky" },
+    street: {
+      no: "N° 04",
+      note: "Open source",
+      line: "Typed SDKs for Tunisia's payment gateways. Three packages on npm.",
+    },
     title: "tnpay",
     company: "Open source",
     year: "2026",
@@ -502,6 +603,7 @@ export const projects: Project[] = [
   },
   {
     slug: "deal-grader",
+    door: { motif: "rows", paint: "night" },
     cover: {
       src: "/work/deal-grader-report.jpg",
       alt: "A Deal Grader report: a score of 77 out of 100 labelled Strong Exit, a score breakdown, price against the market, and nearby off-market deals",
@@ -571,6 +673,12 @@ export const projects: Project[] = [
   },
   {
     slug: "kora",
+    door: { motif: "fish", paint: "red" },
+    street: {
+      no: "N° 05",
+      note: "Side project",
+      line: "Daily football games for Tunisia, in Arabic, French and English.",
+    },
     cover: {
       src: "/work/kora-chkoun.png",
       alt: "Chkoun?, Kora's daily puzzle, in French: a grid of guesses with some fields revealed",
@@ -608,6 +716,7 @@ export const projects: Project[] = [
   },
   {
     slug: "spyder",
+    door: { motif: "sun", paint: "sky" },
     title: "Spyder",
     company: "Offa.com",
     year: "2026",
@@ -652,6 +761,7 @@ export const projects: Project[] = [
   },
   {
     slug: "inspection-platform",
+    door: { motif: "lozenge", paint: "green" },
     earlier: true,
     title: "Field-inspection platform",
     company: "Pearls Consulting",
@@ -700,6 +810,7 @@ export const projects: Project[] = [
   },
   {
     slug: "event-orchestrator",
+    door: { motif: "rows", paint: "yellow" },
     earlier: true,
     title: "Event Orchestrator",
     company: "ESPRIT · team project",
@@ -818,7 +929,7 @@ export const ledger = {
     {
       name: "Potluck",
       detail: "Stripe Connect payments stack and production infrastructure",
-      value: "owned since Jun 2026",
+      value: "owned Jun – Oct 2026",
       href: "https://www.bigpotluck.com",
     },
   ] as { name: string; detail: string; value: string; href?: string }[],
@@ -828,12 +939,21 @@ export const ledger = {
 export const experience = [
   {
     role: "Founding Engineer",
+    company: "Solvedblue",
+    href: "https://solvedblue.com",
+    detail: "Business messaging platform · fully remote",
+    period: "Nov 2026 – present",
+    summary:
+      "Work on the engine that decides what is sent, from which line, and when: dispatch, per-line queues, fleet health, replies and calling.",
+  },
+  {
+    role: "Founding Engineer",
     company: "Potluck",
     href: "https://www.bigpotluck.com",
     detail: "US live-shopping marketplace · fully remote",
-    period: "Jun 2026 – present",
+    period: "Jun 2026 – Oct 2026",
     summary:
-      "Own the Stripe Connect payments stack and production infrastructure. Built the live-shopping product and realtime messaging. Lead releases for a three-person team.",
+      "Owned the Stripe Connect payments stack and production infrastructure. Built the live-shopping product and realtime messaging. Led releases for a three-person team.",
   },
   {
     role: "Software Engineer",
@@ -876,7 +996,7 @@ export const about = {
   },
   paragraphs: [
     "I started on the infrastructure side. After two years of preparatory classes at IPEI El Manar I studied IT architecture and cloud computing at ESPRIT in Tunis, and my first paid work was at Pearls Consulting: deploying Laravel applications, automating releases, then building a field-inspection platform and the Kubernetes pipeline that shipped it.",
-    "In January 2026 I joined the team behind Offa.com, a US real-estate marketplace, and moved from running software to building products: first Deal Grader, then Spyder. In June I followed the same founding team to Potluck as its founding engineer, and took on the part with the least room for error: the payments.",
+    "In January 2026 I joined the team behind Offa.com, a US real-estate marketplace, and moved from running software to building products: first Deal Grader, then Spyder. In June I followed the same founding team to Potluck as its founding engineer, and took on the part with the least room for error: the payments. Since November 2026 I have been one of the founding engineers of Solvedblue, a business messaging platform.",
     "The infrastructure habit stayed. I ask what happens when a webhook is late, a deploy stops halfway or two requests race for one balance, and I would rather have the database refuse a wrong state than trust every caller to avoid it. Payout Ledger is that habit, written down in public.",
   ],
   facts: [
@@ -937,6 +1057,9 @@ export const leadership = {
       organisation: "Inceptum Junior Enterprise, ESPRIT",
     },
   ],
+  /** The town the chapter is named after. */
+  place:
+    "El Alia is the hill town near Bizerte that grows the teasel used to card Tunisia's chechias.",
   bridge:
     "It is the same job as leading releases at Potluck: agree a plan, split the work, keep people informed and make sure it ships.",
 };

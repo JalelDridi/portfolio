@@ -2,6 +2,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const PROJECTS = [
+  "Solvedblue",
   "Potluck",
   "tnpay",
   "Deal Grader",
@@ -74,7 +75,7 @@ test("hovering a work row changes the preview", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 900 });
   await page.goto("/");
   const preview = page.locator("#work [data-preview]");
-  await expect(preview).toHaveAttribute("data-preview", "potluck");
+  await expect(preview).toHaveAttribute("data-preview", "solvedblue");
   await page.getByRole("link", { name: "Deal Grader", exact: true }).hover();
   await expect(preview).toHaveAttribute("data-preview", "deal-grader");
   // A keyboard user gets the same preview by focusing a row's link.
@@ -117,6 +118,23 @@ test("Kora has a case study with its live link", async ({ page }) => {
     "href",
     "https://kora-tn.vercel.app",
   );
+});
+
+test("Solvedblue is the current job and has a case study", async ({ page }) => {
+  await page.goto("/");
+  const first = page.locator("#experience li").first();
+  await expect(first).toContainText("Solvedblue");
+  await expect(first).toContainText("Nov 2026 – present");
+  await expect(page.locator("#experience li").nth(1)).toContainText(
+    "Jun 2026 – Oct 2026",
+  );
+  await page.goto("/work/solvedblue");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Solvedblue" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Solvedblue", exact: true }).first(),
+  ).toHaveAttribute("href", "https://solvedblue.com");
 });
 
 test.describe("the pipeline playground", () => {
@@ -330,6 +348,7 @@ test("the home page describes its subject to search engines", async ({
   expect(data["@type"]).toBe("ProfilePage");
   expect(data.mainEntity.name).toBe("Mohamed Jalel Dridi");
   expect(data.mainEntity.sameAs).toContain("https://github.com/JalelDridi");
+  expect(data.mainEntity.worksFor.name).toBe("Solvedblue");
 });
 
 test("recordings wait until they are near the screen", async ({ page }) => {
