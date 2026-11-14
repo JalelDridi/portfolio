@@ -95,7 +95,8 @@ export function Diagram({
       aria-label={spec.caption}
       className={cn(
         "relative flex w-full items-stretch justify-between",
-        compact ? "gap-3" : "gap-4 sm:gap-8",
+        // Phones get a tighter row so five columns fit a 340 px screen.
+        compact ? "gap-3" : "gap-1.5 sm:gap-8",
         className,
       )}
     >
@@ -118,11 +119,11 @@ export function Diagram({
                   ref={refs[node.id]}
                   className={cn(
                     "flex items-center justify-center border-[1.5px] border-brand bg-card text-brand",
-                    compact ? "size-11" : "size-12 sm:size-14",
+                    compact ? "size-11" : "size-10 sm:size-14",
                   )}
                 >
                   <Icon
-                    className={compact ? "size-5" : "size-5 sm:size-6"}
+                    className={compact ? "size-5" : "size-4 sm:size-6"}
                     aria-hidden="true"
                   />
                 </div>
@@ -132,7 +133,7 @@ export function Diagram({
                     // The line height comes after the size, or cn() drops it.
                     compact
                       ? "max-w-20 text-[0.85rem] leading-tight"
-                      : "max-w-20 text-[0.85rem] leading-tight sm:max-w-28",
+                      : "max-w-20 text-[0.72rem] leading-tight sm:max-w-28 sm:text-[0.85rem]",
                   )}
                 >
                   {node.label}
