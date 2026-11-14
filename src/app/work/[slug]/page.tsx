@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
 import { LinkButton } from "@/components/link-button";
 import { ClipFigure, ShotFigure } from "@/components/media";
-import { Door, DoorFrame } from "@/components/motifs";
+import { ClosedDoor, Door, DoorFrame } from "@/components/motifs";
 import { DiagramPanel } from "@/components/project-visual";
 import { Rise } from "@/components/rise";
 import { Tags } from "@/components/tags";
@@ -72,21 +72,19 @@ function DiagramFigure({ spec }: { spec: DiagramSpec }) {
   );
 }
 
-/** What was built, as a lettered list. */
+/** What was built, as a list with a lozenge stud before each line. */
 function BuiltList({ items }: { items: string[] }) {
   return (
     <ol className="max-w-3xl">
-      {items.map((item, itemIndex) => (
+      {items.map((item) => (
         <li
           key={item}
           className="grid grid-cols-[1.6rem_1fr] border-b border-border py-3 text-lg leading-relaxed last:border-b-0"
         >
           <span
             aria-hidden="true"
-            className="pt-0.5 font-mono text-[0.85rem] text-brand"
-          >
-            {String.fromCharCode(97 + itemIndex)}
-          </span>
+            className="mt-[0.72em] size-2 rotate-45 bg-brand"
+          />
           <span className="text-pretty">{item}</span>
         </li>
       ))}
@@ -106,10 +104,13 @@ function partId(title: string) {
 function Row({
   label,
   id,
+  number,
   children,
 }: {
   label: string;
   id?: string;
+  /** A part of a case study: its number, and its title set as a heading. */
+  number?: number;
   children: ReactNode;
 }) {
   return (
@@ -117,7 +118,19 @@ function Row({
       aria-labelledby={id}
       className="grid gap-x-8 gap-y-4 border-t border-border py-9 first:border-t-0 md:grid-cols-[11rem_1fr]"
     >
-      {id ? (
+      {id && number ? (
+        <div>
+          <p aria-hidden="true" className={cn(LABEL, "text-brand")}>
+            N° {String(number).padStart(2, "0")}
+          </p>
+          <h2
+            id={id}
+            className="mt-2 font-display text-[1.45rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance"
+          >
+            {label}
+          </h2>
+        </div>
+      ) : id ? (
         <h2 id={id} className={cn(LABEL, "text-brand")}>
           {label}
         </h2>
@@ -220,13 +233,18 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
 
         <div className="mt-12 border-t border-border">
           <Row label="Why it existed" id="why">
-            <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
+            <p className="max-w-4xl font-display text-[clamp(1.25rem,2.1vw,1.6rem)] leading-[1.35] font-bold tracking-[-0.015em] text-pretty">
               {project.why}
             </p>
           </Row>
 
-          {project.parts?.map((part) => (
-            <Row key={part.title} label={part.title} id={partId(part.title)}>
+          {project.parts?.map((part, partIndex) => (
+            <Row
+              key={part.title}
+              label={part.title}
+              id={partId(part.title)}
+              number={partIndex + 1}
+            >
               <div className="flex flex-col gap-8">
                 {part.why && (
                   <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
@@ -312,7 +330,14 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
         >
           <span className={`pt-2 ${LABEL}`}>Next</span>
           <span className="flex items-center justify-between gap-4 font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-extrabold tracking-[-0.03em] text-balance">
-            {next.title}
+            <span className="flex items-center gap-5">
+              <ClosedDoor
+                motif={next.door.motif}
+                paint={next.door.paint}
+                className="w-14 shrink-0"
+              />
+              {next.title}
+            </span>
             <ArrowRight
               className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
               aria-hidden="true"

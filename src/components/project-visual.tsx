@@ -15,7 +15,7 @@ export function DiagramPanel({
       className={
         size === "card"
           ? "relative flex h-72 w-full items-center overflow-hidden px-5"
-          : "relative flex w-full items-center overflow-hidden px-3 py-10 sm:px-12 sm:py-14"
+          : "relative mx-auto flex w-full max-w-[52rem] items-center overflow-hidden px-3 py-8 sm:px-10 sm:py-10"
       }
     >
       <Diagram spec={spec} compact={size === "card"} />

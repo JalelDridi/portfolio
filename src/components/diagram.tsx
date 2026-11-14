@@ -118,12 +118,13 @@ export function Diagram({
                 <div
                   ref={refs[node.id]}
                   className={cn(
-                    "flex items-center justify-center border-[1.5px] border-brand bg-card text-brand",
-                    compact ? "size-11" : "size-10 sm:size-14",
+                    // A painted square, like a door stud: the icon is cut out of it.
+                    "flex items-center justify-center bg-brand text-card",
+                    compact ? "size-11" : "size-10 sm:size-16",
                   )}
                 >
                   <Icon
-                    className={compact ? "size-5" : "size-4 sm:size-6"}
+                    className={compact ? "size-5" : "size-4 sm:size-7"}
                     aria-hidden="true"
                   />
                 </div>
