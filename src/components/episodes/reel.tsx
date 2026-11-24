@@ -140,7 +140,7 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
       className="reel relative md:h-svh md:min-h-[36rem] md:overflow-hidden"
     >
       {/* First in the page, so the name comes before every title; at the bottom on a wide screen. */}
-      <div className="relative z-20 flex flex-col gap-1 px-4 pt-20 pb-6 font-mono sm:px-11 text-[0.8rem] text-muted-foreground md:absolute md:inset-x-0 md:bottom-0 md:flex-row md:items-center md:gap-[18px] md:pt-0 md:pb-7">
+      <div className="relative z-20 flex flex-col gap-1 px-4 pt-2 pb-6 font-mono sm:px-11 text-[0.8rem] text-muted-foreground md:absolute md:inset-x-0 md:bottom-0 md:flex-row md:items-center md:gap-[18px] md:pt-0 md:pb-7">
         <h1 className="font-medium whitespace-nowrap text-foreground">
           {profile.name}
         </h1>
@@ -171,10 +171,13 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
         <article
           key={episode.slug}
           data-on={i === index ? "" : undefined}
+          // The next still loads ahead of its turn; the others wait (see globals.css).
+          data-next={i === (index + 1) % episodes.length ? "" : undefined}
           className="reel-episode relative h-[78svh] min-h-[30rem] overflow-hidden md:absolute md:inset-0 md:h-auto md:min-h-0"
         >
+          {/* Only the shown still is named, so the way back never morphs into a hidden one. */}
           <ViewTransition
-            name={`episode-still-${episode.slug}`}
+            name={i === index ? `episode-still-${episode.slug}` : undefined}
             share="morph"
             default="none"
           >
@@ -197,6 +200,7 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
               · {episode.year}
             </p>
             <h2
+              id={`reel-title-${episode.slug}`}
               ref={(node) => {
                 titles.current[i] = node;
               }}
@@ -209,6 +213,7 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
             </p>
             <Link
               href={episode.href}
+              aria-describedby={`reel-title-${episode.slug}`}
               className="mt-6 inline-flex items-center gap-3 border border-foreground px-5 py-[13px] font-mono text-sm tracking-[0.06em] text-foreground uppercase transition-colors hover:bg-foreground hover:text-background md:mt-7"
             >
               {ui.play} <span aria-hidden="true">→</span>

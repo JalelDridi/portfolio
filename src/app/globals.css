@@ -23,15 +23,9 @@
   /* The bezel of a phone frame around a screenshot. */
   --bezel: #1d1c1b;
 
-  /*
-   * Bab's paints, kept until the home page and case studies are rebuilt
-   * (Tasks 2 and 3), so the pages that still use them keep their colours.
-   */
+  /* Named only by LinkButton's two old variants, which no page uses. */
   --brand-deep: #0f4f96;
   --sun: #edb021;
-  --leaf: #23795a;
-  --stud: #10151b;
-  --room: #0c1520;
 
   /* The shadcn tokens follow the ones above. */
   --card-foreground: var(--foreground);
@@ -72,10 +66,7 @@
   --color-bezel: var(--bezel);
   --color-brand-deep: var(--brand-deep);
   --color-sun: var(--sun);
-  --color-leaf: var(--leaf);
   --color-red: var(--red);
-  --color-stud: var(--stud);
-  --color-room: var(--room);
   --color-wall-2: var(--wall-2);
   /* Titles: Archivo, set wide (font-stretch: 125%) where it is used. */
   --font-display: var(--font-archivo), "Arial Black", sans-serif;
@@ -112,16 +103,6 @@
     outline: 2px solid var(--brand);
     outline-offset: 2px;
   }
-  /* On painted bands the ring takes the band's text colour, or door yellow in the dark room. */
-  .focus-white :focus-visible {
-    outline-color: #ffffff;
-  }
-  .focus-ink :focus-visible {
-    outline-color: #101922;
-  }
-  .focus-sun :focus-visible {
-    outline-color: var(--sun);
-  }
   html {
     @apply scroll-smooth font-sans;
     /* One notch above the browser default, so every rem-based size grows. */
@@ -133,65 +114,6 @@
   }
   ::selection {
     background: color-mix(in oklch, var(--brand) 25%, transparent);
-  }
-}
-
-/*
- * Doors. Leaves swing inward on the hinge side and darken a little as they
- * open; the parent sets `perspective` and `data-state`.
- */
-@layer components {
-  .door-leaf {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    z-index: 2;
-    width: 50%;
-    backface-visibility: hidden;
-    transition:
-      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
-      filter 0.9s;
-  }
-  .door-leaf-l {
-    left: 0;
-    transform-origin: left center;
-  }
-  .door-leaf-r {
-    right: 0;
-    transform-origin: right center;
-  }
-  [data-state="ajar"] > .door-leaf-r {
-    transform: rotateY(-76deg);
-    filter: brightness(0.82);
-  }
-  [data-state="open"] > .door-leaf-l {
-    transform: rotateY(78deg);
-    filter: brightness(0.82);
-  }
-  [data-state="open"] > .door-leaf-r {
-    transform: rotateY(-78deg);
-    filter: brightness(0.82);
-  }
-
-  /*
-   * The street's doors are links: they open while pointed at or focused, and
-   * stand ajar on touch screens, which cannot hover, so the picture shows.
-   */
-  .door-link:hover .door-leaf-l,
-  .door-link:focus-visible .door-leaf-l {
-    transform: rotateY(78deg);
-    filter: brightness(0.82);
-  }
-  .door-link:hover .door-leaf-r,
-  .door-link:focus-visible .door-leaf-r {
-    transform: rotateY(-78deg);
-    filter: brightness(0.82);
-  }
-  @media (hover: none) {
-    .door-link .door-leaf-r {
-      transform: rotateY(-76deg);
-      filter: brightness(0.82);
-    }
   }
 }
 
@@ -243,6 +165,31 @@
     }
     .reel-episode:not([data-on]) {
       visibility: hidden;
+    }
+    /*
+     * Hidden stills are inside the viewport, so `loading="lazy"` alone would
+     * fetch all six. Taken out of the layout they wait; the next one loads
+     * ahead of its turn.
+     */
+    .reel-episode:not([data-on]):not([data-next]) .reel-still img {
+      display: none;
+    }
+    /* The header sits over the top of the still: near black under it. */
+    .reel-tint {
+      background:
+        linear-gradient(
+          180deg,
+          rgb(7 7 7 / 0.92) 0,
+          rgb(7 7 7 / 0.88) 110px,
+          transparent 240px
+        ),
+        linear-gradient(
+          90deg,
+          rgb(7 7 7 / 0.94) 0%,
+          rgb(7 7 7 / 0.55) 45%,
+          rgb(7 7 7 / 0.2) 100%
+        ),
+        linear-gradient(0deg, rgb(7 7 7 / 0.9), transparent 40%);
     }
   }
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {

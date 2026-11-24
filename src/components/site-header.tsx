@@ -7,7 +7,8 @@ import { cn } from "@/lib/utils";
 
 /**
  * The handle and four links, in one row at every width. Fixed over the home
- * page's reel, in the flow of the page everywhere else.
+ * page's reel from 768px up, where the reel fills the screen; in the flow of
+ * the page everywhere else, so on a phone it never covers a card.
  */
 export function SiteHeader() {
   const home = usePathname() === "/";
@@ -15,7 +16,9 @@ export function SiteHeader() {
     <header
       className={cn(
         "inset-x-0 top-0 z-50 font-mono text-[0.8rem] sm:text-[0.85rem]",
-        home ? "fixed" : "relative bg-background",
+        home
+          ? "relative bg-background md:fixed md:bg-transparent"
+          : "relative bg-background",
       )}
     >
       <div className="mx-auto flex w-full items-baseline justify-between gap-4 px-4 py-5 sm:px-11 sm:py-7">
@@ -29,7 +32,13 @@ export function SiteHeader() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-muted-foreground transition-colors hover:text-foreground"
+                  className={cn(
+                    "transition-colors",
+                    // Over a still, muted text would be too faint.
+                    home
+                      ? "text-foreground hover:text-brand"
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
                 >
                   {item.label}
                 </Link>

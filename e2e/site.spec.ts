@@ -62,7 +62,7 @@ test("with motion reduced the reel does not advance on its own", async ({
   page,
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
+  await openReel(page);
   await page.waitForTimeout(7000);
   await expect(
     page.getByRole("heading", { level: 2, name: "Solvedblue" }),
@@ -174,7 +174,45 @@ test("on a phone every episode is a card with its own link", async ({
   await expect(
     page.getByRole("heading", { level: 2, name: "Kora" }),
   ).toBeVisible();
+  // Each "Play episode" is described by its own title.
+  await expect(
+    page.getByRole("link", { name: "Play episode" }).nth(4),
+  ).toHaveAccessibleDescription("Kora");
   await context.close();
+});
+
+test("on a phone the header scrolls away instead of covering the cards", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  const header = page.getByRole("banner");
+  await expect(header).toHaveCSS("position", "relative");
+  await page.evaluate(() => window.scrollTo(0, 1500));
+  await expect(header).not.toBeInViewport();
+  await context.close();
+});
+
+test("on a wide screen only the shown still and the next one load", async ({
+  page,
+}) => {
+  await openReel(page);
+  await page.waitForLoadState("networkidle");
+  const loaded = await page
+    .locator(".reel-still img")
+    .evaluateAll(
+      (images) =>
+        images.filter(
+          (image) =>
+            (image as HTMLImageElement).complete &&
+            (image as HTMLImageElement).naturalWidth > 0,
+        ).length,
+    );
+  expect(loaded).toBe(2);
 });
 
 test("the shell is dark, with four header links", async ({ page }) => {
