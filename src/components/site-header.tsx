@@ -24,7 +24,7 @@ export function SiteHeader() {
           <span className="text-brand">.</span>
         </Link>
         <nav aria-label="Site">
-          <ul className="flex gap-3.5 sm:gap-7">
+          <ul className="flex gap-3 sm:gap-7">
             {shell.nav.map((item) => (
               <li key={item.href}>
                 <Link

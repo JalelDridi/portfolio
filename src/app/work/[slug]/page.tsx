@@ -1,24 +1,26 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { ReactNode } from "react";
-import { LinkButton } from "@/components/link-button";
+import {
+  EpisodeHead,
+  FactLinks,
+  StackLine,
+} from "@/components/episodes/episode-head";
+import { NextEpisode } from "@/components/episodes/next-episode";
+import { episodeFile } from "@/components/episodes/order";
 import { ClipFigure, ShotFigure } from "@/components/media";
-import { ClosedDoor, Door, DoorFrame } from "@/components/motifs";
 import { DiagramPanel } from "@/components/project-visual";
-import { Rise } from "@/components/rise";
-import { Tags } from "@/components/tags";
-import { type DiagramSpec, projects, type Shot } from "@/content";
-import { DOOR_PAINTS, type DoorPaint, INK } from "@/lib/motifs";
-import { cn } from "@/lib/utils";
+import { type DiagramSpec, episodes, projects, type Shot } from "@/content";
 
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }
 
-// Only the listed projects exist; anything else is a 404.
-export const dynamicParams = false;
+/*
+ * Only the listed projects exist; any other slug reaches `notFound()` below
+ * and is a 404. (`dynamicParams = false` gave the same 404 but logged a
+ * NoFallbackError on the server for every unknown slug.)
+ */
 
 export async function generateMetadata(
   props: PageProps<"/work/[slug]">,
@@ -40,52 +42,46 @@ export async function generateMetadata(
   };
 }
 
-const LABEL =
-  "font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase";
+/** A mono label in the small red. */
+const LABEL = "font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase";
 
-/*
- * Text on the head band. White passes AA on the dark paints; on yellow and on
- * sky (white on #3d8bc9 is 3.7:1, short of 4.5:1) the text is ink.
- */
-const BAND_TEXT: Record<DoorPaint, string> = {
-  blue: "#ffffff",
-  green: "#ffffff",
-  yellow: INK,
-  sky: INK,
-  red: "#ffffff",
-  night: "#ffffff",
-};
+/** Long text: Onest, at a size that reads comfortably. */
+const PROSE = "max-w-[40rem] text-[1.15rem] leading-[1.7] text-pretty";
 
-/** An architecture sketch in a whitewashed frame, captioned below. */
+const pad = (n: number) => String(n).padStart(2, "0");
+
+/** An architecture sketch in a thin dark frame, captioned below. */
 function DiagramFigure({ spec }: { spec: DiagramSpec }) {
   return (
     <figure className="flex flex-col gap-3">
-      <div className="bg-wall-2 p-[9px] shadow-[0_0_0_1px_var(--border)]">
-        <div className="bg-card">
-          <DiagramPanel spec={spec} size="page" />
-        </div>
+      <div className="border border-border bg-card">
+        <DiagramPanel spec={spec} size="page" />
       </div>
-      <figcaption className="font-mono text-[0.8rem] text-pretty text-muted-foreground">
+      <figcaption className="font-mono text-[0.8rem] leading-relaxed text-pretty text-muted-foreground">
         {spec.caption}
       </figcaption>
     </figure>
   );
 }
 
-/** What was built, as a list with a lozenge stud before each line. */
+/** What was built, as a numbered list under hairlines. */
 function BuiltList({ items }: { items: string[] }) {
   return (
-    <ol className="max-w-3xl">
-      {items.map((item) => (
+    <ol className="max-w-[44rem] border-t border-border">
+      {items.map((item, index) => (
         <li
           key={item}
-          className="grid grid-cols-[1.6rem_1fr] border-b border-border py-3 text-lg leading-relaxed last:border-b-0"
+          className="grid grid-cols-[2.5rem_1fr] border-b border-border py-4"
         >
           <span
             aria-hidden="true"
-            className="mt-[0.72em] size-2 rotate-45 bg-brand"
-          />
-          <span className="text-pretty">{item}</span>
+            className="pt-[0.3rem] font-mono text-[0.8rem] text-brand"
+          >
+            {pad(index + 1)}
+          </span>
+          <span className="text-[1.08rem] leading-[1.65] text-pretty">
+            {item}
+          </span>
         </li>
       ))}
     </ol>
@@ -100,58 +96,38 @@ function partId(title: string) {
     .replace(/^-|-$/g, "")}`;
 }
 
-/** A row under a hairline: the label in its own column, the content beside it. */
-function Row({
-  label,
+/** A section of the single column, under a hairline, with a mono label. */
+function Section({
   id,
-  number,
+  label,
   children,
 }: {
+  id: string;
   label: string;
-  id?: string;
-  /** A part of a case study: its number, and its title set as a heading. */
-  number?: number;
   children: ReactNode;
 }) {
   return (
     <section
       aria-labelledby={id}
-      className="grid gap-x-8 gap-y-4 border-t border-border py-9 first:border-t-0 md:grid-cols-[11rem_1fr]"
+      className="border-t border-border py-12 sm:py-16"
     >
-      {id && number ? (
-        <div>
-          <p aria-hidden="true" className={cn(LABEL, "text-brand")}>
-            N° {String(number).padStart(2, "0")}
-          </p>
-          <h2
-            id={id}
-            className="mt-2 font-display text-[1.45rem] leading-[1.05] font-extrabold tracking-[-0.03em] text-balance"
-          >
-            {label}
-          </h2>
-        </div>
-      ) : id ? (
-        <h2 id={id} className={cn(LABEL, "text-brand")}>
-          {label}
-        </h2>
-      ) : (
-        <p className={LABEL}>{label}</p>
-      )}
-      <div className="min-w-0">{children}</div>
+      <h2 id={id} className={LABEL}>
+        {label}
+      </h2>
+      <div className="mt-6">{children}</div>
     </section>
   );
 }
 
 export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
   const { slug } = await props.params;
-  const index = projects.findIndex((p) => p.slug === slug);
-  if (index === -1) notFound();
+  const project = projects.find((p) => p.slug === slug);
+  if (!project) notFound();
 
-  const project = projects[index];
-  const next = projects[(index + 1) % projects.length];
   const { visual, clip, cover } = project;
-  const paint = DOOR_PAINTS[project.door.paint];
-  const bandText = BAND_TEXT[project.door.paint];
+  // A still on the home page grows into this page's lead picture when they
+  // are the same picture.
+  const still = episodes.find((episode) => episode.slug === slug)?.still.src;
 
   // The lead picture is the most vivid thing available: a recording, then a
   // screenshot, then the architecture sketch.
@@ -178,172 +154,116 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
     visual.kind === "diagram" && lead !== "visual" && !project.parts;
 
   return (
-    <main className="pb-16 sm:pb-24">
-      {/* The head band, in the paint of the project's door. */}
-      <header
-        className={bandText === INK ? "focus-ink" : "focus-white"}
-        style={{ backgroundColor: paint.fill, color: bandText }}
+    <main className="pb-8">
+      <EpisodeHead
+        file={episodeFile(slug)}
+        title={project.title}
+        summary={project.summary}
+        facts={[
+          { label: "role", value: `${project.company} · ${project.year}` },
+          { label: "stack", value: <StackLine items={project.stack} /> },
+          ...(project.links.length > 0
+            ? [{ label: "links", value: <FactLinks links={project.links} /> }]
+            : []),
+        ]}
       >
-        <div className="mx-auto grid w-full max-w-[1280px] items-end gap-12 px-5 *:min-w-0 md:grid-cols-[1fr_auto]">
-          <Rise className="pt-10 pb-12 md:pt-12 md:pb-14">
-            <Link
-              href="/#work"
-              className="inline-flex items-center gap-1.5 text-base font-medium underline-offset-4 hover:underline focus-visible:outline-current"
-            >
-              <ArrowLeft className="size-4" aria-hidden="true" /> All work
-            </Link>
-            <p className="mt-8 font-mono text-[0.8rem] tracking-[0.1em] uppercase">
-              {project.company} · {project.year}
-            </p>
-            <h1 className="mt-3 font-display text-[clamp(2.6rem,6.4vw,5.4rem)] leading-[0.92] font-black tracking-[-0.04em] text-balance">
-              {project.title}
-            </h1>
-            <p className="mt-6 max-w-3xl text-[1.25rem] text-pretty">
-              {project.summary}
-            </p>
-          </Rise>
-          {/* The project's door, closed, its step resting on the band's edge. */}
-          <div className="hidden w-[170px] pt-10 md:block lg:w-[190px]">
-            <DoorFrame small>
-              <Door motif={project.door.motif} paint={project.door.paint} />
-            </DoorFrame>
-          </div>
-        </div>
-      </header>
+        {lead === "clip" && clip && <ClipFigure clip={clip} />}
+        {lead === "cover" && cover && (
+          <ShotFigure
+            shot={cover}
+            priority
+            transitionName={
+              cover.src === still ? `episode-still-${slug}` : undefined
+            }
+          />
+        )}
+        {lead === "visual" && visual.kind === "diagram" && (
+          <DiagramFigure spec={visual.diagram} />
+        )}
+        {lead === "visual" && visual.kind === "image" && (
+          <ShotFigure
+            priority
+            shot={{
+              ...visual,
+              caption: "",
+              frame: "browser",
+              url: "grade.offa.com",
+            }}
+          />
+        )}
+      </EpisodeHead>
 
-      <div className="mx-auto w-full max-w-[1280px] px-5 pt-12">
-        <div>
-          {lead === "clip" && clip && <ClipFigure clip={clip} />}
-          {lead === "cover" && cover && <ShotFigure shot={cover} priority />}
-          {lead === "visual" && visual.kind === "diagram" && (
-            <DiagramFigure spec={visual.diagram} />
-          )}
-          {lead === "visual" && visual.kind === "image" && (
-            <ShotFigure
-              priority
-              shot={{
-                ...visual,
-                caption: "",
-                frame: "browser",
-                url: "grade.offa.com",
-              }}
-            />
-          )}
-        </div>
-
-        <div className="mt-12 border-t border-border">
-          <Row label="Why it existed" id="why">
-            <p className="max-w-4xl font-display text-[clamp(1.25rem,2.1vw,1.6rem)] leading-[1.35] font-bold tracking-[-0.015em] text-pretty">
+      <div className="mx-auto mt-16 w-full max-w-[calc(1360px+5.5rem)] px-4 sm:mt-24 sm:px-11">
+        <div className="max-w-[64rem]">
+          <Section id="why" label="Why it existed">
+            <p className="max-w-[40rem] text-[1.3rem] leading-[1.55] text-pretty sm:text-[1.45rem]">
               {project.why}
             </p>
-          </Row>
+          </Section>
 
-          {project.parts?.map((part, partIndex) => (
-            <Row
-              key={part.title}
-              label={part.title}
-              id={partId(part.title)}
-              number={partIndex + 1}
-            >
-              <div className="flex flex-col gap-8">
-                {part.why && (
-                  <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
-                    {part.why}
-                  </p>
-                )}
-                <BuiltList items={part.built} />
-                {part.outcome && (
-                  <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
-                    {part.outcome}
-                  </p>
-                )}
-                {part.diagram && <DiagramFigure spec={part.diagram} />}
-              </div>
-            </Row>
-          ))}
+          {project.parts?.map((part, partIndex) => {
+            const id = partId(part.title);
+            return (
+              <section
+                key={part.title}
+                aria-labelledby={id}
+                className="border-t border-border py-12 sm:py-16"
+              >
+                <p aria-hidden="true" className={LABEL}>
+                  {pad(partIndex + 1)} / {pad(project.parts?.length ?? 0)}
+                </p>
+                <h2
+                  id={id}
+                  className="mt-3 font-display text-[clamp(1.6rem,3.2vw,2.3rem)] leading-[1.05] font-extrabold tracking-[-0.02em] text-balance"
+                >
+                  {part.title}
+                </h2>
+                <div className="mt-7 flex flex-col gap-8">
+                  {part.why && <p className={PROSE}>{part.why}</p>}
+                  <BuiltList items={part.built} />
+                  {part.outcome && <p className={PROSE}>{part.outcome}</p>}
+                  {part.diagram && <DiagramFigure spec={part.diagram} />}
+                </div>
+              </section>
+            );
+          })}
 
           {project.built.length > 0 && (
-            <Row label="What I built" id="built">
+            <Section id="built" label="What I built">
               <BuiltList items={project.built} />
-            </Row>
+            </Section>
           )}
 
           {project.outcome && (
-            <Row label="Outcome" id="outcome">
-              <p className="max-w-3xl text-[1.2rem] leading-relaxed text-pretty">
-                {project.outcome}
-              </p>
-            </Row>
+            <Section id="outcome" label="Outcome">
+              <p className={PROSE}>{project.outcome}</p>
+            </Section>
           )}
 
           {project.note && (
-            <div className="grid gap-x-8 border-t border-border py-8 md:grid-cols-[11rem_1fr]">
-              <p className="max-w-3xl text-base text-pretty text-muted-foreground md:col-start-2">
-                {project.note}
-              </p>
-            </div>
-          )}
-
-          <Row label="Stack" id="stack">
-            <Tags items={project.stack} />
-          </Row>
-
-          {project.links.length > 0 && (
-            <Row label="Links" id="links">
-              <ul className="flex flex-wrap gap-3">
-                {project.links.map((link, linkIndex) => (
-                  <li key={link.href}>
-                    <LinkButton
-                      href={link.href}
-                      variant={linkIndex === 0 ? "primary" : "outline"}
-                      className="h-auto min-h-11 py-2 text-left"
-                    >
-                      {link.label}
-                      <ArrowUpRight className="shrink-0" aria-hidden="true" />
-                    </LinkButton>
-                  </li>
-                ))}
-              </ul>
-            </Row>
+            <p className="max-w-[40rem] border-t border-border py-10 text-base leading-relaxed text-pretty text-muted-foreground">
+              {project.note}
+            </p>
           )}
 
           {stills.length > 0 && (
-            <Row label="On screen" id="screens">
-              <div className="flex flex-col gap-12">
+            <Section id="screens" label="On screen">
+              <div className="flex flex-col gap-14">
                 {stills.map((shot) => (
                   <ShotFigure key={shot.src} shot={shot} />
                 ))}
               </div>
-            </Row>
+            </Section>
           )}
 
           {showDiagramBelow && (
-            <Row label="How it fits together" id="architecture">
+            <Section id="architecture" label="How it fits together">
               <DiagramFigure spec={visual.diagram} />
-            </Row>
+            </Section>
           )}
         </div>
 
-        <Link
-          href={`/work/${next.slug}`}
-          className="group mt-12 grid gap-x-8 gap-y-2 border-y border-border py-7 transition-colors hover:text-brand md:grid-cols-[11rem_1fr]"
-        >
-          <span className={`pt-2 ${LABEL}`}>Next</span>
-          <span className="flex items-center justify-between gap-4 font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-extrabold tracking-[-0.03em] text-balance">
-            <span className="flex items-center gap-5">
-              <ClosedDoor
-                motif={next.door.motif}
-                paint={next.door.paint}
-                className="w-14 shrink-0"
-              />
-              {next.title}
-            </span>
-            <ArrowRight
-              className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
-              aria-hidden="true"
-            />
-          </span>
-        </Link>
+        <NextEpisode slug={slug} />
       </div>
     </main>
   );

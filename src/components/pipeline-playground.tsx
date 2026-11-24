@@ -18,7 +18,7 @@ const MAX_ENTRIES = 12;
 
 /** Column heads of the ledger book. */
 const LABEL =
-  "font-display text-[0.85rem] font-bold tracking-[-0.01em] text-muted-foreground";
+  "font-mono text-[0.75rem] font-normal tracking-[0.08em] text-muted-foreground uppercase";
 
 /** Labels of the totals under the book. */
 const TOTAL = "font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase";
@@ -42,7 +42,8 @@ function resultOf(step: Step, before: Counters): string {
 const RESULT_TONE = {
   ok: "text-brand",
   skip: "text-muted-foreground",
-  wait: "text-red",
+  // The title red is too dark for small text; a held step is off-white.
+  wait: "text-foreground",
 };
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -110,7 +111,7 @@ export function PipelinePlayground({
               onClick={() => run(scenario.id)}
               disabled={busy}
               className={cn(
-                "inline-flex h-12 items-center rounded-[999px_999px_10px_10px] border-2 px-[1.3rem] font-sans text-base font-semibold transition-colors disabled:opacity-50",
+                "inline-flex h-12 items-center border px-5 font-mono text-[0.8rem] tracking-[0.06em] uppercase transition-colors disabled:opacity-50",
                 index === 0
                   ? "border-brand bg-brand text-background hover:border-foreground hover:bg-foreground"
                   : "border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background",
@@ -124,13 +125,13 @@ export function PipelinePlayground({
         <p
           role="status"
           aria-live="polite"
-          className="min-h-[3.25rem] border-l-[3px] border-sun pl-3 font-mono text-[0.88rem] leading-snug"
+          className="min-h-[3.25rem] border-l-2 border-brand pl-3 font-mono text-[0.88rem] leading-snug"
         >
           {message}
         </p>
       </div>
 
-      <div className="min-w-0 bg-card px-4 pt-3 pb-5 shadow-[0_0_0_1px_var(--border)] sm:px-6">
+      <div className="min-w-0 border border-border bg-card px-4 pt-3 pb-5 sm:px-6">
         <table
           aria-label="Ledger entries"
           className="w-full font-mono text-[0.85rem]"

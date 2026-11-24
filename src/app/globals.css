@@ -294,6 +294,54 @@
   }
 }
 
+/*
+ * Episode pages. The head is wiped in from the top once. A title is sized
+ * from its longest word (`--longest`, in characters, set inline) so that word
+ * fits its column at every width; `overflow-wrap: anywhere` is the safety net.
+ */
+@layer components {
+  .episode-head {
+    animation: episode-wipe 0.5s cubic-bezier(0.7, 0, 0.2, 1) both;
+  }
+  .episode-title,
+  .episode-next-title {
+    font-stretch: 125%;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+  .episode-title {
+    --column: calc(100vw - 2rem);
+    font-size: clamp(28px, calc(var(--column) / (var(--longest) * 0.9)), 88px);
+  }
+  .episode-next-title {
+    --column: calc(100vw - 2rem);
+    font-size: clamp(28px, calc(var(--column) / (var(--longest) * 0.9)), 64px);
+  }
+  @media (min-width: 640px) {
+    .episode-title,
+    .episode-next-title {
+      --column: calc(100vw - 6.5rem);
+    }
+  }
+  /* Two columns: the title gets 5/12 of the row, less the 56px gap. */
+  @media (min-width: 900px) {
+    .episode-title {
+      --column: calc((min(100vw - 6.5rem, 1360px) - 56px) * 5 / 12);
+    }
+  }
+}
+
+@keyframes episode-wipe {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
 /* A still that grows into the episode's lead picture. */
 ::view-transition-group(.morph) {
   animation-duration: 400ms;

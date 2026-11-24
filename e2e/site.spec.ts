@@ -158,8 +158,87 @@ test("an episode opens its case study, which links out", async ({ page }) => {
     page.getByRole("link", { name: "Open Deal Grader" }),
   ).toHaveAttribute("href", "https://grade.offa.com");
 
-  await page.getByRole("link", { name: "All work" }).click();
-  await expect(page).toHaveURL(/\/#work$/);
+  await page.getByRole("link", { name: "All episodes" }).click();
+  await expect(page).toHaveURL(/:\d+\/$/);
+});
+
+test("an episode page opens with its file name, title and a way back", async ({
+  page,
+}) => {
+  await page.goto("/work/potluck");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Potluck" }),
+  ).toBeVisible();
+  await expect(page.getByText("eps1.2_potluck.ts")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "All episodes" }),
+  ).toHaveAttribute("href", "/");
+  await expect(
+    page.getByRole("link", { name: /Next episode/ }),
+  ).toHaveAttribute("href", "/work/tnpay");
+});
+
+test("every episode page shows its file name, and the last leads back to the first", async ({
+  page,
+}) => {
+  for (const [path, file] of [
+    ["/work/spyder", "eps0.0_spyder.ts"],
+    ["/work/inspection-platform", "eps0.1_inspectionplatform.ts"],
+    ["/work/event-orchestrator", "eps0.2_eventorchestrator.ts"],
+  ]) {
+    await page.goto(path);
+    await expect(page.getByText(file)).toBeVisible();
+  }
+  await expect(
+    page.getByRole("link", { name: /Next episode/ }),
+  ).toHaveAttribute("href", "/work/solvedblue");
+  await page.goto("/work/solvedblue");
+  await expect(
+    page.getByRole("link", { name: /Next episode/ }),
+  ).toHaveAttribute("href", "/work/payout-ledger");
+});
+
+test("Payout Ledger is an episode with the demo, the code and the playground", async ({
+  page,
+}) => {
+  await page.goto("/work/payout-ledger");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Payout Ledger" }),
+  ).toBeVisible();
+  await expect(page.getByText("eps1.1_payoutledger.ts")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Try the live demo" }),
+  ).toHaveAttribute("href", "https://payout-ledger-gamma.vercel.app");
+  await expect(
+    page.getByRole("link", { name: "Read the code" }),
+  ).toHaveAttribute("href", "https://github.com/JalelDridi/payout-ledger");
+  await expect(
+    page.getByRole("button", { name: "Send it twice" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /Next episode/ }),
+  ).toHaveAttribute("href", "/work/potluck");
+});
+
+test("long titles wrap on the narrowest phone", async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 320, height: 640 },
+  });
+  const page = await context.newPage();
+  for (const path of [
+    "/work/inspection-platform",
+    "/work/event-orchestrator",
+    "/work/payout-ledger",
+  ]) {
+    await page.goto(path);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+      path,
+    ).toBe(true);
+  }
+  await context.close();
 });
 
 test("old Potluck case-study links redirect to the merged one", async ({
@@ -183,14 +262,6 @@ test("old Potluck case-study links redirect to the merged one", async ({
   await expect(
     page.getByRole("heading", { name: "Payments on Stripe Connect" }),
   ).toBeVisible();
-});
-
-test("a case study opens on a band in its door's colour", async ({ page }) => {
-  await page.goto("/work/potluck");
-  const band = page.locator("main > header");
-  expect(
-    await band.evaluate((el) => getComputedStyle(el).backgroundColor),
-  ).toBe("rgb(237, 176, 33)");
 });
 
 test("Kora has a case study with its live link", async ({ page }) => {
@@ -224,20 +295,17 @@ test.fixme("Solvedblue is the current job and has a case study", async ({
   ).toHaveAttribute("href", "https://solvedblue.com");
 });
 
-// The playground left the home page: restored in Task 3.
 test.describe("the pipeline playground", () => {
   test.beforeEach(async ({ page }) => {
     // Steps are instant with motion reduced, which keeps these tests fast.
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/");
+    await page.goto("/work/payout-ledger");
   });
 
   const counters = (page: import("@playwright/test").Page) =>
     page.locator("dl").filter({ hasText: "Owed to seller" });
 
-  test.fixme("a webhook sent twice is stored and applied once", async ({
-    page,
-  }) => {
+  test("a webhook sent twice is stored and applied once", async ({ page }) => {
     await page.getByRole("button", { name: "Send it twice" }).click();
 
     await expect(page.getByRole("status")).toContainText(
@@ -248,7 +316,7 @@ test.describe("the pipeline playground", () => {
     await expect(counters(page)).toContainText("$25.00");
   });
 
-  test.fixme("an out-of-order payout waits, then ends at the same balance", async ({
+  test("an out-of-order payout waits, then ends at the same balance", async ({
     page,
   }) => {
     await page.getByRole("button", { name: "Send out of order" }).click();
@@ -259,9 +327,7 @@ test.describe("the pipeline playground", () => {
     await expect(counters(page)).toContainText("$0.00");
   });
 
-  test.fixme("each step posts an entry in the ledger book", async ({
-    page,
-  }) => {
+  test("each step posts an entry in the ledger book", async ({ page }) => {
     await page.getByRole("button", { name: "Send it twice" }).click();
     const rows = page
       .getByRole("table", { name: "Ledger entries" })
@@ -273,7 +339,7 @@ test.describe("the pipeline playground", () => {
     await expect(rows.nth(2)).toContainText("$25.00");
   });
 
-  test.fixme("balances add up across several runs", async ({ page }) => {
+  test("balances add up across several runs", async ({ page }) => {
     const send = page.getByRole("button", { name: "Send a webhook" });
     await send.click();
     await expect(counters(page)).toContainText("Applied1");
@@ -319,7 +385,7 @@ test("every link has a destination", async ({ page }) => {
 });
 
 // The site is dark only: each path is scanned once.
-for (const path of ["/", "/about", "/work/potluck"]) {
+for (const path of ["/", "/about", "/work/potluck", "/work/payout-ledger"]) {
   test(`no detectable accessibility violations on ${path}`, async ({
     page,
   }) => {
@@ -402,18 +468,23 @@ test("the home page describes its subject to search engines", async ({
   expect(data.mainEntity.worksFor.name).toBe("Solvedblue");
 });
 
-// The recordings left the home page: restored in Task 3.
-test.fixme("recordings wait until they are near the screen", async ({
-  page,
-}) => {
-  await page.goto("/");
-  const video = page.locator("#project video");
+test("recordings wait until they are near the screen", async ({ browser }) => {
+  // In the server HTML a recording loads nothing, not even its poster.
+  const still = await browser.newContext({ javaScriptEnabled: false });
+  const before = await still.newPage();
+  await before.goto("/work/payout-ledger");
+  const idle = before.locator("video").first();
+  await expect(idle).toHaveAttribute("preload", "none");
+  await expect(idle).not.toHaveAttribute("poster");
+  await still.close();
 
-  await expect(video).toHaveAttribute("preload", "none");
-  await expect(video).not.toHaveAttribute("poster");
-
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto("/work/payout-ledger");
+  const video = page.locator("video").first();
   await video.scrollIntoViewIfNeeded();
   await expect(video).toHaveAttribute("poster", /payout-ledger-poster/);
+  await context.close();
 });
 
 // The about section left the home page: restored in Task 4.
@@ -464,11 +535,10 @@ test.fixme("the copy button puts the email on the clipboard", async ({
   await context.close();
 });
 
-// The writing list left the home page: restored in Task 3.
-test.fixme("an article opens from the home page and links to its sources", async ({
+test("an article opens from Payout Ledger and links to its sources", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/work/payout-ledger");
   await page
     .getByRole("link", {
       name: "Twenty-five payouts, a balance that covers ten",
@@ -484,7 +554,7 @@ test.fixme("an article opens from the home page and links to its sources", async
   ).toHaveAttribute("href", /0003-concurrency/);
 
   await page.getByRole("link", { name: "All writing" }).click();
-  await expect(page).toHaveURL(/\/#writing$/);
+  await expect(page).toHaveURL(/\/work\/payout-ledger#writing$/);
 });
 
 test("the changelog lists the current version first and is linked from the footer", async ({

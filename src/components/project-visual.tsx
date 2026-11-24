@@ -23,7 +23,7 @@ export function DiagramPanel({
   );
 }
 
-/** The preview beside the work table: a real screenshot when there is one. */
+/** The preview beside the work table (Bab, no longer used): a real screenshot when there is one. */
 export function PreviewVisual({ project }: { project: Project }) {
   const image =
     project.cover ?? (project.visual.kind === "image" ? project.visual : null);
