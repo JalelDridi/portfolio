@@ -112,7 +112,7 @@ export function PipelinePlayground({
               className={cn(
                 "inline-flex h-12 items-center rounded-[999px_999px_10px_10px] border-2 px-[1.3rem] font-sans text-base font-semibold transition-colors disabled:opacity-50",
                 index === 0
-                  ? "border-brand bg-brand text-white hover:border-brand-deep hover:bg-brand-deep dark:border-brand-deep dark:bg-brand-deep dark:hover:border-brand"
+                  ? "border-brand bg-brand text-background hover:border-foreground hover:bg-foreground"
                   : "border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background",
               )}
             >

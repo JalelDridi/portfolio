@@ -2,9 +2,9 @@ import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 const STYLES = {
-  // Blue fill. At night `--brand` is a light text blue, so the fill turns deep.
+  // Red fill with black text: white on this red is under 4.5:1.
   primary:
-    "border-brand bg-brand text-white hover:border-brand-deep hover:bg-brand-deep dark:border-brand-deep dark:bg-brand-deep dark:hover:border-brand",
+    "border-brand bg-brand text-background hover:border-foreground hover:bg-foreground",
   outline:
     "border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background",
   // Door yellow with ink, the same in both themes.

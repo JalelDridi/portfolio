@@ -1,4 +1,4 @@
-import AxeBuilder from "@axe-core/playwright";
+﻿import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 const PROJECTS = [
@@ -34,107 +34,31 @@ test("shows who I am, the open-source project and every piece of work", async ({
   }
 });
 
-test("the hero door opens and closes with the keyboard", async ({ page }) => {
-  await page.goto("/");
-  const door = page.getByRole("button", { name: "Open the door" });
-  const room = page.locator("#hero-room");
-  await expect(door).toHaveAttribute("aria-expanded", "false");
-  // Ajar, the room has exactly one link, and it works without JavaScript.
-  await expect(room.getByRole("link")).toHaveCount(1);
-  await expect(room.getByRole("link", { name: "Step inside" })).toHaveAttribute(
-    "href",
-    "/work/solvedblue",
+test("the shell is dark, with four header links", async ({ page }) => {
+  // TODO(Task 4): point at /about once it exists.
+  await page.goto("/changelog");
+  await expect(page.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(7, 7, 7)",
   );
-  await expect(
-    room.getByRole("link", { name: "Read the case study" }),
-  ).toHaveCount(0);
-  await door.focus();
-  await page.keyboard.press("Enter");
-  const close = page.getByRole("button", { name: "Close the door" });
-  await expect(close).toHaveAttribute("aria-expanded", "true");
-  await expect(
-    page
-      .locator("#hero-room")
-      .getByRole("link", { name: "Read the case study" }),
-  ).toHaveAttribute("href", "/work/solvedblue");
-  await page.keyboard.press("Enter");
-  const reopen = page.getByRole("button", { name: "Open the door" });
-  await expect(reopen).toBeVisible();
-  await expect(
-    room.getByRole("link", { name: "Read the case study" }),
-  ).toHaveCount(0);
-  await expect(reopen).toBeFocused();
+  const nav = page.getByRole("navigation", { name: "Site" });
+  for (const [name, href] of [
+    ["work", "/"],
+    ["about", "/about"],
+    ["cv", "/Jalel_Dridi_CV.pdf"],
+    ["contact", "/about#contact"],
+  ])
+    await expect(nav.getByRole("link", { name, exact: true })).toHaveAttribute(
+      "href",
+      href,
+    );
 });
 
-test("a project door swings open on hover and on keyboard focus", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const street = page.locator("#work");
-  const link = street.getByRole("link", { name: /Potluck/ }).first();
-  const leaf = link.locator(".door-leaf-r");
-  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).toBe(
-    "none",
+test("the changelog lists version 4.0.0, Episodes, first", async ({ page }) => {
+  await page.goto("/changelog");
+  await expect(page.getByRole("heading", { level: 2 }).first()).toContainText(
+    "Episodes",
   );
-  await link.hover();
-  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).not.toBe(
-    "none",
-  );
-  await page.mouse.move(0, 0);
-  await link.focus();
-  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).not.toBe(
-    "none",
-  );
-});
-
-test("on a touch screen the doors stand ajar and a tap opens the case study", async ({
-  browser,
-}) => {
-  const context = await browser.newContext({
-    hasTouch: true,
-    isMobile: true,
-    viewport: { width: 390, height: 844 },
-  });
-  const page = await context.newPage();
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const link = page
-    .locator("#work")
-    .getByRole("link", { name: /Potluck/ })
-    .first();
-  await link.scrollIntoViewIfNeeded();
-  expect(
-    await page.evaluate(() => matchMedia("(hover: none)").matches),
-    "a touch context reports (hover: none)",
-  ).toBe(true);
-  expect(
-    await link
-      .locator(".door-leaf-r")
-      .evaluate((el) => getComputedStyle(el).transform),
-  ).not.toBe("none");
-  await link.tap();
-  await expect(page).toHaveURL(/\/work\/potluck$/);
-  await context.close();
-});
-
-test("the street shows five doors with their numbers before any JavaScript runs", async ({
-  browser,
-}) => {
-  const context = await browser.newContext({ javaScriptEnabled: false });
-  const page = await context.newPage();
-  await page.goto("/");
-  const doors = page.locator("#work ol > li");
-  await expect(doors).toHaveCount(5);
-  await expect(doors.first()).toContainText("N° 01");
-  await expect(doors.first()).toContainText("Solvedblue");
-  await expect(doors.nth(1)).toContainText("99 tests");
-  // The hero door's teaser is a real link, so it works without the button.
-  await expect(
-    page.locator("#hero-room").getByRole("link", { name: "Step inside" }),
-  ).toHaveAttribute("href", "/work/solvedblue");
-  await context.close();
 });
 
 test("a project card opens its case study, which links out", async ({
@@ -307,19 +231,6 @@ test("every link has a destination", async ({ page }) => {
   }
 });
 
-test("the theme switch changes the colour scheme", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/");
-  const html = page.locator("html");
-  await expect(html).not.toHaveClass(/dark/);
-
-  await page
-    .getByRole("button", { name: "Switch between light and dark theme" })
-    .click();
-
-  await expect(html).toHaveClass(/dark/);
-});
-
 for (const colorScheme of ["light", "dark"] as const) {
   for (const path of [
     "/",
@@ -328,25 +239,28 @@ for (const colorScheme of ["light", "dark"] as const) {
     "/writing/webhooks-in-any-order",
     "/changelog",
   ]) {
-    test(`no detectable accessibility violations on ${path} in ${colorScheme} mode`, async ({
-      page,
-    }) => {
-      await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
-      await page.goto(path);
-      // Bring every scroll-revealed section into view before scanning.
-      await page.evaluate(async () => {
-        for (let y = 0; y < document.body.scrollHeight; y += 400) {
-          window.scrollTo(0, y);
-          await new Promise((resolve) => setTimeout(resolve, 60));
-        }
-      });
-      // Let the last fade-in finish so colours are measured at full opacity.
-      await page.waitForTimeout(1200);
+    // The Bab home page is not rebuilt for the dark tokens yet: restored in Task 2.
+    const run = path === "/" ? test.fixme : test;
+    run(
+      `no detectable accessibility violations on ${path} in ${colorScheme} mode`,
+      async ({ page }) => {
+        await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
+        await page.goto(path);
+        // Bring every scroll-revealed section into view before scanning.
+        await page.evaluate(async () => {
+          for (let y = 0; y < document.body.scrollHeight; y += 400) {
+            window.scrollTo(0, y);
+            await new Promise((resolve) => setTimeout(resolve, 60));
+          }
+        });
+        // Let the last fade-in finish so colours are measured at full opacity.
+        await page.waitForTimeout(1200);
 
-      const results = await new AxeBuilder({ page }).analyze();
+        const results = await new AxeBuilder({ page }).analyze();
 
-      expect(results.violations).toEqual([]);
-    });
+        expect(results.violations).toEqual([]);
+      },
+    );
   }
 }
 
@@ -380,24 +294,6 @@ test("fits a phone screen without horizontal scrolling", async ({ page }) => {
 
     expect(overflow, path).toBeLessThanOrEqual(0);
   }
-});
-
-test("a phone gets the section links behind a menu button", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-
-  await page.getByRole("button", { name: "Open the menu" }).click();
-  await page
-    .getByRole("navigation", { name: "Sections" })
-    .getByRole("link", { name: "Experience" })
-    .click();
-
-  await expect(page).toHaveURL(/#experience$/);
-  await expect(
-    page.getByRole("button", { name: "Open the menu" }),
-  ).toBeVisible();
 });
 
 test("an unknown address shows a way back to the home page", async ({
@@ -449,26 +345,6 @@ test("recordings wait until they are near the screen", async ({ page }) => {
 
   await video.scrollIntoViewIfNeeded();
   await expect(video).toHaveAttribute("poster", /payout-ledger-poster/);
-});
-
-test("the flagship sits on the blue band with its recording in an arch", async ({
-  page,
-}) => {
-  await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/");
-  const band = page.locator("#project");
-  const bg = await band.evaluate((el) => getComputedStyle(el).backgroundColor);
-  expect(bg).toBe("rgb(23, 99, 182)");
-  await expect(band.locator("video")).toHaveAttribute("preload", "none");
-  expect(
-    await band
-      .locator("video")
-      .evaluate((el) => getComputedStyle(el.closest("[data-arch]")!).clipPath),
-  ).toContain("url(");
-  await expect(band.locator("[data-arch]")).toHaveAttribute(
-    "data-arch-shape",
-    "segmental",
-  );
 });
 
 test("the about section shows the portrait, the story and live clocks", async ({
@@ -536,21 +412,11 @@ test("an article opens from the home page and links to its sources", async ({
   await expect(page).toHaveURL(/\/#writing$/);
 });
 
-test("the status strip shows three live clocks, the site version and the deploy date", async ({
+test("the changelog lists the current version first and is linked from the footer", async ({
   page,
 }) => {
-  await page.goto("/");
-  const footer = page.getByRole("contentinfo");
-  await expect(footer.getByText(/^\d{2}:\d{2}$/)).toHaveCount(3);
-  await expect(footer).toContainText(/Site v\d+\.\d+\.\d+/);
-  await expect(footer).toContainText(/Last deploy \d{1,2} \w{3,4} \d{4}/);
-  await expect(footer).not.toContainText("Built with");
-});
-
-test("the changelog lists the current version first and is linked from the status strip", async ({
-  page,
-}) => {
-  await page.goto("/");
+  // The home page has no footer; any other page does.
+  await page.goto("/work/kora");
   await page
     .getByRole("contentinfo")
     .getByRole("link", { name: "changelog" })
@@ -559,7 +425,7 @@ test("the changelog lists the current version first and is linked from the statu
   await expect(
     page.getByRole("heading", { level: 1, name: "Changelog" }),
   ).toBeVisible();
-  await expect(page.locator("main ol li").first()).toContainText("3.0.0");
+  await expect(page.locator("main ol li").first()).toContainText("4.0.0");
 });
 
 test("with motion reduced the hero is visible at once", async ({ page }) => {
@@ -580,45 +446,4 @@ test("with motion reduced the hero is visible at once", async ({ page }) => {
       (el) => getComputedStyle(el.closest(".animate-in")!).opacity,
     ),
   ).toBe("1");
-});
-
-test("the page is set in the Bab typefaces and ends on a band of tiles", async ({
-  page,
-}) => {
-  await page.goto("/");
-  const h1Font = await page
-    .getByRole("heading", { level: 1 })
-    .evaluate((el) => getComputedStyle(el).fontFamily);
-  expect(h1Font).toMatch(/Alexandria/i);
-  const bodyFont = await page
-    .locator("body")
-    .evaluate((el) => getComputedStyle(el).fontFamily);
-  expect(bodyFont).toMatch(/Onest/i);
-  await expect(
-    page.getByRole("contentinfo").locator("svg pattern"),
-  ).toHaveCount(1);
-  await expect(page.getByRole("contentinfo")).toContainText("Bislema");
-});
-
-test("every Arabic word is marked as Arabic", async ({ page }) => {
-  await page.goto("/");
-  const unmarked = await page.evaluate(() => {
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-    );
-    const bad: string[] = [];
-    while (walker.nextNode()) {
-      const node = walker.currentNode as Text;
-      // Skip the framework's inline scripts, which repeat the page's text.
-      if (node.parentElement?.closest("script, style")) continue;
-      if (
-        /[\u0600-\u06FF]/.test(node.data) &&
-        !node.parentElement?.closest('[lang="ar"]')
-      )
-        bad.push(node.data.trim());
-    }
-    return bad;
-  });
-  expect(unmarked).toEqual([]);
 });

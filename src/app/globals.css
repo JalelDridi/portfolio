@@ -4,35 +4,34 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Bab: a whitewashed street, Sidi Bou Said blue, painted doors. */
+/* Episodes: black, off-white and one red. Dark only. */
 :root {
+  color-scheme: dark;
   --radius: 0;
-  /* The wall. */
-  --background: #faf9f4;
-  /* Frames and plaques. */
-  --card: #ffffff;
-  /* Door frames and quiet bands. */
-  --wall-2: #f1efe6;
-  --foreground: #101922;
-  --muted-foreground: #4b5764;
-  --border: #dedbd0;
-  /* Sidi Bou Said blue: links, accents, the flagship band. */
-  --brand: #1763b6;
-  --brand-deep: #0f4f96;
-  /* Door yellow: the one loud accent. */
-  --sun: #edb021;
-  --leaf: #23795a;
-  /* Door red; also "held" in the playground. */
-  --red: #c5352c;
-  --stud: #10151b;
-  /* The dark inside of a door. */
-  --room: #0c1520;
+  --background: #070707;
+  /* Panels: the episode list, frames. */
+  --card: #0e0e0e;
+  --wall-2: #0e0e0e;
+  --foreground: #ece8e1;
+  --muted-foreground: #9a968f;
+  /* Hairlines. */
+  --border: #2a2927;
+  /* The title red, for large type only (28px or more). */
+  --red: #e10600;
+  /* The red for small text and the focus ring: 4.5:1 or more on the background. */
+  --brand: #ff4a3d;
 
   /*
-   * The shadcn tokens follow the ones above. They are declared once here:
-   * `.dark` sits on the same <html> element, so these resolve against
-   * whichever theme's values apply.
+   * Bab's paints, kept until the home page and case studies are rebuilt
+   * (Tasks 2 and 3), so the pages that still use them keep their colours.
    */
+  --brand-deep: #0f4f96;
+  --sun: #edb021;
+  --leaf: #23795a;
+  --stud: #10151b;
+  --room: #0c1520;
+
+  /* The shadcn tokens follow the ones above. */
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
@@ -46,24 +45,6 @@
   --destructive: var(--red);
   --input: var(--border);
   --ring: var(--brand);
-}
-
-/* The street at night. Door paints do not change. */
-.dark {
-  --background: #0d1621;
-  --card: #131f2c;
-  --wall-2: #172433;
-  --foreground: #f0eee7;
-  --muted-foreground: #a9b4c0;
-  --border: #263443;
-  --brand: #58a0ea;
-  /* The flagship band keeps a deep blue at night. */
-  --brand-deep: #12508f;
-  --sun: #f2bb3a;
-  --leaf: #3fa37c;
-  --red: #e2685e;
-  --stud: #0a0e13;
-  --room: #060b12;
 }
 
 @theme inline {
@@ -93,11 +74,13 @@
   --color-stud: var(--stud);
   --color-room: var(--room);
   --color-wall-2: var(--wall-2);
-  --font-display: var(--font-alexandria), system-ui, sans-serif;
-  --font-heading: var(--font-alexandria), system-ui, sans-serif;
+  /* Titles: Archivo, set wide (font-stretch: 125%) where it is used. */
+  --font-display: var(--font-archivo), "Arial Black", sans-serif;
+  --font-heading: var(--font-archivo), "Arial Black", sans-serif;
+  /* Long case-study text. */
   --font-sans: var(--font-onest), system-ui, sans-serif;
-  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
-  --font-kufi: var(--font-reem-kufi), var(--font-alexandria), sans-serif;
+  /* Labels, the header and the home page. */
+  --font-mono: var(--font-plex-mono), ui-monospace, Consolas, monospace;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);

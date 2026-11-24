@@ -5,8 +5,17 @@ import type { DoorMotif, DoorPaint } from "@/lib/motifs";
 export const SITE_URL = "https://jaleldridi.vercel.app";
 
 export const site = {
-  version: "3.0.0",
+  version: "4.0.0",
   repo: "https://github.com/JalelDridi/portfolio",
+};
+
+/** Labels on the home page's reel and the case studies. */
+export const ui = {
+  play: "Play episode",
+  back: "All episodes",
+  next: "Next episode",
+  earlier: "Earlier episodes",
+  tagline: "Founding engineer · Bizerte, Tunisia · open to remote roles",
 };
 
 /** Every version of the site, newest first; the first is `site.version`. */
@@ -16,6 +25,17 @@ export const changelog: {
   title: string;
   items: string[];
 }[] = [
+  {
+    version: "4.0.0",
+    date: "2026-11-24",
+    title: "Episodes",
+    items: [
+      "One screen, one project at a time: each piece of work is an episode with a title card over a still of the real product.",
+      "Black, off-white and one red; Archivo and IBM Plex Mono.",
+      "About, experience and contact moved to their own page.",
+      "The doors, tiles and light theme are gone.",
+    ],
+  },
   {
     version: "3.0.0",
     date: "2026-11-14",
@@ -92,6 +112,22 @@ export const profile = {
     linkedin: "https://www.linkedin.com/in/mohamed-jalel-dridi",
     email: "med.jalel.dridi@gmail.com",
     cv: "/Jalel_Dridi_CV.pdf",
+  },
+};
+
+/** The header's handle and links, and the footer's words. */
+export const shell = {
+  handle: "jalel_dridi",
+  nav: [
+    { label: "work", href: "/" },
+    { label: "about", href: "/about" },
+    { label: "cv", href: profile.links.cv },
+    { label: "contact", href: "/about#contact" },
+  ],
+  footer: {
+    changelog: "changelog",
+    source: "source",
+    lastDeploy: "last deploy",
   },
 };
 
@@ -856,6 +892,109 @@ export const projects: Project[] = [
     },
   },
 ];
+
+export type EpisodeStatus = "NOW" | "LIVE" | "SHIPPED";
+
+/** One piece of work on the home page's reel. */
+export type Episode = {
+  slug: string;
+  href: string;
+  /** Shown as a file name, e.g. "eps1.0_solvedblue.ts". */
+  file: string;
+  title: string;
+  kind: string;
+  year: string;
+  /** One sentence. */
+  line: string;
+  status: EpisodeStatus;
+  still: { src: string; width: number; height: number };
+};
+
+function projectBySlug(slug: string): Project {
+  const project = projects.find((item) => item.slug === slug);
+  if (!project) throw new Error(`No project with the slug "${slug}"`);
+  return project;
+}
+
+/** A project's title, year and line on the reel: its street line, or its summary. */
+function projectEpisode(slug: string, line: "street" | "summary" = "street") {
+  const project = projectBySlug(slug);
+  const sentence = line === "summary" ? project.summary : project.street?.line;
+  if (!sentence) throw new Error(`The project "${slug}" has no ${line} line`);
+  return { title: project.title, year: project.year, line: sentence };
+}
+
+const fileName = (series: number, index: number, slug: string) =>
+  `eps${series}.${index}_${slug.replaceAll("-", "")}.ts`;
+
+/** The reel, in order. Every sentence comes from `projects` or `flagship`. */
+const REEL: Omit<Episode, "href" | "file">[] = [
+  {
+    slug: "solvedblue",
+    status: "NOW",
+    kind: "Current job",
+    ...projectEpisode("solvedblue"),
+    still: { src: "/work/solvedblue-home.png", width: 1440, height: 900 },
+  },
+  {
+    slug: "payout-ledger",
+    status: "LIVE",
+    kind: "Open source",
+    title: flagship.name,
+    year: "2026",
+    line: flagship.street.line,
+    still: { src: "/payout-ledger.png", width: 2400, height: 3000 },
+  },
+  {
+    slug: "potluck",
+    status: "SHIPPED",
+    kind: "Founding engineer",
+    ...projectEpisode("potluck"),
+    still: { src: "/work/potluck-feed.jpg", width: 1440, height: 900 },
+  },
+  {
+    slug: "tnpay",
+    status: "LIVE",
+    kind: "Open source",
+    ...projectEpisode("tnpay"),
+    still: { src: "/work/tnpay.png", width: 1440, height: 900 },
+  },
+  {
+    slug: "kora",
+    status: "LIVE",
+    kind: "Side project",
+    ...projectEpisode("kora"),
+    still: { src: "/work/kora-chkoun.png", width: 1280, height: 1306 },
+  },
+  {
+    slug: "deal-grader",
+    status: "SHIPPED",
+    kind: "Offa.com",
+    ...projectEpisode("deal-grader", "summary"),
+    still: { src: "/work/deal-grader-report.jpg", width: 1440, height: 900 },
+  },
+];
+
+export const episodes: Episode[] = REEL.map((episode, index) => ({
+  ...episode,
+  href: `/work/${episode.slug}`,
+  file: fileName(1, index, episode.slug),
+}));
+
+/** Older work, listed quietly under the reel. */
+export const earlierEpisodes = [
+  "spyder",
+  "inspection-platform",
+  "event-orchestrator",
+].map((slug, index) => {
+  const project = projectBySlug(slug);
+  return {
+    href: `/work/${slug}`,
+    file: fileName(0, index, slug),
+    title: project.title,
+    year: project.year,
+  };
+});
 
 export const skills = [
   {
