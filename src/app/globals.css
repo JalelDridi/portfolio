@@ -298,6 +298,8 @@
  * Episode pages. The head is wiped in from the top once. A title is sized
  * from its longest word (`--longest`, in characters, set inline) so that word
  * fits its column at every width; `overflow-wrap: anywhere` is the safety net.
+ * The floor is 24px (WCAG large text; the red is about 4:1 here), reached
+ * only by a 12-letter word on a screen narrower than about 330px.
  */
 @layer components {
   .episode-head {
@@ -313,11 +315,11 @@
   }
   .episode-title {
     --column: calc(100vw - 2rem);
-    font-size: clamp(28px, calc(var(--column) / (var(--longest) * 0.9)), 88px);
+    font-size: clamp(24px, calc(var(--column) / (var(--longest) * 0.9)), 88px);
   }
   .episode-next-title {
     --column: calc(100vw - 2rem);
-    font-size: clamp(28px, calc(var(--column) / (var(--longest) * 0.9)), 64px);
+    font-size: clamp(24px, calc(var(--column) / (var(--longest) * 0.9)), 64px);
   }
   @media (min-width: 640px) {
     .episode-title,

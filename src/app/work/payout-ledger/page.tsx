@@ -33,7 +33,7 @@ const LABEL = "font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase";
 
 /** A section title in wide red capitals. */
 const TITLE =
-  "mt-3 font-display text-[clamp(1.9rem,4.6vw,3.6rem)] leading-[0.92] font-black tracking-[-0.03em] text-red uppercase [font-stretch:125%] [overflow-wrap:anywhere] text-balance";
+  "mt-3 font-display text-[clamp(28px,4.6vw,3.6rem)] leading-[0.92] font-black tracking-[-0.03em] text-red uppercase [font-stretch:125%] [overflow-wrap:anywhere] text-balance";
 
 /** The flagship as an episode: the recording, the four points, the playground, the notes. */
 export default function PayoutLedger() {
