@@ -21,6 +21,15 @@ const AUTO_QUERY =
   "(min-width: 768px) and (prefers-reduced-motion: no-preference)";
 const REDUCE_QUERY = "(prefers-reduced-motion: reduce)";
 
+/** Any of these on the page stops the reel for good. */
+const STOP_EVENTS = [
+  "pointerdown",
+  "keydown",
+  "touchstart",
+  "wheel",
+  "scroll",
+] as const;
+
 function subscribeAuto(onChange: () => void) {
   const query = matchMedia(AUTO_QUERY);
   query.addEventListener("change", onChange);
@@ -42,7 +51,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
  */
 export function Reel({ episodes }: { episodes: Episode[] }) {
   const [index, setIndex] = useState(0);
-  // The first pointer, key or touch on the page stops the reel for good.
+  // The first pointer, key, touch, wheel or scroll on the page stops the reel for good.
   const [touched, setTouched] = useState(false);
   const autoAllowed = useSyncExternalStore(
     subscribeAuto,
@@ -64,10 +73,10 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
     if (touched) return;
     const stop = () => setTouched(true);
     const options = { capture: true, passive: true } as const;
-    for (const type of ["pointerdown", "keydown", "touchstart"])
+    for (const type of STOP_EVENTS)
       window.addEventListener(type, stop, options);
     return () => {
-      for (const type of ["pointerdown", "keydown", "touchstart"])
+      for (const type of STOP_EVENTS)
         window.removeEventListener(type, stop, options);
     };
   }, [touched]);

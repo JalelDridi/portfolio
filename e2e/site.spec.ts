@@ -1,4 +1,4 @@
-﻿import AxeBuilder from "@axe-core/playwright";
+import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 test("the home page is one episode at a time, starting with Solvedblue", async ({
@@ -55,6 +55,32 @@ test("with motion reduced the reel does not advance on its own", async ({
 }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
+  await page.waitForTimeout(7000);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+});
+
+test("arrow keys outside the episode list do not change the episode", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await page.getByRole("link", { name: "Play episode" }).focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+  await page.locator("body").focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+});
+
+test("a mouse wheel on the page stops the reel", async ({ page }) => {
+  await page.goto("/");
+  await page.mouse.move(400, 300);
+  await page.mouse.wheel(0, 200);
   await page.waitForTimeout(7000);
   await expect(
     page.getByRole("heading", { level: 2, name: "Solvedblue" }),
