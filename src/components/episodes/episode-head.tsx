@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 import { ui } from "@/content";
+import { CONTAINER } from "@/lib/styles";
 
 /** Characters in the longest word of a title; the title is sized so it fits. */
 export function longestWord(title: string) {
@@ -71,7 +72,7 @@ export function EpisodeHead({
   children: ReactNode;
 }) {
   return (
-    <header className="episode-head mx-auto w-full max-w-[calc(1360px+5.5rem)] px-4 pt-4 sm:px-11 sm:pt-6">
+    <header className={`episode-head ${CONTAINER} pt-4 sm:pt-6`}>
       <Link
         href="/"
         className="font-mono text-sm text-muted-foreground lowercase transition-colors hover:text-foreground"

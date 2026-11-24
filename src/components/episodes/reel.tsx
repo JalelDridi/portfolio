@@ -30,8 +30,14 @@ const STOP_EVENTS = [
   "scroll",
 ] as const;
 
+// Made once, on first use in the browser, and kept.
+let autoQuery: MediaQueryList | undefined;
+let reduceQuery: MediaQueryList | undefined;
+const auto = () => (autoQuery ??= matchMedia(AUTO_QUERY));
+const reduce = () => (reduceQuery ??= matchMedia(REDUCE_QUERY));
+
 function subscribeAuto(onChange: () => void) {
-  const query = matchMedia(AUTO_QUERY);
+  const query = auto();
   query.addEventListener("change", onChange);
   return () => query.removeEventListener("change", onChange);
 }
@@ -51,11 +57,13 @@ const pad = (n: number) => String(n).padStart(2, "0");
  */
 export function Reel({ episodes }: { episodes: Episode[] }) {
   const [index, setIndex] = useState(0);
+  // False until the episode first changes, so the first card is not cut on first paint.
+  const [changed, setChanged] = useState(false);
   // The first pointer, key, touch, wheel or scroll on the page stops the reel for good.
   const [touched, setTouched] = useState(false);
   const autoAllowed = useSyncExternalStore(
     subscribeAuto,
-    () => matchMedia(AUTO_QUERY).matches,
+    () => auto().matches,
     () => false,
   );
   const tabVisible = useSyncExternalStore(
@@ -68,6 +76,7 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
   const titles = useRef<(HTMLHeadingElement | null)[]>([]);
   const links = useRef<(HTMLAnchorElement | null)[]>([]);
   const shown = useRef(index);
+  const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (touched) return;
@@ -81,12 +90,17 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
     };
   }, [touched]);
 
+  // Hydrated, and listening for the input that stops the reel (tests wait on it).
+  useEffect(() => {
+    if (root.current) root.current.dataset.ready = "";
+  }, []);
+
   useEffect(() => {
     if (!playing) return;
-    const timer = setTimeout(
-      () => setIndex((current) => (current + 1) % episodes.length),
-      HOLD_MS,
-    );
+    const timer = setTimeout(() => {
+      setChanged(true);
+      setIndex((current) => (current + 1) % episodes.length);
+    }, HOLD_MS);
     return () => clearTimeout(timer);
   }, [playing, index, episodes.length]);
 
@@ -95,18 +109,21 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
     if (shown.current === index) return;
     shown.current = index;
     const title = titles.current[index];
-    if (!title || matchMedia(REDUCE_QUERY).matches) return;
+    if (!title || reduce().matches) return;
     return decode(title, episodes[index].title);
   }, [index, episodes]);
 
   const select = (next: number) => {
     setTouched(true);
+    if (next !== index) setChanged(true);
     setIndex(next);
   };
 
   // Arrow keys move through the list, only while focus is inside it.
   const onListKey = (event: KeyboardEvent<HTMLElement>) => {
     if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey)
+      return;
     event.preventDefault();
     const focused = links.current.findIndex(
       (link) => link === document.activeElement,
@@ -117,7 +134,11 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
   };
 
   return (
-    <div className="relative md:h-svh md:min-h-[36rem] md:overflow-hidden">
+    <div
+      ref={root}
+      data-cut={changed ? "" : undefined}
+      className="reel relative md:h-svh md:min-h-[36rem] md:overflow-hidden"
+    >
       {/* First in the page, so the name comes before every title; at the bottom on a wide screen. */}
       <div className="relative z-20 flex flex-col gap-1 px-4 pt-20 pb-6 font-mono sm:px-11 text-[0.8rem] text-muted-foreground md:absolute md:inset-x-0 md:bottom-0 md:flex-row md:items-center md:gap-[18px] md:pt-0 md:pb-7">
         <h1 className="font-medium whitespace-nowrap text-foreground">

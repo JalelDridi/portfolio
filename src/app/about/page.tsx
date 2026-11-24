@@ -6,7 +6,7 @@ import { Leadership } from "@/components/sections/leadership";
 import { Skills } from "@/components/sections/skills";
 import { Writing } from "@/components/sections/writing";
 import { profile } from "@/content";
-import { CONTAINER, LABEL_MUTED } from "@/lib/styles";
+import { CONTAINER, LABEL_MUTED, WIDE_TITLE } from "@/lib/styles";
 
 export const metadata: Metadata = {
   title: "About",
@@ -29,7 +29,9 @@ export default function AboutPage() {
         <p className={LABEL_MUTED}>
           {profile.role} · {profile.location}
         </p>
-        <h1 className="mt-3 font-display text-[clamp(28px,5.6vw,4.6rem)] leading-[0.92] font-black tracking-[-0.03em] text-foreground uppercase [font-stretch:125%] [overflow-wrap:anywhere] text-balance">
+        <h1
+          className={`${WIDE_TITLE} mt-3 text-[clamp(28px,5.6vw,4.6rem)] text-foreground`}
+        >
           {profile.name}
         </h1>
         <p className="mt-6 max-w-[40rem] text-[1.2rem] leading-[1.55] text-pretty text-muted-foreground">

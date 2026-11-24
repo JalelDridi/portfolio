@@ -9,7 +9,7 @@ import { LazyVideo } from "./lazy-video";
 function PhoneFrame({ children }: { children: ReactNode }) {
   return (
     <div className="border border-border bg-card px-5 py-8">
-      <div className="mx-auto w-full max-w-[17rem] overflow-hidden rounded-[2.25rem] border-[6px] border-[#1d1c1b] bg-black">
+      <div className="mx-auto w-full max-w-[17rem] overflow-hidden rounded-[2.25rem] border-[6px] border-bezel bg-black">
         {children}
       </div>
     </div>

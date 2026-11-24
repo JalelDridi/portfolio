@@ -11,6 +11,7 @@ import { episodeFile } from "@/components/episodes/order";
 import { ClipFigure, ShotFigure } from "@/components/media";
 import { DiagramPanel } from "@/components/project-visual";
 import { type DiagramSpec, episodes, projects, type Shot, ui } from "@/content";
+import { CONTAINER, LABEL } from "@/lib/styles";
 
 /*
  * Only the listed projects exist. Any other slug reaches `notFound()` below
@@ -40,9 +41,6 @@ export async function generateMetadata(
     },
   };
 }
-
-/** A mono label in the small red. */
-const LABEL = "font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase";
 
 /** Long text: Onest, at a size that reads comfortably. */
 const PROSE = "max-w-[40rem] text-[1.15rem] leading-[1.7] text-pretty";
@@ -200,7 +198,7 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
         )}
       </EpisodeHead>
 
-      <div className="mx-auto mt-16 w-full max-w-[calc(1360px+5.5rem)] px-4 sm:mt-24 sm:px-11">
+      <div className={`${CONTAINER} mt-16 sm:mt-24`}>
         <div className="max-w-[64rem]">
           <Section id="why" label="Why it existed">
             <p className="max-w-[40rem] text-[1.3rem] leading-[1.55] text-pretty sm:text-[1.45rem]">

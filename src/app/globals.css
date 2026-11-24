@@ -20,6 +20,8 @@
   --red: #e10600;
   /* The red for small text and the focus ring: 4.5:1 or more on the background. */
   --brand: #ff4a3d;
+  /* The bezel of a phone frame around a screenshot. */
+  --bezel: #1d1c1b;
 
   /*
    * Bab's paints, kept until the home page and case studies are rebuilt
@@ -67,6 +69,7 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-brand: var(--brand);
+  --color-bezel: var(--bezel);
   --color-brand-deep: var(--brand-deep);
   --color-sun: var(--sun);
   --color-leaf: var(--leaf);
@@ -195,8 +198,10 @@
 /*
  * The home page's reel. On a wide screen the episodes are stacked and only
  * the selected one (`data-on`) shows; a change is a hard cut: the card is
- * sliced once and the still settles from 1.04 to 1. Below 768px every
- * episode is its own card and nothing moves.
+ * sliced once (only after the first change, `data-cut`, so the first card is
+ * not sliced while it loads) and the still settles from 1.04 to 1. Below
+ * 768px every episode is its own card and nothing moves; with motion reduced
+ * nothing moves at any width.
  */
 @layer components {
   .reel-still {
@@ -239,10 +244,12 @@
     .reel-episode:not([data-on]) {
       visibility: hidden;
     }
+  }
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
     .reel-episode[data-on] .reel-still {
       animation: reel-settle 6s linear both;
     }
-    .reel-episode[data-on] .reel-card {
+    .reel[data-cut] .reel-episode[data-on] .reel-card {
       animation: reel-cut 260ms steps(1) 1;
     }
   }
@@ -295,15 +302,18 @@
 }
 
 /*
- * Episode pages. The head is wiped in from the top once. A title is sized
+ * Episode pages. The head is wiped in from the top once, unless motion is
+ * reduced. A title is sized
  * from its longest word (`--longest`, in characters, set inline) so that word
  * fits its column at every width; `overflow-wrap: anywhere` is the safety net.
  * The floor is 24px (WCAG large text; the red is about 4:1 here), reached
  * only by a 12-letter word on a screen narrower than about 330px.
  */
 @layer components {
-  .episode-head {
-    animation: episode-wipe 0.5s cubic-bezier(0.7, 0, 0.2, 1) both;
+  @media (prefers-reduced-motion: no-preference) {
+    .episode-head {
+      animation: episode-wipe 0.5s cubic-bezier(0.7, 0, 0.2, 1) both;
+    }
   }
   .episode-title,
   .episode-next-title {

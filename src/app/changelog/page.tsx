@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { changelog } from "@/content";
 import { formatShortDate } from "@/lib/dates";
+import { CONTAINER, LABEL_MUTED, WIDE_TITLE } from "@/lib/styles";
 
 export const metadata: Metadata = {
   title: "Changelog",
@@ -14,14 +15,13 @@ export const metadata: Metadata = {
   },
 };
 
-const LABEL =
-  "font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase";
-
 export default function ChangelogPage() {
   return (
-    <main className="mx-auto w-full max-w-[calc(1360px+5.5rem)] px-4 pt-10 pb-8 sm:px-11 sm:pt-14">
-      <p className={LABEL}>Site</p>
-      <h1 className="mt-3 font-display text-[clamp(28px,6.4vw,5.4rem)] leading-[0.9] font-black tracking-[-0.03em] text-red uppercase [font-stretch:125%] [overflow-wrap:anywhere] text-balance">
+    <main className={`${CONTAINER} pt-10 pb-8 sm:pt-14`}>
+      <p className={LABEL_MUTED}>Site</p>
+      <h1
+        className={`${WIDE_TITLE} mt-3 text-[clamp(28px,6.4vw,5.4rem)] text-red`}
+      >
         Changelog
       </h1>
       <p className="mt-6 max-w-3xl text-[1.25rem] text-pretty text-muted-foreground">

@@ -12,6 +12,7 @@ import { ClipFigure } from "@/components/media";
 import { PipelinePlayground } from "@/components/pipeline-playground";
 import { episodes, flagship, ui } from "@/content";
 import { formatShortDate } from "@/lib/dates";
+import { CONTAINER, LABEL, WIDE_TITLE } from "@/lib/styles";
 import { articles } from "@/writing";
 
 const SLUG = "payout-ledger";
@@ -29,11 +30,8 @@ export const metadata: Metadata = {
   },
 };
 
-const LABEL = "font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase";
-
 /** A section title in wide red capitals. */
-const TITLE =
-  "mt-3 font-display text-[clamp(28px,4.6vw,3.6rem)] leading-[0.92] font-black tracking-[-0.03em] text-red uppercase [font-stretch:125%] [overflow-wrap:anywhere] text-balance";
+const TITLE = `${WIDE_TITLE} mt-3 text-[clamp(28px,4.6vw,3.6rem)] text-red`;
 
 /** The flagship as an episode: the recording, the four points, the playground, the notes. */
 export default function PayoutLedger() {
@@ -76,7 +74,7 @@ export default function PayoutLedger() {
         />
       </EpisodeHead>
 
-      <div className="mx-auto mt-16 w-full max-w-[calc(1360px+5.5rem)] px-4 sm:mt-24 sm:px-11">
+      <div className={`${CONTAINER} mt-16 sm:mt-24`}>
         <ul className="grid max-w-[64rem] border-t border-border sm:grid-cols-2 sm:gap-x-12">
           {flagship.points.map((point) => (
             <li key={point.title} className="border-b border-border py-7">

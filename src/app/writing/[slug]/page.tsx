@@ -7,7 +7,7 @@ import { Rise } from "@/components/rise";
 import { Tags } from "@/components/tags";
 import { profile, SITE_URL } from "@/content";
 import { formatShortDate } from "@/lib/dates";
-import { cn } from "@/lib/utils";
+import { CONTAINER, LABEL, LABEL_MUTED, WIDE_TITLE } from "@/lib/styles";
 import { articles, type Block } from "@/writing";
 
 export function generateStaticParams() {
@@ -38,9 +38,6 @@ export async function generateMetadata(
   };
 }
 
-const LABEL =
-  "font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase";
-
 /** A row under a hairline: the label in its own column, the content beside it. */
 function Row({
   label,
@@ -57,11 +54,11 @@ function Row({
       className="grid gap-x-8 gap-y-4 border-t border-border py-9 first:border-t-0 md:grid-cols-[11rem_1fr]"
     >
       {id ? (
-        <h2 id={id} className={cn(LABEL, "text-brand")}>
+        <h2 id={id} className={LABEL}>
           {label}
         </h2>
       ) : (
-        <p className={LABEL}>{label}</p>
+        <p className={LABEL_MUTED}>{label}</p>
       )}
       <div className="min-w-0">{children}</div>
     </section>
@@ -141,7 +138,7 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-[calc(1360px+5.5rem)] px-4 pt-4 pb-8 sm:px-11 sm:pt-6">
+    <main className={`${CONTAINER} pt-4 pb-8 sm:pt-6`}>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -155,11 +152,13 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
         >
           <span aria-hidden="true">← </span>All writing
         </Link>
-        <p className={`mt-10 ${LABEL}`}>
+        <p className={`mt-10 ${LABEL_MUTED}`}>
           <time dateTime={article.date}>{formatShortDate(article.date)}</time> ·{" "}
           {article.minutes} minute read
         </p>
-        <h1 className="mt-3 max-w-[22ch] font-display text-[clamp(28px,5vw,4.4rem)] leading-[0.92] font-black tracking-[-0.03em] text-red uppercase [font-stretch:125%] [overflow-wrap:anywhere] text-balance">
+        <h1
+          className={`${WIDE_TITLE} mt-3 max-w-[22ch] text-[clamp(28px,5vw,4.4rem)] text-red`}
+        >
           {article.title}
         </h1>
         <p className="mt-6 max-w-[40rem] text-[1.2rem] leading-[1.6] text-pretty text-muted-foreground">
@@ -199,7 +198,7 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
           href={`/writing/${next.slug}`}
           className="group grid max-w-[64rem] gap-x-8 gap-y-2 border-y border-border py-7 transition-colors hover:text-brand md:grid-cols-[11rem_1fr]"
         >
-          <span className={`pt-2 ${LABEL}`}>Next</span>
+          <span className={`pt-2 ${LABEL_MUTED}`}>Next</span>
           <span className="flex items-center justify-between gap-4 font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-extrabold tracking-[-0.03em] text-balance">
             {next.title}
             <span

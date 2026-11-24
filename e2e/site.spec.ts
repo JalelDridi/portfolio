@@ -1,5 +1,12 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+import { episodes } from "../src/content";
+
+/** Opens the home page once the reel is hydrated and listening for input. */
+async function openReel(page: Page) {
+  await page.goto("/");
+  await expect(page.locator(".reel[data-ready]")).toHaveCount(1);
+}
 
 test("the home page is one episode at a time, starting with Solvedblue", async ({
   page,
@@ -19,7 +26,7 @@ test("the home page is one episode at a time, starting with Solvedblue", async (
 });
 
 test("pointing at or focusing an episode selects it", async ({ page }) => {
-  await page.goto("/");
+  await openReel(page);
   const list = page.getByRole("navigation", { name: "Episodes" });
   await list.getByRole("link", { name: /potluck/ }).hover();
   await expect(
@@ -47,6 +54,7 @@ test("without JavaScript the six episodes are still links", async ({
   await expect(
     page.getByRole("heading", { level: 2, name: "Solvedblue" }),
   ).toBeVisible();
+  await expect(page.getByText(episodes[0].line)).toBeVisible();
   await context.close();
 });
 
@@ -64,21 +72,77 @@ test("with motion reduced the reel does not advance on its own", async ({
 test("arrow keys outside the episode list do not change the episode", async ({
   page,
 }) => {
-  await page.goto("/");
+  await openReel(page);
   await page.getByRole("link", { name: "Play episode" }).focus();
   await page.keyboard.press("ArrowDown");
   await expect(
     page.getByRole("heading", { level: 2, name: "Solvedblue" }),
   ).toBeVisible();
-  await page.locator("body").focus();
+  // With nothing focused, the keys go to the page, not to the list.
+  await page.evaluate(() => (document.activeElement as HTMLElement).blur());
+  await expect(page.locator("body")).toBeFocused();
   await page.keyboard.press("ArrowDown");
   await expect(
     page.getByRole("heading", { level: 2, name: "Solvedblue" }),
   ).toBeVisible();
 });
 
+test("arrow keys with a modifier held do not move the selection", async ({
+  page,
+}) => {
+  await openReel(page);
+  const list = page.getByRole("navigation", { name: "Episodes" });
+  await list.getByRole("link", { name: /kora/ }).focus();
+  for (const key of [
+    "Alt+ArrowDown",
+    "Control+ArrowDown",
+    "Meta+ArrowUp",
+    "Shift+ArrowDown",
+  ])
+    await page.keyboard.press(key);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Kora" }),
+  ).toBeVisible();
+  await expect(list.getByRole("link", { name: /kora/ })).toBeFocused();
+});
+
+test("the first episode is not cut on first paint, only on a change", async ({
+  page,
+}) => {
+  await openReel(page);
+  const card = page.locator(".reel-episode[data-on] .reel-card");
+  await expect(card).toHaveCSS("animation-name", "none");
+  await page
+    .getByRole("navigation", { name: "Episodes" })
+    .getByRole("link", { name: /potluck/ })
+    .hover();
+  await expect(card).toHaveCSS("animation-name", "reel-cut");
+});
+
+test("with motion reduced nothing is cut, zoomed or wiped", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openReel(page);
+  await page
+    .getByRole("navigation", { name: "Episodes" })
+    .getByRole("link", { name: /potluck/ })
+    .hover();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Potluck" }),
+  ).toBeVisible();
+  const on = page.locator(".reel-episode[data-on]");
+  await expect(on.locator(".reel-card")).toHaveCSS("animation-name", "none");
+  await expect(on.locator(".reel-still")).toHaveCSS("animation-name", "none");
+  await page.goto("/work/potluck");
+  await expect(page.locator(".episode-head")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+});
+
 test("a mouse wheel on the page stops the reel", async ({ page }) => {
-  await page.goto("/");
+  await openReel(page);
   await page.mouse.move(400, 300);
   await page.mouse.wheel(0, 200);
   await page.waitForTimeout(7000);
