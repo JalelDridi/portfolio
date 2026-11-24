@@ -10,17 +10,16 @@ import { NextEpisode } from "@/components/episodes/next-episode";
 import { episodeFile } from "@/components/episodes/order";
 import { ClipFigure, ShotFigure } from "@/components/media";
 import { DiagramPanel } from "@/components/project-visual";
-import { type DiagramSpec, episodes, projects, type Shot } from "@/content";
+import { type DiagramSpec, episodes, projects, type Shot, ui } from "@/content";
 
+/*
+ * Only the listed projects exist. Any other slug reaches `notFound()` below
+ * and answers 404 (tested). `dynamicParams = false` gives the same 404 but
+ * makes the server log a NoFallbackError for every unknown slug.
+ */
 export function generateStaticParams() {
   return projects.map((project) => ({ slug: project.slug }));
 }
-
-/*
- * Only the listed projects exist; any other slug reaches `notFound()` below
- * and is a 404. (`dynamicParams = false` gave the same 404 but logged a
- * NoFallbackError on the server for every unknown slug.)
- */
 
 export async function generateMetadata(
   props: PageProps<"/work/[slug]">,
@@ -160,10 +159,18 @@ export default async function CaseStudy(props: PageProps<"/work/[slug]">) {
         title={project.title}
         summary={project.summary}
         facts={[
-          { label: "role", value: `${project.company} · ${project.year}` },
-          { label: "stack", value: <StackLine items={project.stack} /> },
+          {
+            label: ui.facts.role,
+            value: `${project.company} · ${project.year}`,
+          },
+          { label: ui.facts.stack, value: <StackLine items={project.stack} /> },
           ...(project.links.length > 0
-            ? [{ label: "links", value: <FactLinks links={project.links} /> }]
+            ? [
+                {
+                  label: ui.facts.links,
+                  value: <FactLinks links={project.links} />,
+                },
+              ]
             : []),
         ]}
       >

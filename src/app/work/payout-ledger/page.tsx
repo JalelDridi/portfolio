@@ -10,7 +10,7 @@ import { episodeFile } from "@/components/episodes/order";
 import { LinkButton } from "@/components/link-button";
 import { ClipFigure } from "@/components/media";
 import { PipelinePlayground } from "@/components/pipeline-playground";
-import { episodes, flagship } from "@/content";
+import { episodes, flagship, ui } from "@/content";
 import { formatShortDate } from "@/lib/dates";
 import { articles } from "@/writing";
 
@@ -46,12 +46,15 @@ export default function PayoutLedger() {
         summary={flagship.summary}
         facts={[
           {
-            label: "role",
+            label: ui.facts.role,
             value: episode ? `${episode.kind} · ${episode.year}` : "",
           },
-          { label: "stack", value: <StackLine items={flagship.stack} /> },
           {
-            label: "links",
+            label: ui.facts.stack,
+            value: <StackLine items={flagship.stack} />,
+          },
+          {
+            label: ui.facts.links,
             value: (
               <FactLinks
                 links={[
@@ -67,10 +70,8 @@ export default function PayoutLedger() {
         <ClipFigure
           clip={{
             ...flagship.video,
-            caption:
-              "A dropped webhook is sent, the checks run, and reconciliation flags the payout the ledger has fallen behind on.",
             frame: "browser",
-            url: "payout-ledger-gamma.vercel.app",
+            url: new URL(flagship.demo).host,
           }}
         />
       </EpisodeHead>

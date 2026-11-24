@@ -229,6 +229,10 @@ test("long titles wrap on the narrowest phone", async ({ browser }) => {
     "/work/inspection-platform",
     "/work/event-orchestrator",
     "/work/payout-ledger",
+    "/work/spyder",
+    "/changelog",
+    "/no-such-page",
+    "/writing/twenty-five-payouts-a-balance-for-ten",
   ]) {
     await page.goto(path);
     expect(
@@ -237,6 +241,24 @@ test("long titles wrap on the narrowest phone", async ({ browser }) => {
       ),
       path,
     ).toBe(true);
+    // No word of the title is split across lines. A hyphen is a fair place
+    // to break, so "Field-" and "inspection" count as two words.
+    const split = await page.locator("h1").evaluate((title) => {
+      const text = title.firstChild;
+      if (!text || text.nodeType !== Node.TEXT_NODE) return ["no text"];
+      const broken: string[] = [];
+      for (const match of (text.textContent ?? "").matchAll(/[^\s-]+-?/g)) {
+        const range = document.createRange();
+        range.setStart(text, match.index);
+        range.setEnd(text, match.index + match[0].length);
+        const tops = new Set(
+          [...range.getClientRects()].map((rect) => Math.round(rect.top)),
+        );
+        if (tops.size > 1) broken.push(match[0]);
+      }
+      return broken;
+    });
+    expect(split, path).toEqual([]);
   }
   await context.close();
 });

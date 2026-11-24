@@ -1,7 +1,7 @@
 import { episodes, flagship } from "@/content";
 import { OG_SIZE, ogCard } from "@/lib/og";
 
-export const alt = "Case study";
+export const alt = flagship.name;
 export const size = OG_SIZE;
 export const contentType = "image/png";
 

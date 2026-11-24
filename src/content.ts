@@ -16,6 +16,8 @@ export const ui = {
   next: "Next episode",
   earlier: "Earlier episodes",
   tagline: "Founding engineer · Bizerte, Tunisia · open to remote roles",
+  /** The labels of the facts at the top of an episode page. */
+  facts: { role: "role", stack: "stack", links: "links" },
 };
 
 /** Every version of the site, newest first; the first is `site.version`. */
@@ -171,6 +173,8 @@ export const flagship = {
     poster: "/demo/payout-ledger-poster.jpg",
     label:
       "Screen recording of the Payout Ledger demo: a dropped webhook is sent, the checks run, and reconciliation flags the mismatch",
+    caption:
+      "A dropped webhook is sent, the checks run, and reconciliation flags the payout the ledger has fallen behind on.",
   },
   door: { motif: "sun", paint: "green" } satisfies Door,
   street: {
