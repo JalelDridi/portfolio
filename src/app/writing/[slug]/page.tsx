@@ -1,4 +1,3 @@
-import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -79,9 +78,7 @@ function BlockView({ block }: { block: Block }) {
       );
     case "p":
       return (
-        <p className="text-[1.2rem] leading-relaxed text-pretty">
-          {block.text}
-        </p>
+        <p className="text-[1.15rem] leading-[1.7] text-pretty">{block.text}</p>
       );
     case "list":
       return (
@@ -107,8 +104,8 @@ function BlockView({ block }: { block: Block }) {
       );
     case "code":
       return (
-        <figure className="overflow-hidden bg-wall-2 px-[9px] pb-[9px] shadow-[0_0_0_1px_var(--border)]">
-          <figcaption className="flex items-center justify-between gap-3 py-2 font-mono text-[0.8rem] text-muted-foreground">
+        <figure className="overflow-hidden border border-border bg-card">
+          <figcaption className="flex items-center justify-between gap-3 border-b border-border px-3.5 py-2.5 font-mono text-[0.8rem] text-muted-foreground">
             <span className="truncate">{block.caption ?? block.language}</span>
             {block.caption && <span>{block.language}</span>}
           </figcaption>
@@ -116,7 +113,7 @@ function BlockView({ block }: { block: Block }) {
           <pre
             tabIndex={0}
             aria-label={`${block.language} code`}
-            className="overflow-x-auto bg-card p-4 font-mono text-[0.9rem] leading-relaxed"
+            className="overflow-x-auto p-4 font-mono text-[0.9rem] leading-relaxed"
           >
             <code>{block.code}</code>
           </pre>
@@ -144,7 +141,7 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
   };
 
   return (
-    <main className="mx-auto w-full max-w-[1280px] px-5 pt-[4.2rem] pb-16 sm:pb-24">
+    <main className="mx-auto w-full max-w-[calc(1360px+5.5rem)] px-4 pt-4 pb-8 sm:px-11 sm:pt-6">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -153,19 +150,19 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
       />
       <Rise>
         <Link
-          href="/#writing"
-          className="inline-flex items-center gap-1.5 text-base font-medium text-muted-foreground transition-colors hover:text-brand"
+          href="/work/payout-ledger#writing"
+          className="font-mono text-sm text-muted-foreground lowercase transition-colors hover:text-foreground"
         >
-          <ArrowLeft className="size-4" aria-hidden="true" /> All writing
+          <span aria-hidden="true">← </span>All writing
         </Link>
         <p className={`mt-10 ${LABEL}`}>
           <time dateTime={article.date}>{formatShortDate(article.date)}</time> ·{" "}
           {article.minutes} minute read
         </p>
-        <h1 className="mt-3 max-w-5xl font-display text-[clamp(2.6rem,6.4vw,5.4rem)] leading-[0.92] font-black tracking-[-0.04em] text-balance">
+        <h1 className="mt-3 max-w-[22ch] font-display text-[clamp(28px,5vw,4.4rem)] leading-[0.92] font-black tracking-[-0.03em] text-red uppercase [font-stretch:125%] [overflow-wrap:anywhere] text-balance">
           {article.title}
         </h1>
-        <p className="mt-6 max-w-3xl text-[1.25rem] text-pretty text-muted-foreground">
+        <p className="mt-6 max-w-[40rem] text-[1.2rem] leading-[1.6] text-pretty text-muted-foreground">
           {article.summary}
         </p>
         <div className="mt-6">
@@ -174,22 +171,22 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
       </Rise>
 
       {/* The body sits in the content column, under a hairline. */}
-      <div className="mt-12 border-t border-border pt-9 md:pl-[13rem]">
-        <div className="flex max-w-3xl flex-col gap-6">
+      <div className="mt-12 max-w-[64rem] border-t border-border pt-9 md:pl-[13rem]">
+        <div className="flex max-w-[40rem] flex-col gap-6">
           {article.blocks.map((block, blockIndex) => (
             <BlockView key={blockIndex} block={block} />
           ))}
         </div>
       </div>
 
-      <div className="mt-12 border-t border-border">
+      <div className="mt-12 max-w-[64rem] border-t border-border">
         <Row label="In the repository" id="sources">
           <ul className="flex flex-wrap gap-3">
             {article.links.map((link) => (
               <li key={link.href}>
                 <LinkButton href={link.href} className="h-auto min-h-11 py-2">
                   {link.label}
-                  <ArrowUpRight className="shrink-0" aria-hidden="true" />
+                  <span aria-hidden="true">↗</span>
                 </LinkButton>
               </li>
             ))}
@@ -200,15 +197,17 @@ export default async function ArticlePage(props: PageProps<"/writing/[slug]">) {
       {next.slug !== article.slug && (
         <Link
           href={`/writing/${next.slug}`}
-          className="group grid gap-x-8 gap-y-2 border-y border-border py-7 transition-colors hover:text-brand md:grid-cols-[11rem_1fr]"
+          className="group grid max-w-[64rem] gap-x-8 gap-y-2 border-y border-border py-7 transition-colors hover:text-brand md:grid-cols-[11rem_1fr]"
         >
           <span className={`pt-2 ${LABEL}`}>Next</span>
           <span className="flex items-center justify-between gap-4 font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-extrabold tracking-[-0.03em] text-balance">
             {next.title}
-            <ArrowRight
-              className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
+            <span
               aria-hidden="true"
-            />
+              className="shrink-0 text-brand transition-transform group-hover:translate-x-1"
+            >
+              →
+            </span>
           </span>
         </Link>
       )}
