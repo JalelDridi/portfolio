@@ -192,6 +192,113 @@
   }
 }
 
+/*
+ * The home page's reel. On a wide screen the episodes are stacked and only
+ * the selected one (`data-on`) shows; a change is a hard cut: the card is
+ * sliced once and the still settles from 1.04 to 1. Below 768px every
+ * episode is its own card and nothing moves.
+ */
+@layer components {
+  .reel-still {
+    filter: grayscale(1) contrast(1.15) brightness(0.5) blur(1.5px);
+  }
+  .reel-tint {
+    background:
+      linear-gradient(
+        90deg,
+        rgb(7 7 7 / 0.94) 0%,
+        rgb(7 7 7 / 0.55) 45%,
+        rgb(7 7 7 / 0.2) 100%
+      ),
+      linear-gradient(0deg, rgb(7 7 7 / 0.9), transparent 40%);
+  }
+  /*
+   * Wide capitals, sized so the longest word ("Solvedblue", about 8.5em wide)
+   * fits its column at every width.
+   */
+  .reel-title {
+    font-size: calc(11vw - 4px);
+    font-stretch: 125%;
+    line-height: 0.88;
+    letter-spacing: -0.035em;
+    margin-left: -0.04em;
+    overflow-wrap: break-word;
+  }
+  .reel-progress {
+    animation: reel-progress 6s linear both;
+  }
+  @media (min-width: 640px) {
+    .reel-title {
+      font-size: calc(11.4vw - 11px);
+    }
+  }
+  @media (min-width: 768px) {
+    .reel-title {
+      font-size: calc(11.4vw - 51px);
+    }
+    .reel-episode:not([data-on]) {
+      visibility: hidden;
+    }
+    .reel-episode[data-on] .reel-still {
+      animation: reel-settle 6s linear both;
+    }
+    .reel-episode[data-on] .reel-card {
+      animation: reel-cut 260ms steps(1) 1;
+    }
+  }
+  @media (min-width: 1024px) {
+    .reel-title {
+      font-size: min(118px, calc(11.4vw - 62px));
+    }
+  }
+}
+
+@keyframes reel-settle {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes reel-cut {
+  0% {
+    clip-path: inset(0 0 62% 0);
+    transform: translateX(-14px);
+  }
+  25% {
+    clip-path: inset(38% 0 20% 0);
+    transform: translateX(10px);
+  }
+  50% {
+    clip-path: inset(70% 0 0 0);
+    transform: translateX(-6px);
+  }
+  75% {
+    clip-path: inset(10% 0 55% 0);
+    transform: translateX(4px);
+  }
+  100% {
+    clip-path: none;
+    transform: none;
+  }
+}
+
+@keyframes reel-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* A still that grows into the episode's lead picture. */
+::view-transition-group(.morph) {
+  animation-duration: 400ms;
+}
+
 /* People who ask for less motion get a still page. */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -204,5 +311,10 @@
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

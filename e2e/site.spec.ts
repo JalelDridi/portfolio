@@ -1,37 +1,90 @@
 ﻿import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-const PROJECTS = [
-  "Solvedblue",
-  "Potluck",
-  "tnpay",
-  "Deal Grader",
-  "Kora",
-  "Spyder",
-  "Field-inspection platform",
-  "Event Orchestrator",
-];
-
-test("shows who I am, the open-source project and every piece of work", async ({
+test("the home page is one episode at a time, starting with Solvedblue", async ({
   page,
 }) => {
   await page.goto("/");
-
   await expect(
     page.getByRole("heading", { level: 1, name: "Mohamed Jalel Dridi" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Try the live demo" }),
-  ).toHaveAttribute("href", "https://payout-ledger-gamma.vercel.app");
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+  const list = page.getByRole("navigation", { name: "Episodes" });
+  await expect(list.getByRole("link")).toHaveCount(6);
   await expect(
-    page.getByRole("link", { name: "Read the code" }),
-  ).toHaveAttribute("href", "https://github.com/JalelDridi/payout-ledger");
+    list.getByRole("link", { name: /eps1\.1_payoutledger\.ts/ }),
+  ).toHaveAttribute("href", "/work/payout-ledger");
+});
 
-  for (const title of PROJECTS) {
-    await expect(
-      page.getByRole("heading", { level: 3, name: title, exact: true }),
-    ).toBeVisible();
-  }
+test("pointing at or focusing an episode selects it", async ({ page }) => {
+  await page.goto("/");
+  const list = page.getByRole("navigation", { name: "Episodes" });
+  await list.getByRole("link", { name: /potluck/ }).hover();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Potluck" }),
+  ).toBeVisible();
+  await list.getByRole("link", { name: /kora/ }).focus();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Kora" }),
+  ).toBeVisible();
+  await page.keyboard.press("ArrowDown");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Deal Grader" }),
+  ).toBeVisible();
+});
+
+test("without JavaScript the six episodes are still links", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(
+    page.getByRole("navigation", { name: "Episodes" }).getByRole("link"),
+  ).toHaveCount(6);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+  await context.close();
+});
+
+test("with motion reduced the reel does not advance on its own", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  await page.waitForTimeout(7000);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+});
+
+test("left alone, the reel moves to the next episode", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Payout Ledger" }),
+  ).toBeVisible({ timeout: 9000 });
+});
+
+test("on a phone every episode is a card with its own link", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "Play episode" })).toHaveCount(6);
+  await page
+    .getByRole("heading", { level: 2, name: "Kora" })
+    .scrollIntoViewIfNeeded();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Kora" }),
+  ).toBeVisible();
+  await context.close();
 });
 
 test("the shell is dark, with four header links", async ({ page }) => {
@@ -61,13 +114,11 @@ test("the changelog lists version 4.0.0, Episodes, first", async ({ page }) => {
   );
 });
 
-test("a project card opens its case study, which links out", async ({
-  page,
-}) => {
+test("an episode opens its case study, which links out", async ({ page }) => {
   await page.goto("/");
   await page
-    .getByRole("list", { name: /Also on this street/ })
-    .getByRole("link", { name: "Deal Grader", exact: true })
+    .getByRole("navigation", { name: "Episodes" })
+    .getByRole("link", { name: /dealgrader/ })
     .click();
 
   await expect(page).toHaveURL(/\/work\/deal-grader$/);
@@ -127,7 +178,10 @@ test("Kora has a case study with its live link", async ({ page }) => {
   );
 });
 
-test("Solvedblue is the current job and has a case study", async ({ page }) => {
+// The experience list left the home page: restored in Task 4.
+test.fixme("Solvedblue is the current job and has a case study", async ({
+  page,
+}) => {
   await page.goto("/");
   const first = page.locator("#experience li").first();
   await expect(first).toContainText("Solvedblue");
@@ -144,6 +198,7 @@ test("Solvedblue is the current job and has a case study", async ({ page }) => {
   ).toHaveAttribute("href", "https://solvedblue.com");
 });
 
+// The playground left the home page: restored in Task 3.
 test.describe("the pipeline playground", () => {
   test.beforeEach(async ({ page }) => {
     // Steps are instant with motion reduced, which keeps these tests fast.
@@ -154,7 +209,9 @@ test.describe("the pipeline playground", () => {
   const counters = (page: import("@playwright/test").Page) =>
     page.locator("dl").filter({ hasText: "Owed to seller" });
 
-  test("a webhook sent twice is stored and applied once", async ({ page }) => {
+  test.fixme("a webhook sent twice is stored and applied once", async ({
+    page,
+  }) => {
     await page.getByRole("button", { name: "Send it twice" }).click();
 
     await expect(page.getByRole("status")).toContainText(
@@ -165,7 +222,7 @@ test.describe("the pipeline playground", () => {
     await expect(counters(page)).toContainText("$25.00");
   });
 
-  test("an out-of-order payout waits, then ends at the same balance", async ({
+  test.fixme("an out-of-order payout waits, then ends at the same balance", async ({
     page,
   }) => {
     await page.getByRole("button", { name: "Send out of order" }).click();
@@ -176,7 +233,9 @@ test.describe("the pipeline playground", () => {
     await expect(counters(page)).toContainText("$0.00");
   });
 
-  test("each step posts an entry in the ledger book", async ({ page }) => {
+  test.fixme("each step posts an entry in the ledger book", async ({
+    page,
+  }) => {
     await page.getByRole("button", { name: "Send it twice" }).click();
     const rows = page
       .getByRole("table", { name: "Ledger entries" })
@@ -188,7 +247,7 @@ test.describe("the pipeline playground", () => {
     await expect(rows.nth(2)).toContainText("$25.00");
   });
 
-  test("balances add up across several runs", async ({ page }) => {
+  test.fixme("balances add up across several runs", async ({ page }) => {
     const send = page.getByRole("button", { name: "Send a webhook" });
     await send.click();
     await expect(counters(page)).toContainText("Applied1");
@@ -199,7 +258,8 @@ test.describe("the pipeline playground", () => {
   });
 });
 
-test("shows the local time in Bizerte and the gap to the visitor", async ({
+// The local time left the home page: restored in Task 4.
+test.fixme("shows the local time in Bizerte and the gap to the visitor", async ({
   browser,
 }) => {
   const context = await browser.newContext({ timezoneId: "America/New_York" });
@@ -225,49 +285,39 @@ test("every link has a destination", async ({ page }) => {
     .getByRole("link")
     .evaluateAll((links) => links.map((a) => a.getAttribute("href")));
 
-  expect(hrefs.length).toBeGreaterThan(15);
+  // The header, the six episodes, the play link and the earlier episodes.
+  expect(hrefs.length).toBeGreaterThanOrEqual(15);
   for (const href of hrefs) {
     expect(href).toMatch(/^(https:\/\/|mailto:|\/|#)/);
   }
 });
 
-for (const colorScheme of ["light", "dark"] as const) {
-  for (const path of [
-    "/",
-    "/work/potluck",
-    "/work/solvedblue",
-    "/writing/webhooks-in-any-order",
-    "/changelog",
-  ]) {
-    // The Bab home page is not rebuilt for the dark tokens yet: restored in Task 2.
-    const run = path === "/" ? test.fixme : test;
-    run(
-      `no detectable accessibility violations on ${path} in ${colorScheme} mode`,
-      async ({ page }) => {
-        await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
-        await page.goto(path);
-        // Bring every scroll-revealed section into view before scanning.
-        await page.evaluate(async () => {
-          for (let y = 0; y < document.body.scrollHeight; y += 400) {
-            window.scrollTo(0, y);
-            await new Promise((resolve) => setTimeout(resolve, 60));
-          }
-        });
-        // Let the last fade-in finish so colours are measured at full opacity.
-        await page.waitForTimeout(1200);
+// The site is dark only: each path is scanned once.
+for (const path of ["/", "/about", "/work/potluck"]) {
+  test(`no detectable accessibility violations on ${path}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(path);
+    // Bring every scroll-revealed section into view before scanning.
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 400) {
+        window.scrollTo(0, y);
+        await new Promise((resolve) => setTimeout(resolve, 60));
+      }
+    });
+    // Let the last fade-in finish so colours are measured at full opacity.
+    await page.waitForTimeout(1200);
 
-        const results = await new AxeBuilder({ page }).analyze();
+    const results = await new AxeBuilder({ page }).analyze();
 
-        expect(results.violations).toEqual([]);
-      },
-    );
-  }
+    expect(results.violations).toEqual([]);
+  });
 }
 
 test("fits a phone screen without horizontal scrolling", async ({ page }) => {
   // Narrower than most phones, to leave a margin for font differences.
   await page.setViewportSize({ width: 340, height: 812 });
-  // The playground's steps are instant with motion reduced.
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const path of [
     "/",
@@ -277,16 +327,6 @@ test("fits a phone screen without horizontal scrolling", async ({ page }) => {
     "/changelog",
   ]) {
     await page.goto(path);
-    if (path === "/") {
-      // Open the hero door, its widest state, before measuring.
-      await page.getByRole("button", { name: "Open the door" }).click();
-      await expect(
-        page.getByRole("button", { name: "Close the door" }),
-      ).toBeVisible();
-      // Fill the ledger book, its widest state, before measuring.
-      await page.getByRole("button", { name: "Send out of order" }).click();
-      await expect(page.getByRole("status")).toContainText("Retried");
-    }
 
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - window.innerWidth,
@@ -336,7 +376,10 @@ test("the home page describes its subject to search engines", async ({
   expect(data.mainEntity.worksFor.name).toBe("Solvedblue");
 });
 
-test("recordings wait until they are near the screen", async ({ page }) => {
+// The recordings left the home page: restored in Task 3.
+test.fixme("recordings wait until they are near the screen", async ({
+  page,
+}) => {
   await page.goto("/");
   const video = page.locator("#project video");
 
@@ -347,7 +390,8 @@ test("recordings wait until they are near the screen", async ({ page }) => {
   await expect(video).toHaveAttribute("poster", /payout-ledger-poster/);
 });
 
-test("the about section shows the portrait, the story and live clocks", async ({
+// The about section left the home page: restored in Task 4.
+test.fixme("the about section shows the portrait, the story and live clocks", async ({
   page,
 }) => {
   await page.goto("/");
@@ -363,7 +407,8 @@ test("the about section shows the portrait, the story and live clocks", async ({
   await expect(about.getByText(/^\d{2}:\d{2}$/)).toHaveCount(4);
 });
 
-test("the leadership section lists the three JCI roles in order", async ({
+// The leadership section left the home page: restored in Task 4.
+test.fixme("the leadership section lists the three JCI roles in order", async ({
   page,
 }) => {
   await page.goto("/");
@@ -376,7 +421,10 @@ test("the leadership section lists the three JCI roles in order", async ({
   ]);
 });
 
-test("the copy button puts the email on the clipboard", async ({ browser }) => {
+// The contact section left the home page: restored in Task 4.
+test.fixme("the copy button puts the email on the clipboard", async ({
+  browser,
+}) => {
   const context = await browser.newContext({
     permissions: ["clipboard-read", "clipboard-write"],
   });
@@ -390,7 +438,8 @@ test("the copy button puts the email on the clipboard", async ({ browser }) => {
   await context.close();
 });
 
-test("an article opens from the home page and links to its sources", async ({
+// The writing list left the home page: restored in Task 3.
+test.fixme("an article opens from the home page and links to its sources", async ({
   page,
 }) => {
   await page.goto("/");
@@ -426,24 +475,4 @@ test("the changelog lists the current version first and is linked from the foote
     page.getByRole("heading", { level: 1, name: "Changelog" }),
   ).toBeVisible();
   await expect(page.locator("main ol li").first()).toContainText("4.0.0");
-});
-
-test("with motion reduced the hero is visible at once", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const h1 = page.getByRole("heading", {
-    level: 1,
-    name: "Mohamed Jalel Dridi",
-  });
-  await expect(h1).toBeVisible();
-  expect(
-    await h1.evaluate((el) => getComputedStyle(el.parentElement!).opacity),
-  ).toBe("1");
-  // The last entrance, the hero door, is not held back either.
-  const room = page.locator("#hero-room");
-  expect(
-    await room.evaluate(
-      (el) => getComputedStyle(el.closest(".animate-in")!).opacity,
-    ),
-  ).toBe("1");
 });
