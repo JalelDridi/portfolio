@@ -1,22 +1,24 @@
 import { skills } from "@/content";
+import { LABEL_MUTED } from "@/lib/styles";
 import { Section } from "../section";
 
+/** One row per group: its name in mono, then the tools. */
 export function Skills() {
   return (
     <Section
       id="skills"
-      eyebrow="Skills"
+      label="Skills"
       title="The stack I work in"
       description="TypeScript end to end, PostgreSQL underneath, and the infrastructure to ship it."
     >
-      <dl className="grid gap-x-10 gap-y-8 min-[640px]:grid-cols-2 min-[920px]:grid-cols-3">
+      <dl className="grid sm:grid-cols-2 sm:gap-x-12">
         {skills.map((group) => (
-          <div key={group.group}>
-            <dt className="flex items-center gap-2.5 font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase">
-              <span aria-hidden="true" className="size-2 shrink-0 bg-brand" />
-              {group.group}
-            </dt>
-            <dd className="mt-2 font-display text-[1.25rem] leading-[1.35] font-bold tracking-[-0.015em] text-pretty">
+          <div
+            key={group.group}
+            className="border-b border-border py-5 first:pt-0 sm:nth-2:pt-0"
+          >
+            <dt className={LABEL_MUTED}>{group.group}</dt>
+            <dd className="mt-2 text-[1.1rem] leading-[1.5] text-pretty">
               {group.items.join(" · ")}
             </dd>
           </div>

@@ -114,8 +114,7 @@ test("on a phone every episode is a card with its own link", async ({
 });
 
 test("the shell is dark, with four header links", async ({ page }) => {
-  // TODO(Task 4): point at /about once it exists.
-  await page.goto("/changelog");
+  await page.goto("/about");
   await expect(page.locator("body")).toHaveCSS(
     "background-color",
     "rgb(7, 7, 7)",
@@ -297,11 +296,8 @@ test("Kora has a case study with its live link", async ({ page }) => {
   );
 });
 
-// The experience list left the home page: restored in Task 4.
-test.fixme("Solvedblue is the current job and has a case study", async ({
-  page,
-}) => {
-  await page.goto("/");
+test("Solvedblue is the current job and has a case study", async ({ page }) => {
+  await page.goto("/about");
   const first = page.locator("#experience li").first();
   await expect(first).toContainText("Solvedblue");
   await expect(first).toContainText("Nov 2026 – present");
@@ -372,13 +368,12 @@ test.describe("the pipeline playground", () => {
   });
 });
 
-// The local time left the home page: restored in Task 4.
-test.fixme("shows the local time in Bizerte and the gap to the visitor", async ({
+test("shows the local time in Bizerte and the gap to the visitor", async ({
   browser,
 }) => {
   const context = await browser.newContext({ timezoneId: "America/New_York" });
   const page = await context.newPage();
-  await page.goto("/");
+  await page.goto("/about");
 
   await expect(
     page.getByText(/\d{2}:\d{2} here now, [56] hours ahead of you/),
@@ -439,6 +434,7 @@ test("fits a phone screen without horizontal scrolling", async ({ page }) => {
     "/work/potluck",
     "/writing/twenty-five-payouts-a-balance-for-ten",
     "/changelog",
+    "/about",
   ]) {
     await page.goto(path);
 
@@ -509,11 +505,10 @@ test("recordings wait until they are near the screen", async ({ browser }) => {
   await context.close();
 });
 
-// The about section left the home page: restored in Task 4.
-test.fixme("the about section shows the portrait, the story and live clocks", async ({
+test("the about section shows the portrait, the story and live clocks", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/about");
   const about = page.locator("#about");
 
   await expect(
@@ -526,11 +521,44 @@ test.fixme("the about section shows the portrait, the story and live clocks", as
   await expect(about.getByText(/^\d{2}:\d{2}$/)).toHaveCount(4);
 });
 
-// The leadership section left the home page: restored in Task 4.
-test.fixme("the leadership section lists the three JCI roles in order", async ({
+test("the about page gathers everything that is not work, in order", async ({
   page,
 }) => {
-  await page.goto("/");
+  const response = await page.goto("/about");
+  expect(response?.status()).toBe(200);
+  await expect(page).toHaveTitle(/^About · /);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    /\/about$/,
+  );
+  await expect(
+    page
+      .locator("main section")
+      .evaluateAll((sections) => sections.map((section) => section.id)),
+  ).resolves.toEqual([
+    "about",
+    "experience",
+    "skills",
+    "leadership",
+    "writing",
+    "contact",
+  ]);
+  // Section titles are off-white: red is for episode titles.
+  for (const title of await page.locator("main section h2").all())
+    await expect(title).toHaveCSS("color", "rgb(236, 232, 225)");
+  // No Bab leftovers: no Arabic words.
+  await expect(page.locator('main [lang="ar"]')).toHaveCount(0);
+  await expect(
+    page.getByRole("link", {
+      name: "Twenty-five payouts, a balance that covers ten",
+    }),
+  ).toHaveAttribute("href", "/writing/twenty-five-payouts-a-balance-for-ten");
+});
+
+test("the leadership section lists the three JCI roles in order", async ({
+  page,
+}) => {
+  await page.goto("/about");
 
   const roles = page.locator("#leadership ol li");
   await expect(roles).toHaveText([
@@ -540,15 +568,12 @@ test.fixme("the leadership section lists the three JCI roles in order", async ({
   ]);
 });
 
-// The contact section left the home page: restored in Task 4.
-test.fixme("the copy button puts the email on the clipboard", async ({
-  browser,
-}) => {
+test("the copy button puts the email on the clipboard", async ({ browser }) => {
   const context = await browser.newContext({
     permissions: ["clipboard-read", "clipboard-write"],
   });
   const page = await context.newPage();
-  await page.goto("/#contact");
+  await page.goto("/about#contact");
   await page.getByRole("button", { name: "Copy email" }).click();
   await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
