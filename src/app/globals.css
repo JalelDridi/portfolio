@@ -303,9 +303,9 @@
 
 /*
  * Episode pages. The head is wiped in from the top once, unless motion is
- * reduced. A title is sized
- * from its longest word (`--longest`, in characters, set inline) so that word
- * fits its column at every width; `overflow-wrap: anywhere` is the safety net.
+ * reduced. A title is sized from its longest word (`--longest`, in
+ * characters, set inline) so that word fits its column at every width;
+ * `overflow-wrap: anywhere` is the safety net.
  * The floor is 24px (WCAG large text; the red is about 4:1 here), reached
  * only by a 12-letter word on a screen narrower than about 330px.
  */
