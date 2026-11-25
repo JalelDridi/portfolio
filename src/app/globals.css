@@ -23,10 +23,6 @@
   /* The bezel of a phone frame around a screenshot. */
   --bezel: #1d1c1b;
 
-  /* Named only by LinkButton's two old variants, which no page uses. */
-  --brand-deep: #0f4f96;
-  --sun: #edb021;
-
   /* The shadcn tokens follow the ones above. */
   --card-foreground: var(--foreground);
   --popover: var(--card);
@@ -64,8 +60,6 @@
   --color-ring: var(--ring);
   --color-brand: var(--brand);
   --color-bezel: var(--bezel);
-  --color-brand-deep: var(--brand-deep);
-  --color-sun: var(--sun);
   --color-red: var(--red);
   --color-wall-2: var(--wall-2);
   /* Titles: Archivo, set wide (font-stretch: 125%) where it is used. */

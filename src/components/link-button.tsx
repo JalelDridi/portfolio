@@ -7,10 +7,6 @@ const STYLES = {
     "border-brand bg-brand text-background hover:border-foreground hover:bg-foreground",
   outline:
     "border-foreground bg-transparent text-foreground hover:bg-foreground hover:text-background",
-  // Bab's variants, still used by the unused Bab sections.
-  sun: "border-sun bg-sun text-[#101922] hover:brightness-95",
-  light:
-    "border-white bg-transparent text-white hover:bg-white hover:text-brand-deep",
 };
 
 /** A link drawn as a square button with a mono, upper-case label. */
