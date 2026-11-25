@@ -181,7 +181,10 @@ export function Reel({ episodes }: { episodes: Episode[] }) {
             share="morph"
             default="none"
           >
-            <div className="reel-still absolute inset-0">
+            <div
+              className="reel-still absolute inset-0"
+              data-dark={episode.still.dark ? "" : undefined}
+            >
               <Image
                 src={episode.still.src}
                 alt=""

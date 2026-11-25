@@ -911,7 +911,8 @@ export type Episode = {
   /** One sentence. */
   line: string;
   status: EpisodeStatus;
-  still: { src: string; width: number; height: number };
+  /** `dark` marks a screenshot that is already dark, so the reel dims it less. */
+  still: { src: string; width: number; height: number; dark?: boolean };
 };
 
 function projectBySlug(slug: string): Project {
@@ -968,7 +969,12 @@ const REEL: Omit<Episode, "href" | "file">[] = [
     status: "LIVE",
     kind: "Side project",
     ...projectEpisode("kora"),
-    still: { src: "/work/kora-chkoun.png", width: 1280, height: 1306 },
+    still: {
+      src: "/work/kora-chkoun.png",
+      width: 1280,
+      height: 1306,
+      dark: true,
+    },
   },
   {
     slug: "deal-grader",
