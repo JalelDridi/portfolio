@@ -129,6 +129,10 @@
   .reel-still {
     filter: grayscale(1) contrast(1.15) brightness(0.5) blur(1.5px);
   }
+  /* A screenshot that is already dark is lifted instead of dimmed. */
+  .reel-still[data-dark] {
+    filter: grayscale(1) contrast(1.1) brightness(2) blur(1.5px);
+  }
   .reel-tint {
     background:
       linear-gradient(
