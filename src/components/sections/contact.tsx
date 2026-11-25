@@ -16,7 +16,7 @@ export function Contact() {
     <Section
       id="contact"
       label={LABEL}
-      title="Hiring for payments or full-stack TypeScript? Knock."
+      title="Hiring for payments or full-stack TypeScript? Let’s write the next episode."
     >
       <p className="max-w-[36rem] text-[1.3rem] leading-[1.5] text-pretty">
         I am open to remote roles. Email is the quickest way to reach me.
