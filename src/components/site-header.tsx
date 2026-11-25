@@ -32,6 +32,8 @@ export function SiteHeader() {
               <li key={item.href}>
                 <Link
                   href={item.href}
+                  // A file is not a page: prefetching it as one is a 404.
+                  prefetch={item.href.endsWith(".pdf") ? false : undefined}
                   className={cn(
                     "transition-colors",
                     // Over a still, muted text would be too faint.
