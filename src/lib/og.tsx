@@ -3,13 +3,10 @@ import { profile } from "@/content";
 
 export const OG_SIZE = { width: 1200, height: 630 };
 
-/** Nail heads down the blue band, top to bottom. */
-const STUDS = Array.from({ length: 13 }, (_, index) => index);
-
 /**
- * The card shown when a page is shared: the whitewashed wall, a blue band
- * with a column of studs at the left, ink text. Satori lays this out with
- * flexbox only, so every element with more than one child is `display: flex`.
+ * The card shown when a page is shared: a black ground, a red bar down the
+ * left, off-white text. Satori lays this out with flexbox only, so every
+ * element with more than one child is `display: flex`.
  */
 export function ogCard({
   eyebrow,
@@ -26,34 +23,11 @@ export function ogCard({
         width: "100%",
         height: "100%",
         display: "flex",
-        background: "#faf9f4",
-        color: "#101922",
+        background: "#070707",
+        color: "#ece8e1",
       }}
     >
-      <div
-        style={{
-          width: 96,
-          height: "100%",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "space-between",
-          padding: "26px 0",
-          background: "#1763b6",
-        }}
-      >
-        {STUDS.map((index) => (
-          <div
-            key={index}
-            style={{
-              width: 14,
-              height: 14,
-              borderRadius: 7,
-              background: "#10151b",
-            }}
-          />
-        ))}
-      </div>
+      <div style={{ width: 96, height: "100%", background: "#e10600" }} />
       <div
         style={{
           flex: 1,
@@ -70,7 +44,7 @@ export function ogCard({
             letterSpacing: 4,
             textTransform: "uppercase",
             fontFamily: "ui-monospace, Menlo, monospace",
-            color: "#1763b6",
+            color: "#ff4a3d",
           }}
         >
           {eyebrow}
@@ -82,9 +56,10 @@ export function ogCard({
               fontWeight: 900,
               lineHeight: 1,
               letterSpacing: -1,
-              color: "#101922",
+              textTransform: "uppercase",
+              color: "#ece8e1",
               // The bundled font has one weight; a stroke makes it heavy.
-              WebkitTextStroke: "3px #101922",
+              WebkitTextStroke: "3px #ece8e1",
             }}
           >
             {title}
@@ -93,7 +68,7 @@ export function ogCard({
             style={{
               fontSize: 32,
               marginTop: 28,
-              color: "#4b5764",
+              color: "#9a968f",
               lineHeight: 1.3,
             }}
           >
@@ -105,7 +80,7 @@ export function ogCard({
             display: "flex",
             justifyContent: "space-between",
             fontSize: 26,
-            color: "#4b5764",
+            color: "#9a968f",
           }}
         >
           <div>{profile.name}</div>

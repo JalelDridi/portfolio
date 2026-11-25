@@ -1,85 +1,66 @@
 import Image from "next/image";
-import { about, profile } from "@/content";
-import { ArchFrame } from "../motifs";
+import { about, shell } from "@/content";
+import { LABEL_MUTED } from "@/lib/styles";
 import { Section } from "../section";
 import { WorldClocks } from "../world-clocks";
 
-/** The same place and coordinates the header shows. */
-const TAG = `Bizerte · ${profile.coordinates}`;
+const LABEL = shell.nav.find((item) => item.href === "/about")?.label ?? "";
 
-/** Splits the title so its last words can be set in blue. */
-const ACCENT = "to moving money";
-
+/** The story, the facts and the clocks at the right; the portrait under the title. */
 export function About() {
-  const { portrait } = about;
-  const title = about.title.endsWith(ACCENT)
-    ? about.title.slice(0, -ACCENT.length).trim()
-    : about.title;
-  const accent = about.title.endsWith(ACCENT) ? ACCENT : undefined;
-
+  const { portrait, figure } = about;
   return (
     <Section
       id="about"
-      arabic="دار"
-      eyebrow="Dar · at home"
-      title={title}
-      accent={accent}
-    >
-      <div className="grid items-start gap-[3.2rem] *:min-w-0 min-[920px]:grid-cols-[0.8fr_1.2fr] min-[920px]:grid-rows-[auto_1fr] min-[920px]:gap-y-8">
-        <figure className="relative">
-          <ArchFrame ratio={4 / 5} className="w-full bg-wall-2">
-            <Image
-              src={portrait.src}
-              alt={portrait.alt}
-              fill
-              sizes="(min-width: 920px) 480px, 92vw"
-              className="object-cover"
-            />
-          </ArchFrame>
-          <figcaption className="absolute -right-4 bottom-[1.4rem] bg-sun px-[0.7rem] py-[0.4rem] font-mono text-[0.76rem] text-[#101922]">
-            {TAG}
+      label={LABEL}
+      title={about.title}
+      aside={
+        <figure className="mt-10 max-w-[26rem]">
+          <Image
+            src={portrait.src}
+            alt={portrait.alt}
+            width={portrait.width}
+            height={portrait.height}
+            sizes="(min-width: 640px) 442px, calc(100vw - 2rem)"
+            loading="eager"
+            className="aspect-square w-full object-cover"
+          />
+          <figcaption className="mt-3 font-mono text-[0.8rem] text-muted-foreground">
+            {figure.label} · {figure.coordinates}
           </figcaption>
         </figure>
+      }
+    >
+      {about.paragraphs.map((paragraph, index) => (
+        <p
+          key={paragraph}
+          className={
+            index === 0
+              ? "mb-6 max-w-[44rem] text-[1.3rem] leading-[1.5] text-pretty"
+              : "mb-5 max-w-[44rem] text-[1.1rem] leading-[1.65] text-pretty"
+          }
+        >
+          {paragraph}
+        </p>
+      ))}
 
-        <div className="min-[920px]:col-start-2 min-[920px]:row-span-2 min-[920px]:row-start-1">
-          {about.paragraphs.map((paragraph, index) => (
-            <p
-              key={paragraph}
-              className={
-                index === 0
-                  ? "mb-5 font-display text-[clamp(1.25rem,1.9vw,1.45rem)] leading-[1.25] font-bold tracking-[-0.02em] text-pretty"
-                  : "mb-4 text-[1.15rem] text-pretty"
-              }
-            >
-              {paragraph}
-            </p>
-          ))}
+      <dl className="mt-10 grid border-t border-border sm:grid-cols-2 sm:gap-x-12">
+        {about.facts.map((fact) => (
+          <div key={fact.label} className="border-b border-border py-4">
+            <dt className={LABEL_MUTED}>{fact.label}</dt>
+            <dd className="mt-1.5 text-[1.05rem] text-pretty">{fact.value}</dd>
+          </div>
+        ))}
+      </dl>
 
-          <dl className="mt-7 grid grid-cols-2 gap-x-[1.4rem] gap-y-4 border-t pt-5 min-[920px]:grid-cols-3">
-            {about.facts.map((fact) => (
-              <div key={fact.label}>
-                <dt className="font-mono text-[0.8rem] tracking-[0.1em] text-brand uppercase">
-                  {fact.label}
-                </dt>
-                <dd className="mt-1 font-medium text-pretty">{fact.value}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-
-        {/*
-         * Under the portrait on wide screens, after the story on phones. Only
-         * `min-[…]` breakpoints here: Tailwind emits them before `sm:`.
-         */}
-        <div className="bg-wall-2 px-4 py-6 sm:px-6 min-[920px]:col-start-1 min-[920px]:row-start-2">
-          <WorldClocks
-            clocks={about.clocks}
-            className="grid-cols-2 min-[640px]:grid-cols-4 min-[920px]:grid-cols-2 min-[1280px]:grid-cols-4"
-          />
-          <p className="mt-5 text-center text-[0.95rem] text-muted-foreground">
-            {about.clocksCaption}
-          </p>
-        </div>
+      <div className="mt-12">
+        <WorldClocks
+          clocks={about.clocks}
+          className="grid-cols-2 min-[640px]:grid-cols-4"
+        />
+        <p className="mt-6 text-[0.95rem] text-muted-foreground">
+          {about.clocksCaption}
+        </p>
       </div>
     </Section>
   );

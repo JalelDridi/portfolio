@@ -1,15 +1,15 @@
-import { About } from "@/components/sections/about";
-import { Contact } from "@/components/sections/contact";
-import { Experience } from "@/components/sections/experience";
-import { Flagship } from "@/components/sections/flagship";
-import { Hero } from "@/components/sections/hero";
-import { Leadership } from "@/components/sections/leadership";
-import { Playground } from "@/components/sections/playground";
-import { Skills } from "@/components/sections/skills";
-import { Work } from "@/components/sections/work";
-import { Writing } from "@/components/sections/writing";
-import { TileBand } from "@/components/motifs";
-import { experience, flagship, profile, SITE_URL, skills } from "@/content";
+import Link from "next/link";
+import { Reel } from "@/components/episodes/reel";
+import {
+  earlierEpisodes,
+  episodes,
+  experience,
+  flagship,
+  profile,
+  SITE_URL,
+  skills,
+  ui,
+} from "@/content";
 
 // Tells search engines who this page is about, in their own vocabulary.
 const jsonLd = {
@@ -49,18 +49,33 @@ export default function Home() {
           __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
         }}
       />
-      <Hero />
-      <Work />
-      <Flagship />
-      <Playground />
-      <Writing />
-      {/* A ground line of tiles under the notes, before the skills. */}
-      <TileBand className="mt-[4.2rem]" />
-      <Skills />
-      <About />
-      <Experience />
-      <Leadership />
-      <Contact />
+      <Reel episodes={episodes} />
+      {/* Older work, quietly, under the reel. */}
+      <section
+        aria-labelledby="earlier"
+        className="px-4 pt-14 pb-20 font-mono sm:px-11"
+      >
+        <h2
+          id="earlier"
+          className="text-[0.8rem] tracking-[0.08em] text-muted-foreground uppercase"
+        >
+          {ui.earlier}
+        </h2>
+        <ul className="mt-4 max-w-3xl border-t border-border">
+          {earlierEpisodes.map((episode) => (
+            <li key={episode.href} className="border-b border-border">
+              <Link
+                href={episode.href}
+                className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 py-3 text-[0.85rem] text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <span>{episode.file}</span>
+                <span className="text-foreground">{episode.title}</span>
+                <span className="tabular-nums">{episode.year}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </section>
     </main>
   );
 }

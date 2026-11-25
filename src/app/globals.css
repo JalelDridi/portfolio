@@ -4,35 +4,30 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Bab: a whitewashed street, Sidi Bou Said blue, painted doors. */
+/* Episodes: black, off-white and one red. Dark only. */
 :root {
+  color-scheme: dark;
   --radius: 0;
-  /* The wall. */
-  --background: #faf9f4;
-  /* Frames and plaques. */
-  --card: #ffffff;
-  /* Door frames and quiet bands. */
-  --wall-2: #f1efe6;
-  --foreground: #101922;
-  --muted-foreground: #4b5764;
-  --border: #dedbd0;
-  /* Sidi Bou Said blue: links, accents, the flagship band. */
-  --brand: #1763b6;
-  --brand-deep: #0f4f96;
-  /* Door yellow: the one loud accent. */
-  --sun: #edb021;
-  --leaf: #23795a;
-  /* Door red; also "held" in the playground. */
-  --red: #c5352c;
-  --stud: #10151b;
-  /* The dark inside of a door. */
-  --room: #0c1520;
+  --background: #070707;
+  /* Panels: the episode list, frames. */
+  --card: #0e0e0e;
+  --wall-2: #0e0e0e;
+  --foreground: #ece8e1;
+  --muted-foreground: #9a968f;
+  /* Hairlines. */
+  --border: #2a2927;
+  /* The title red, for large type only (28px or more). */
+  --red: #e10600;
+  /* The red for small text and the focus ring: 4.5:1 or more on the background. */
+  --brand: #ff4a3d;
+  /* The bezel of a phone frame around a screenshot. */
+  --bezel: #1d1c1b;
 
-  /*
-   * The shadcn tokens follow the ones above. They are declared once here:
-   * `.dark` sits on the same <html> element, so these resolve against
-   * whichever theme's values apply.
-   */
+  /* Named only by LinkButton's two old variants, which no page uses. */
+  --brand-deep: #0f4f96;
+  --sun: #edb021;
+
+  /* The shadcn tokens follow the ones above. */
   --card-foreground: var(--foreground);
   --popover: var(--card);
   --popover-foreground: var(--foreground);
@@ -46,24 +41,6 @@
   --destructive: var(--red);
   --input: var(--border);
   --ring: var(--brand);
-}
-
-/* The street at night. Door paints do not change. */
-.dark {
-  --background: #0d1621;
-  --card: #131f2c;
-  --wall-2: #172433;
-  --foreground: #f0eee7;
-  --muted-foreground: #a9b4c0;
-  --border: #263443;
-  --brand: #58a0ea;
-  /* The flagship band keeps a deep blue at night. */
-  --brand-deep: #12508f;
-  --sun: #f2bb3a;
-  --leaf: #3fa37c;
-  --red: #e2685e;
-  --stud: #0a0e13;
-  --room: #060b12;
 }
 
 @theme inline {
@@ -86,18 +63,18 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
   --color-brand: var(--brand);
+  --color-bezel: var(--bezel);
   --color-brand-deep: var(--brand-deep);
   --color-sun: var(--sun);
-  --color-leaf: var(--leaf);
   --color-red: var(--red);
-  --color-stud: var(--stud);
-  --color-room: var(--room);
   --color-wall-2: var(--wall-2);
-  --font-display: var(--font-alexandria), system-ui, sans-serif;
-  --font-heading: var(--font-alexandria), system-ui, sans-serif;
+  /* Titles: Archivo, set wide (font-stretch: 125%) where it is used. */
+  --font-display: var(--font-archivo), "Arial Black", sans-serif;
+  --font-heading: var(--font-archivo), "Arial Black", sans-serif;
+  /* Long case-study text. */
   --font-sans: var(--font-onest), system-ui, sans-serif;
-  --font-mono: var(--font-dm-mono), ui-monospace, monospace;
-  --font-kufi: var(--font-reem-kufi), var(--font-alexandria), sans-serif;
+  /* Labels, the header and the home page. */
+  --font-mono: var(--font-plex-mono), ui-monospace, Consolas, monospace;
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -126,16 +103,6 @@
     outline: 2px solid var(--brand);
     outline-offset: 2px;
   }
-  /* On painted bands the ring takes the band's text colour, or door yellow in the dark room. */
-  .focus-white :focus-visible {
-    outline-color: #ffffff;
-  }
-  .focus-ink :focus-visible {
-    outline-color: #101922;
-  }
-  .focus-sun :focus-visible {
-    outline-color: var(--sun);
-  }
   html {
     @apply scroll-smooth font-sans;
     /* One notch above the browser default, so every rem-based size grows. */
@@ -151,62 +118,192 @@
 }
 
 /*
- * Doors. Leaves swing inward on the hinge side and darken a little as they
- * open; the parent sets `perspective` and `data-state`.
+ * The home page's reel. On a wide screen the episodes are stacked and only
+ * the selected one (`data-on`) shows; a change is a hard cut: the card is
+ * sliced once (only after the first change, `data-cut`, so the first card is
+ * not sliced while it loads) and the still settles from 1.04 to 1. Below
+ * 768px every episode is its own card and nothing moves; with motion reduced
+ * nothing moves at any width.
  */
 @layer components {
-  .door-leaf {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    z-index: 2;
-    width: 50%;
-    backface-visibility: hidden;
-    transition:
-      transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
-      filter 0.9s;
+  .reel-still {
+    filter: grayscale(1) contrast(1.15) brightness(0.5) blur(1.5px);
   }
-  .door-leaf-l {
-    left: 0;
-    transform-origin: left center;
+  .reel-tint {
+    background:
+      linear-gradient(
+        90deg,
+        rgb(7 7 7 / 0.94) 0%,
+        rgb(7 7 7 / 0.55) 45%,
+        rgb(7 7 7 / 0.2) 100%
+      ),
+      linear-gradient(0deg, rgb(7 7 7 / 0.9), transparent 40%);
   }
-  .door-leaf-r {
-    right: 0;
-    transform-origin: right center;
-  }
-  [data-state="ajar"] > .door-leaf-r {
-    transform: rotateY(-76deg);
-    filter: brightness(0.82);
-  }
-  [data-state="open"] > .door-leaf-l {
-    transform: rotateY(78deg);
-    filter: brightness(0.82);
-  }
-  [data-state="open"] > .door-leaf-r {
-    transform: rotateY(-78deg);
-    filter: brightness(0.82);
-  }
-
   /*
-   * The street's doors are links: they open while pointed at or focused, and
-   * stand ajar on touch screens, which cannot hover, so the picture shows.
+   * Wide capitals, sized so the longest word ("Solvedblue", about 8.5em wide)
+   * fits its column at every width.
    */
-  .door-link:hover .door-leaf-l,
-  .door-link:focus-visible .door-leaf-l {
-    transform: rotateY(78deg);
-    filter: brightness(0.82);
+  .reel-title {
+    font-size: calc(11vw - 4px);
+    font-stretch: 125%;
+    line-height: 0.88;
+    letter-spacing: -0.035em;
+    margin-left: -0.04em;
+    overflow-wrap: break-word;
   }
-  .door-link:hover .door-leaf-r,
-  .door-link:focus-visible .door-leaf-r {
-    transform: rotateY(-78deg);
-    filter: brightness(0.82);
+  .reel-progress {
+    animation: reel-progress 6s linear both;
   }
-  @media (hover: none) {
-    .door-link .door-leaf-r {
-      transform: rotateY(-76deg);
-      filter: brightness(0.82);
+  @media (min-width: 640px) {
+    .reel-title {
+      font-size: calc(11.4vw - 11px);
     }
   }
+  @media (min-width: 768px) {
+    .reel-title {
+      font-size: calc(11.4vw - 51px);
+    }
+    .reel-episode:not([data-on]) {
+      visibility: hidden;
+    }
+    /*
+     * Hidden stills are inside the viewport, so `loading="lazy"` alone would
+     * fetch all six. Taken out of the layout they wait; the next one loads
+     * ahead of its turn.
+     */
+    .reel-episode:not([data-on]):not([data-next]) .reel-still img {
+      display: none;
+    }
+    /* The header sits over the top of the still: near black under it. */
+    .reel-tint {
+      background:
+        linear-gradient(
+          180deg,
+          rgb(7 7 7 / 0.92) 0,
+          rgb(7 7 7 / 0.88) 110px,
+          transparent 240px
+        ),
+        linear-gradient(
+          90deg,
+          rgb(7 7 7 / 0.94) 0%,
+          rgb(7 7 7 / 0.55) 45%,
+          rgb(7 7 7 / 0.2) 100%
+        ),
+        linear-gradient(0deg, rgb(7 7 7 / 0.9), transparent 40%);
+    }
+  }
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    .reel-episode[data-on] .reel-still {
+      animation: reel-settle 6s linear both;
+    }
+    .reel[data-cut] .reel-episode[data-on] .reel-card {
+      animation: reel-cut 260ms steps(1) 1;
+    }
+  }
+  @media (min-width: 1024px) {
+    .reel-title {
+      font-size: min(118px, calc(11.4vw - 62px));
+    }
+  }
+}
+
+@keyframes reel-settle {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@keyframes reel-cut {
+  0% {
+    clip-path: inset(0 0 62% 0);
+    transform: translateX(-14px);
+  }
+  25% {
+    clip-path: inset(38% 0 20% 0);
+    transform: translateX(10px);
+  }
+  50% {
+    clip-path: inset(70% 0 0 0);
+    transform: translateX(-6px);
+  }
+  75% {
+    clip-path: inset(10% 0 55% 0);
+    transform: translateX(4px);
+  }
+  100% {
+    clip-path: none;
+    transform: none;
+  }
+}
+
+@keyframes reel-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/*
+ * Episode pages. The head is wiped in from the top once, unless motion is
+ * reduced. A title is sized from its longest word (`--longest`, in
+ * characters, set inline) so that word fits its column at every width;
+ * `overflow-wrap: anywhere` is the safety net.
+ * The floor is 24px (WCAG large text; the red is about 4:1 here), reached
+ * only by a 12-letter word on a screen narrower than about 330px.
+ */
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    .episode-head {
+      animation: episode-wipe 0.5s cubic-bezier(0.7, 0, 0.2, 1) both;
+    }
+  }
+  .episode-title,
+  .episode-next-title {
+    font-stretch: 125%;
+    line-height: 0.9;
+    letter-spacing: -0.03em;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+  .episode-title {
+    --column: calc(100vw - 2rem);
+    font-size: clamp(24px, calc(var(--column) / (var(--longest) * 0.9)), 88px);
+  }
+  .episode-next-title {
+    --column: calc(100vw - 2rem);
+    font-size: clamp(24px, calc(var(--column) / (var(--longest) * 0.9)), 64px);
+  }
+  @media (min-width: 640px) {
+    .episode-title,
+    .episode-next-title {
+      --column: calc(100vw - 6.5rem);
+    }
+  }
+  /* Two columns: the title gets 5/12 of the row, less the 56px gap. */
+  @media (min-width: 900px) {
+    .episode-title {
+      --column: calc((min(100vw - 6.5rem, 1360px) - 56px) * 5 / 12);
+    }
+  }
+}
+
+@keyframes episode-wipe {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0);
+  }
+}
+
+/* A still that grows into the episode's lead picture. */
+::view-transition-group(.morph) {
+  animation-duration: 400ms;
 }
 
 /* People who ask for less motion get a still page. */
@@ -221,5 +318,10 @@
     animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

@@ -1,149 +1,251 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
+import { episodes } from "../src/content";
 
-const PROJECTS = [
-  "Solvedblue",
-  "Potluck",
-  "tnpay",
-  "Deal Grader",
-  "Kora",
-  "Spyder",
-  "Field-inspection platform",
-  "Event Orchestrator",
-];
+/** Opens the home page once the reel is hydrated and listening for input. */
+async function openReel(page: Page) {
+  await page.goto("/");
+  await expect(page.locator(".reel[data-ready]")).toHaveCount(1);
+}
 
-test("shows who I am, the open-source project and every piece of work", async ({
+test("the home page is one episode at a time, starting with Solvedblue", async ({
   page,
 }) => {
   await page.goto("/");
-
   await expect(
     page.getByRole("heading", { level: 1, name: "Mohamed Jalel Dridi" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("link", { name: "Try the live demo" }),
-  ).toHaveAttribute("href", "https://payout-ledger-gamma.vercel.app");
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+  const list = page.getByRole("navigation", { name: "Episodes" });
+  await expect(list.getByRole("link")).toHaveCount(6);
   await expect(
-    page.getByRole("link", { name: "Read the code" }),
-  ).toHaveAttribute("href", "https://github.com/JalelDridi/payout-ledger");
-
-  for (const title of PROJECTS) {
-    await expect(
-      page.getByRole("heading", { level: 3, name: title, exact: true }),
-    ).toBeVisible();
-  }
+    list.getByRole("link", { name: /eps1\.1_payoutledger\.ts/ }),
+  ).toHaveAttribute("href", "/work/payout-ledger");
 });
 
-test("the hero door opens and closes with the keyboard", async ({ page }) => {
-  await page.goto("/");
-  const door = page.getByRole("button", { name: "Open the door" });
-  const room = page.locator("#hero-room");
-  await expect(door).toHaveAttribute("aria-expanded", "false");
-  // Ajar, the room has exactly one link, and it works without JavaScript.
-  await expect(room.getByRole("link")).toHaveCount(1);
-  await expect(room.getByRole("link", { name: "Step inside" })).toHaveAttribute(
-    "href",
-    "/work/solvedblue",
-  );
+test("pointing at or focusing an episode selects it", async ({ page }) => {
+  await openReel(page);
+  const list = page.getByRole("navigation", { name: "Episodes" });
+  await list.getByRole("link", { name: /potluck/ }).hover();
   await expect(
-    room.getByRole("link", { name: "Read the case study" }),
-  ).toHaveCount(0);
-  await door.focus();
-  await page.keyboard.press("Enter");
-  const close = page.getByRole("button", { name: "Close the door" });
-  await expect(close).toHaveAttribute("aria-expanded", "true");
+    page.getByRole("heading", { level: 2, name: "Potluck" }),
+  ).toBeVisible();
+  await list.getByRole("link", { name: /kora/ }).focus();
   await expect(
-    page
-      .locator("#hero-room")
-      .getByRole("link", { name: "Read the case study" }),
-  ).toHaveAttribute("href", "/work/solvedblue");
-  await page.keyboard.press("Enter");
-  const reopen = page.getByRole("button", { name: "Open the door" });
-  await expect(reopen).toBeVisible();
+    page.getByRole("heading", { level: 2, name: "Kora" }),
+  ).toBeVisible();
+  await page.keyboard.press("ArrowDown");
   await expect(
-    room.getByRole("link", { name: "Read the case study" }),
-  ).toHaveCount(0);
-  await expect(reopen).toBeFocused();
+    page.getByRole("heading", { level: 2, name: "Deal Grader" }),
+  ).toBeVisible();
 });
 
-test("a project door swings open on hover and on keyboard focus", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 1280, height: 900 });
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const street = page.locator("#work");
-  const link = street.getByRole("link", { name: /Potluck/ }).first();
-  const leaf = link.locator(".door-leaf-r");
-  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).toBe(
-    "none",
-  );
-  await link.hover();
-  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).not.toBe(
-    "none",
-  );
-  await page.mouse.move(0, 0);
-  await link.focus();
-  expect(await leaf.evaluate((el) => getComputedStyle(el).transform)).not.toBe(
-    "none",
-  );
-});
-
-test("on a touch screen the doors stand ajar and a tap opens the case study", async ({
-  browser,
-}) => {
-  const context = await browser.newContext({
-    hasTouch: true,
-    isMobile: true,
-    viewport: { width: 390, height: 844 },
-  });
-  const page = await context.newPage();
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const link = page
-    .locator("#work")
-    .getByRole("link", { name: /Potluck/ })
-    .first();
-  await link.scrollIntoViewIfNeeded();
-  expect(
-    await page.evaluate(() => matchMedia("(hover: none)").matches),
-    "a touch context reports (hover: none)",
-  ).toBe(true);
-  expect(
-    await link
-      .locator(".door-leaf-r")
-      .evaluate((el) => getComputedStyle(el).transform),
-  ).not.toBe("none");
-  await link.tap();
-  await expect(page).toHaveURL(/\/work\/potluck$/);
-  await context.close();
-});
-
-test("the street shows five doors with their numbers before any JavaScript runs", async ({
+test("without JavaScript the six episodes are still links", async ({
   browser,
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   const page = await context.newPage();
   await page.goto("/");
-  const doors = page.locator("#work ol > li");
-  await expect(doors).toHaveCount(5);
-  await expect(doors.first()).toContainText("N° 01");
-  await expect(doors.first()).toContainText("Solvedblue");
-  await expect(doors.nth(1)).toContainText("99 tests");
-  // The hero door's teaser is a real link, so it works without the button.
   await expect(
-    page.locator("#hero-room").getByRole("link", { name: "Step inside" }),
-  ).toHaveAttribute("href", "/work/solvedblue");
+    page.getByRole("navigation", { name: "Episodes" }).getByRole("link"),
+  ).toHaveCount(6);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+  await expect(page.getByText(episodes[0].line)).toBeVisible();
   await context.close();
 });
 
-test("a project card opens its case study, which links out", async ({
+test("with motion reduced the reel does not advance on its own", async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openReel(page);
+  await page.waitForTimeout(7000);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+});
+
+test("arrow keys outside the episode list do not change the episode", async ({
+  page,
+}) => {
+  await openReel(page);
+  await page.getByRole("link", { name: "Play episode" }).focus();
+  await page.keyboard.press("ArrowDown");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+  // With nothing focused, the keys go to the page, not to the list.
+  await page.evaluate(() => (document.activeElement as HTMLElement).blur());
+  await expect(page.locator("body")).toBeFocused();
+  await page.keyboard.press("ArrowDown");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+});
+
+test("arrow keys with a modifier held do not move the selection", async ({
+  page,
+}) => {
+  await openReel(page);
+  const list = page.getByRole("navigation", { name: "Episodes" });
+  await list.getByRole("link", { name: /kora/ }).focus();
+  for (const key of [
+    "Alt+ArrowDown",
+    "Control+ArrowDown",
+    "Meta+ArrowUp",
+    "Shift+ArrowDown",
+  ])
+    await page.keyboard.press(key);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Kora" }),
+  ).toBeVisible();
+  await expect(list.getByRole("link", { name: /kora/ })).toBeFocused();
+});
+
+test("the first episode is not cut on first paint, only on a change", async ({
+  page,
+}) => {
+  await openReel(page);
+  const card = page.locator(".reel-episode[data-on] .reel-card");
+  await expect(card).toHaveCSS("animation-name", "none");
+  await page
+    .getByRole("navigation", { name: "Episodes" })
+    .getByRole("link", { name: /potluck/ })
+    .hover();
+  await expect(card).toHaveCSS("animation-name", "reel-cut");
+});
+
+test("with motion reduced nothing is cut, zoomed or wiped", async ({
+  page,
+}) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await openReel(page);
+  await page
+    .getByRole("navigation", { name: "Episodes" })
+    .getByRole("link", { name: /potluck/ })
+    .hover();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Potluck" }),
+  ).toBeVisible();
+  const on = page.locator(".reel-episode[data-on]");
+  await expect(on.locator(".reel-card")).toHaveCSS("animation-name", "none");
+  await expect(on.locator(".reel-still")).toHaveCSS("animation-name", "none");
+  await page.goto("/work/potluck");
+  await expect(page.locator(".episode-head")).toHaveCSS(
+    "animation-name",
+    "none",
+  );
+});
+
+test("a mouse wheel on the page stops the reel", async ({ page }) => {
+  await openReel(page);
+  await page.mouse.move(400, 300);
+  await page.mouse.wheel(0, 200);
+  await page.waitForTimeout(7000);
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Solvedblue" }),
+  ).toBeVisible();
+});
+
+test("left alone, the reel moves to the next episode", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Payout Ledger" }),
+  ).toBeVisible({ timeout: 9000 });
+});
+
+test("on a phone every episode is a card with its own link", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  await expect(page.getByRole("link", { name: "Play episode" })).toHaveCount(6);
+  await page
+    .getByRole("heading", { level: 2, name: "Kora" })
+    .scrollIntoViewIfNeeded();
+  await expect(
+    page.getByRole("heading", { level: 2, name: "Kora" }),
+  ).toBeVisible();
+  // Each "Play episode" is described by its own title.
+  await expect(
+    page.getByRole("link", { name: "Play episode" }).nth(4),
+  ).toHaveAccessibleDescription("Kora");
+  await context.close();
+});
+
+test("on a phone the header scrolls away instead of covering the cards", async ({
+  browser,
+}) => {
+  const context = await browser.newContext({
+    viewport: { width: 390, height: 844 },
+    hasTouch: true,
+  });
+  const page = await context.newPage();
+  await page.goto("/");
+  const header = page.getByRole("banner");
+  await expect(header).toHaveCSS("position", "relative");
+  await page.evaluate(() => window.scrollTo(0, 1500));
+  await expect(header).not.toBeInViewport();
+  await context.close();
+});
+
+test("on a wide screen only the shown still and the next one load", async ({
+  page,
+}) => {
+  await openReel(page);
+  await page.waitForLoadState("networkidle");
+  const loaded = await page
+    .locator(".reel-still img")
+    .evaluateAll(
+      (images) =>
+        images.filter(
+          (image) =>
+            (image as HTMLImageElement).complete &&
+            (image as HTMLImageElement).naturalWidth > 0,
+        ).length,
+    );
+  expect(loaded).toBe(2);
+});
+
+test("the shell is dark, with four header links", async ({ page }) => {
+  await page.goto("/about");
+  await expect(page.locator("body")).toHaveCSS(
+    "background-color",
+    "rgb(7, 7, 7)",
+  );
+  const nav = page.getByRole("navigation", { name: "Site" });
+  for (const [name, href] of [
+    ["work", "/"],
+    ["about", "/about"],
+    ["cv", "/Jalel_Dridi_CV.pdf"],
+    ["contact", "/about#contact"],
+  ])
+    await expect(nav.getByRole("link", { name, exact: true })).toHaveAttribute(
+      "href",
+      href,
+    );
+});
+
+test("the changelog lists version 4.0.0, Episodes, first", async ({ page }) => {
+  await page.goto("/changelog");
+  await expect(page.getByRole("heading", { level: 2 }).first()).toContainText(
+    "Episodes",
+  );
+});
+
+test("an episode opens its case study, which links out", async ({ page }) => {
   await page.goto("/");
   await page
-    .getByRole("list", { name: /Also on this street/ })
-    .getByRole("link", { name: "Deal Grader", exact: true })
+    .getByRole("navigation", { name: "Episodes" })
+    .getByRole("link", { name: /dealgrader/ })
     .click();
 
   await expect(page).toHaveURL(/\/work\/deal-grader$/);
@@ -157,8 +259,109 @@ test("a project card opens its case study, which links out", async ({
     page.getByRole("link", { name: "Open Deal Grader" }),
   ).toHaveAttribute("href", "https://grade.offa.com");
 
-  await page.getByRole("link", { name: "All work" }).click();
-  await expect(page).toHaveURL(/\/#work$/);
+  await page.getByRole("link", { name: "All episodes" }).click();
+  await expect(page).toHaveURL(/:\d+\/$/);
+});
+
+test("an episode page opens with its file name, title and a way back", async ({
+  page,
+}) => {
+  await page.goto("/work/potluck");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Potluck" }),
+  ).toBeVisible();
+  await expect(page.getByText("eps1.2_potluck.ts")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "All episodes" }),
+  ).toHaveAttribute("href", "/");
+  await expect(
+    page.getByRole("link", { name: /Next episode/ }),
+  ).toHaveAttribute("href", "/work/tnpay");
+});
+
+test("every episode page shows its file name, and the last leads back to the first", async ({
+  page,
+}) => {
+  for (const [path, file] of [
+    ["/work/spyder", "eps0.0_spyder.ts"],
+    ["/work/inspection-platform", "eps0.1_inspectionplatform.ts"],
+    ["/work/event-orchestrator", "eps0.2_eventorchestrator.ts"],
+  ]) {
+    await page.goto(path);
+    await expect(page.getByText(file)).toBeVisible();
+  }
+  await expect(
+    page.getByRole("link", { name: /Next episode/ }),
+  ).toHaveAttribute("href", "/work/solvedblue");
+  await page.goto("/work/solvedblue");
+  await expect(
+    page.getByRole("link", { name: /Next episode/ }),
+  ).toHaveAttribute("href", "/work/payout-ledger");
+});
+
+test("Payout Ledger is an episode with the demo, the code and the playground", async ({
+  page,
+}) => {
+  await page.goto("/work/payout-ledger");
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Payout Ledger" }),
+  ).toBeVisible();
+  await expect(page.getByText("eps1.1_payoutledger.ts")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Try the live demo" }),
+  ).toHaveAttribute("href", "https://payout-ledger-gamma.vercel.app");
+  await expect(
+    page.getByRole("link", { name: "Read the code" }),
+  ).toHaveAttribute("href", "https://github.com/JalelDridi/payout-ledger");
+  await expect(
+    page.getByRole("button", { name: "Send it twice" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: /Next episode/ }),
+  ).toHaveAttribute("href", "/work/potluck");
+});
+
+test("long titles wrap on the narrowest phone", async ({ browser }) => {
+  const context = await browser.newContext({
+    viewport: { width: 320, height: 640 },
+  });
+  const page = await context.newPage();
+  for (const path of [
+    "/work/inspection-platform",
+    "/work/event-orchestrator",
+    "/work/payout-ledger",
+    "/work/spyder",
+    "/changelog",
+    "/no-such-page",
+    "/writing/twenty-five-payouts-a-balance-for-ten",
+  ]) {
+    await page.goto(path);
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= window.innerWidth,
+      ),
+      path,
+    ).toBe(true);
+    // No word of the title is split across lines. A hyphen is a fair place
+    // to break, so "Field-" and "inspection" count as two words.
+    const split = await page.locator("h1").evaluate((title) => {
+      const text = title.firstChild;
+      if (!text || text.nodeType !== Node.TEXT_NODE) return ["no text"];
+      const broken: string[] = [];
+      for (const match of (text.textContent ?? "").matchAll(/[^\s-]+-?/g)) {
+        const range = document.createRange();
+        range.setStart(text, match.index);
+        range.setEnd(text, match.index + match[0].length);
+        const tops = new Set(
+          [...range.getClientRects()].map((rect) => Math.round(rect.top)),
+        );
+        if (tops.size > 1) broken.push(match[0]);
+      }
+      return broken;
+    });
+    expect(split, path).toEqual([]);
+  }
+  await context.close();
 });
 
 test("old Potluck case-study links redirect to the merged one", async ({
@@ -184,14 +387,6 @@ test("old Potluck case-study links redirect to the merged one", async ({
   ).toBeVisible();
 });
 
-test("a case study opens on a band in its door's colour", async ({ page }) => {
-  await page.goto("/work/potluck");
-  const band = page.locator("main > header");
-  expect(
-    await band.evaluate((el) => getComputedStyle(el).backgroundColor),
-  ).toBe("rgb(237, 176, 33)");
-});
-
 test("Kora has a case study with its live link", async ({ page }) => {
   await page.goto("/work/kora");
   await expect(
@@ -204,7 +399,7 @@ test("Kora has a case study with its live link", async ({ page }) => {
 });
 
 test("Solvedblue is the current job and has a case study", async ({ page }) => {
-  await page.goto("/");
+  await page.goto("/about");
   const first = page.locator("#experience li").first();
   await expect(first).toContainText("Solvedblue");
   await expect(first).toContainText("Nov 2026 – present");
@@ -224,7 +419,7 @@ test.describe("the pipeline playground", () => {
   test.beforeEach(async ({ page }) => {
     // Steps are instant with motion reduced, which keeps these tests fast.
     await page.emulateMedia({ reducedMotion: "reduce" });
-    await page.goto("/");
+    await page.goto("/work/payout-ledger");
   });
 
   const counters = (page: import("@playwright/test").Page) =>
@@ -280,7 +475,7 @@ test("shows the local time in Bizerte and the gap to the visitor", async ({
 }) => {
   const context = await browser.newContext({ timezoneId: "America/New_York" });
   const page = await context.newPage();
-  await page.goto("/");
+  await page.goto("/about");
 
   await expect(
     page.getByText(/\d{2}:\d{2} here now, [56] hours ahead of you/),
@@ -301,59 +496,39 @@ test("every link has a destination", async ({ page }) => {
     .getByRole("link")
     .evaluateAll((links) => links.map((a) => a.getAttribute("href")));
 
-  expect(hrefs.length).toBeGreaterThan(15);
+  // The header, the six episodes, the play link and the earlier episodes.
+  expect(hrefs.length).toBeGreaterThanOrEqual(15);
   for (const href of hrefs) {
     expect(href).toMatch(/^(https:\/\/|mailto:|\/|#)/);
   }
 });
 
-test("the theme switch changes the colour scheme", async ({ page }) => {
-  await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/");
-  const html = page.locator("html");
-  await expect(html).not.toHaveClass(/dark/);
-
-  await page
-    .getByRole("button", { name: "Switch between light and dark theme" })
-    .click();
-
-  await expect(html).toHaveClass(/dark/);
-});
-
-for (const colorScheme of ["light", "dark"] as const) {
-  for (const path of [
-    "/",
-    "/work/potluck",
-    "/work/solvedblue",
-    "/writing/webhooks-in-any-order",
-    "/changelog",
-  ]) {
-    test(`no detectable accessibility violations on ${path} in ${colorScheme} mode`, async ({
-      page,
-    }) => {
-      await page.emulateMedia({ colorScheme, reducedMotion: "reduce" });
-      await page.goto(path);
-      // Bring every scroll-revealed section into view before scanning.
-      await page.evaluate(async () => {
-        for (let y = 0; y < document.body.scrollHeight; y += 400) {
-          window.scrollTo(0, y);
-          await new Promise((resolve) => setTimeout(resolve, 60));
-        }
-      });
-      // Let the last fade-in finish so colours are measured at full opacity.
-      await page.waitForTimeout(1200);
-
-      const results = await new AxeBuilder({ page }).analyze();
-
-      expect(results.violations).toEqual([]);
+// The site is dark only: each path is scanned once.
+for (const path of ["/", "/about", "/work/potluck", "/work/payout-ledger"]) {
+  test(`no detectable accessibility violations on ${path}`, async ({
+    page,
+  }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto(path);
+    // Bring every scroll-revealed section into view before scanning.
+    await page.evaluate(async () => {
+      for (let y = 0; y < document.body.scrollHeight; y += 400) {
+        window.scrollTo(0, y);
+        await new Promise((resolve) => setTimeout(resolve, 60));
+      }
     });
-  }
+    // Let the last fade-in finish so colours are measured at full opacity.
+    await page.waitForTimeout(1200);
+
+    const results = await new AxeBuilder({ page }).analyze();
+
+    expect(results.violations).toEqual([]);
+  });
 }
 
 test("fits a phone screen without horizontal scrolling", async ({ page }) => {
   // Narrower than most phones, to leave a margin for font differences.
   await page.setViewportSize({ width: 340, height: 812 });
-  // The playground's steps are instant with motion reduced.
   await page.emulateMedia({ reducedMotion: "reduce" });
   for (const path of [
     "/",
@@ -361,18 +536,9 @@ test("fits a phone screen without horizontal scrolling", async ({ page }) => {
     "/work/potluck",
     "/writing/twenty-five-payouts-a-balance-for-ten",
     "/changelog",
+    "/about",
   ]) {
     await page.goto(path);
-    if (path === "/") {
-      // Open the hero door, its widest state, before measuring.
-      await page.getByRole("button", { name: "Open the door" }).click();
-      await expect(
-        page.getByRole("button", { name: "Close the door" }),
-      ).toBeVisible();
-      // Fill the ledger book, its widest state, before measuring.
-      await page.getByRole("button", { name: "Send out of order" }).click();
-      await expect(page.getByRole("status")).toContainText("Retried");
-    }
 
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - window.innerWidth,
@@ -380,24 +546,6 @@ test("fits a phone screen without horizontal scrolling", async ({ page }) => {
 
     expect(overflow, path).toBeLessThanOrEqual(0);
   }
-});
-
-test("a phone gets the section links behind a menu button", async ({
-  page,
-}) => {
-  await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
-
-  await page.getByRole("button", { name: "Open the menu" }).click();
-  await page
-    .getByRole("navigation", { name: "Sections" })
-    .getByRole("link", { name: "Experience" })
-    .click();
-
-  await expect(page).toHaveURL(/#experience$/);
-  await expect(
-    page.getByRole("button", { name: "Open the menu" }),
-  ).toBeVisible();
 });
 
 test("an unknown address shows a way back to the home page", async ({
@@ -440,41 +588,29 @@ test("the home page describes its subject to search engines", async ({
   expect(data.mainEntity.worksFor.name).toBe("Solvedblue");
 });
 
-test("recordings wait until they are near the screen", async ({ page }) => {
-  await page.goto("/");
-  const video = page.locator("#project video");
+test("recordings wait until they are near the screen", async ({ browser }) => {
+  // In the server HTML a recording loads nothing, not even its poster.
+  const still = await browser.newContext({ javaScriptEnabled: false });
+  const before = await still.newPage();
+  await before.goto("/work/payout-ledger");
+  const idle = before.locator("video").first();
+  await expect(idle).toHaveAttribute("preload", "none");
+  await expect(idle).not.toHaveAttribute("poster");
+  await still.close();
 
-  await expect(video).toHaveAttribute("preload", "none");
-  await expect(video).not.toHaveAttribute("poster");
-
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  await page.goto("/work/payout-ledger");
+  const video = page.locator("video").first();
   await video.scrollIntoViewIfNeeded();
   await expect(video).toHaveAttribute("poster", /payout-ledger-poster/);
-});
-
-test("the flagship sits on the blue band with its recording in an arch", async ({
-  page,
-}) => {
-  await page.emulateMedia({ colorScheme: "light" });
-  await page.goto("/");
-  const band = page.locator("#project");
-  const bg = await band.evaluate((el) => getComputedStyle(el).backgroundColor);
-  expect(bg).toBe("rgb(23, 99, 182)");
-  await expect(band.locator("video")).toHaveAttribute("preload", "none");
-  expect(
-    await band
-      .locator("video")
-      .evaluate((el) => getComputedStyle(el.closest("[data-arch]")!).clipPath),
-  ).toContain("url(");
-  await expect(band.locator("[data-arch]")).toHaveAttribute(
-    "data-arch-shape",
-    "segmental",
-  );
+  await context.close();
 });
 
 test("the about section shows the portrait, the story and live clocks", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/about");
   const about = page.locator("#about");
 
   await expect(
@@ -487,10 +623,44 @@ test("the about section shows the portrait, the story and live clocks", async ({
   await expect(about.getByText(/^\d{2}:\d{2}$/)).toHaveCount(4);
 });
 
+test("the about page gathers everything that is not work, in order", async ({
+  page,
+}) => {
+  const response = await page.goto("/about");
+  expect(response?.status()).toBe(200);
+  await expect(page).toHaveTitle(/^About · /);
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
+    "href",
+    /\/about$/,
+  );
+  await expect(
+    page
+      .locator("main section")
+      .evaluateAll((sections) => sections.map((section) => section.id)),
+  ).resolves.toEqual([
+    "about",
+    "experience",
+    "skills",
+    "leadership",
+    "writing",
+    "contact",
+  ]);
+  // Section titles are off-white: red is for episode titles.
+  for (const title of await page.locator("main section h2").all())
+    await expect(title).toHaveCSS("color", "rgb(236, 232, 225)");
+  // No Bab leftovers: no Arabic words.
+  await expect(page.locator('main [lang="ar"]')).toHaveCount(0);
+  await expect(
+    page.getByRole("link", {
+      name: "Twenty-five payouts, a balance that covers ten",
+    }),
+  ).toHaveAttribute("href", "/writing/twenty-five-payouts-a-balance-for-ten");
+});
+
 test("the leadership section lists the three JCI roles in order", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/about");
 
   const roles = page.locator("#leadership ol li");
   await expect(roles).toHaveText([
@@ -505,7 +675,7 @@ test("the copy button puts the email on the clipboard", async ({ browser }) => {
     permissions: ["clipboard-read", "clipboard-write"],
   });
   const page = await context.newPage();
-  await page.goto("/#contact");
+  await page.goto("/about#contact");
   await page.getByRole("button", { name: "Copy email" }).click();
   await expect(page.getByRole("button", { name: "Copied" })).toBeVisible();
   expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
@@ -514,10 +684,10 @@ test("the copy button puts the email on the clipboard", async ({ browser }) => {
   await context.close();
 });
 
-test("an article opens from the home page and links to its sources", async ({
+test("an article opens from Payout Ledger and links to its sources", async ({
   page,
 }) => {
-  await page.goto("/");
+  await page.goto("/work/payout-ledger");
   await page
     .getByRole("link", {
       name: "Twenty-five payouts, a balance that covers ten",
@@ -533,24 +703,14 @@ test("an article opens from the home page and links to its sources", async ({
   ).toHaveAttribute("href", /0003-concurrency/);
 
   await page.getByRole("link", { name: "All writing" }).click();
-  await expect(page).toHaveURL(/\/#writing$/);
+  await expect(page).toHaveURL(/\/work\/payout-ledger#writing$/);
 });
 
-test("the status strip shows three live clocks, the site version and the deploy date", async ({
+test("the changelog lists the current version first and is linked from the footer", async ({
   page,
 }) => {
-  await page.goto("/");
-  const footer = page.getByRole("contentinfo");
-  await expect(footer.getByText(/^\d{2}:\d{2}$/)).toHaveCount(3);
-  await expect(footer).toContainText(/Site v\d+\.\d+\.\d+/);
-  await expect(footer).toContainText(/Last deploy \d{1,2} \w{3,4} \d{4}/);
-  await expect(footer).not.toContainText("Built with");
-});
-
-test("the changelog lists the current version first and is linked from the status strip", async ({
-  page,
-}) => {
-  await page.goto("/");
+  // The home page has no footer; any other page does.
+  await page.goto("/work/kora");
   await page
     .getByRole("contentinfo")
     .getByRole("link", { name: "changelog" })
@@ -559,66 +719,5 @@ test("the changelog lists the current version first and is linked from the statu
   await expect(
     page.getByRole("heading", { level: 1, name: "Changelog" }),
   ).toBeVisible();
-  await expect(page.locator("main ol li").first()).toContainText("3.0.0");
-});
-
-test("with motion reduced the hero is visible at once", async ({ page }) => {
-  await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto("/");
-  const h1 = page.getByRole("heading", {
-    level: 1,
-    name: "Mohamed Jalel Dridi",
-  });
-  await expect(h1).toBeVisible();
-  expect(
-    await h1.evaluate((el) => getComputedStyle(el.parentElement!).opacity),
-  ).toBe("1");
-  // The last entrance, the hero door, is not held back either.
-  const room = page.locator("#hero-room");
-  expect(
-    await room.evaluate(
-      (el) => getComputedStyle(el.closest(".animate-in")!).opacity,
-    ),
-  ).toBe("1");
-});
-
-test("the page is set in the Bab typefaces and ends on a band of tiles", async ({
-  page,
-}) => {
-  await page.goto("/");
-  const h1Font = await page
-    .getByRole("heading", { level: 1 })
-    .evaluate((el) => getComputedStyle(el).fontFamily);
-  expect(h1Font).toMatch(/Alexandria/i);
-  const bodyFont = await page
-    .locator("body")
-    .evaluate((el) => getComputedStyle(el).fontFamily);
-  expect(bodyFont).toMatch(/Onest/i);
-  await expect(
-    page.getByRole("contentinfo").locator("svg pattern"),
-  ).toHaveCount(1);
-  await expect(page.getByRole("contentinfo")).toContainText("Bislema");
-});
-
-test("every Arabic word is marked as Arabic", async ({ page }) => {
-  await page.goto("/");
-  const unmarked = await page.evaluate(() => {
-    const walker = document.createTreeWalker(
-      document.body,
-      NodeFilter.SHOW_TEXT,
-    );
-    const bad: string[] = [];
-    while (walker.nextNode()) {
-      const node = walker.currentNode as Text;
-      // Skip the framework's inline scripts, which repeat the page's text.
-      if (node.parentElement?.closest("script, style")) continue;
-      if (
-        /[\u0600-\u06FF]/.test(node.data) &&
-        !node.parentElement?.closest('[lang="ar"]')
-      )
-        bad.push(node.data.trim());
-    }
-    return bad;
-  });
-  expect(unmarked).toEqual([]);
+  await expect(page.locator("main ol li").first()).toContainText("4.0.0");
 });

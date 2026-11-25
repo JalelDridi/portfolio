@@ -118,8 +118,8 @@ export function Diagram({
                 <div
                   ref={refs[node.id]}
                   className={cn(
-                    // A painted square, like a door stud: the icon is cut out of it.
-                    "flex items-center justify-center bg-brand text-card",
+                    // A dark square under a hairline, the icon in red.
+                    "flex items-center justify-center border border-border bg-card text-brand",
                     compact ? "size-11" : "size-10 sm:size-16",
                   )}
                 >

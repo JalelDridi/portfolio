@@ -1,38 +1,39 @@
 import type { Metadata } from "next";
-import { Alexandria, DM_Mono, Onest, Reem_Kufi } from "next/font/google";
+import { Archivo, IBM_Plex_Mono, Onest } from "next/font/google";
 import { Providers } from "@/components/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { profile, SITE_URL } from "@/content";
 import "./globals.css";
 
-const alexandria = Alexandria({
+// Titles: the variable font with its width axis, so it can be set at 125%.
+const archivo = Archivo({
   subsets: ["latin"],
-  weight: ["500", "700", "800", "900"],
-  variable: "--font-alexandria",
+  axes: ["wdth"],
+  variable: "--font-archivo",
 });
 
+// Labels, the header and the home page.
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-plex-mono",
+});
+
+// Long case-study text.
 const onest = Onest({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-onest",
 });
 
-// Only labels, dates and numbers use the mono face, so it is not worth a preload.
-const dmMono = DM_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--font-dm-mono",
-  preload: false,
-});
-
-// A few Arabic words, each beside its meaning; not worth a preload either.
-const reemKufi = Reem_Kufi({
-  subsets: ["arabic"],
-  weight: ["500", "700"],
-  variable: "--font-reem-kufi",
-  preload: false,
-});
+// Evaluated when the page is built, so it is the date of the deploy.
+const LAST_DEPLOY = new Intl.DateTimeFormat("en-GB", {
+  day: "numeric",
+  month: "short",
+  year: "numeric",
+  timeZone: "UTC",
+}).format(new Date());
 
 const description =
   "Founding engineer working in full-stack TypeScript on payments and reliability. Case studies and Payout Ledger, an open-source payout monitor with a live demo.";
@@ -56,11 +57,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    // next-themes sets the theme class on <html> before hydration.
     <html
       lang="en"
-      suppressHydrationWarning
-      className={`${alexandria.variable} ${onest.variable} ${dmMono.variable} ${reemKufi.variable}`}
+      className={`${archivo.variable} ${plexMono.variable} ${onest.variable}`}
     >
       <body>
         <Providers>
@@ -72,7 +71,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </a>
           <SiteHeader />
           <div id="content">{children}</div>
-          <SiteFooter />
+          <SiteFooter lastDeploy={LAST_DEPLOY} />
         </Providers>
       </body>
     </html>

@@ -2,7 +2,7 @@
 
 # Portfolio
 
-Jalel's personal site. Statically generated: a home page and one case-study page per project. No database.
+Jalel's personal site. Statically generated: a home page that shows one project ("episode") at a time, a page per episode, and /about. No database.
 
 ## Commands
 
@@ -13,8 +13,10 @@ Jalel's personal site. Statically generated: a home page and one case-study page
 
 - `src/content.ts` — all copy; edit wording here
 - `src/writing.ts` — the articles, as typed blocks; pages at `src/app/writing/[slug]/page.tsx`
-- `src/app/page.tsx` — the home page, assembled from `src/components/sections/`
-- `src/app/work/[slug]/page.tsx` — case-study pages
+- `src/app/page.tsx` — the home page: the reel (`src/components/episodes/reel.tsx`) over the `episodes` list in `content.ts`
+- `src/app/work/[slug]/page.tsx` — case-study (episode) pages; `src/app/work/payout-ledger/page.tsx` — the flagship, with the playground
+- `src/app/about/page.tsx` — everything that is not project work, assembled from `src/components/sections/`
+- `src/components/episodes/` — the reel, the episode head and the next-episode link; `src/lib/styles.ts` — shared page column, labels and titles
 - `src/components/diagram.tsx` — architecture sketches drawn from specs in `content.ts`
 - `src/components/media.tsx` — screenshots and recordings in browser or phone frames
 - `public/work`, `public/demo` — screenshots and silent recordings of public pages

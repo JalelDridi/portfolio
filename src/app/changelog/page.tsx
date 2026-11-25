@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { changelog } from "@/content";
 import { formatShortDate } from "@/lib/dates";
+import { CONTAINER, LABEL_MUTED, WIDE_TITLE } from "@/lib/styles";
 
 export const metadata: Metadata = {
   title: "Changelog",
@@ -14,21 +15,20 @@ export const metadata: Metadata = {
   },
 };
 
-const LABEL =
-  "font-mono text-[0.8rem] tracking-[0.1em] text-muted-foreground uppercase";
-
 export default function ChangelogPage() {
   return (
-    <main className="mx-auto w-full max-w-[1280px] px-5 pt-[4.2rem] pb-16">
-      <p className={LABEL}>Site</p>
-      <h1 className="mt-3 font-display text-[clamp(2.6rem,6.4vw,5.4rem)] leading-[0.92] font-black tracking-[-0.04em] text-balance">
+    <main className={`${CONTAINER} pt-10 pb-8 sm:pt-14`}>
+      <p className={LABEL_MUTED}>Site</p>
+      <h1
+        className={`${WIDE_TITLE} mt-3 text-[clamp(28px,6.4vw,5.4rem)] text-red`}
+      >
         Changelog
       </h1>
       <p className="mt-6 max-w-3xl text-[1.25rem] text-pretty text-muted-foreground">
         Every version of this site, newest first. The version number is in the
         status strip at the bottom of every page.
       </p>
-      <ol className="mt-12 border-t border-border">
+      <ol className="mt-12 max-w-[64rem] border-t border-border">
         {changelog.map((entry) => (
           <li
             key={entry.version}
@@ -46,13 +46,12 @@ export default function ChangelogPage() {
               <h2 className="font-display text-[clamp(1.6rem,3vw,2.2rem)] leading-tight font-extrabold tracking-[-0.03em] text-balance">
                 {entry.title}
               </h2>
-              <ul className="mt-4 grid max-w-3xl gap-2 text-[1.1rem] leading-relaxed">
+              <ul className="mt-4 grid max-w-[40rem] gap-2 text-[1.08rem] leading-[1.65]">
                 {entry.items.map((item) => (
                   <li key={item} className="grid grid-cols-[1.2rem_1fr] gap-2">
-                    {/* A nail head for a bullet. */}
                     <span
                       aria-hidden="true"
-                      className="mt-[0.62rem] size-[0.5rem] rounded-full bg-brand"
+                      className="mt-[0.62rem] size-[0.4rem] bg-brand"
                     />
                     <span className="text-pretty">{item}</span>
                   </li>

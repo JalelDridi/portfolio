@@ -1,15 +1,15 @@
 import Image from "next/image";
-import type { ReactNode } from "react";
+import { type ReactNode, ViewTransition } from "react";
 import type { Clip, Shot } from "@/content";
 import { cn } from "@/lib/utils";
 import { BrowserFrame } from "./browser-frame";
 import { LazyVideo } from "./lazy-video";
 
-/** A phone outline around a tall screenshot or recording, on a whitewashed ground. */
+/** A phone outline around a tall screenshot or recording, in a thin dark frame. */
 function PhoneFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="bg-wall-2 px-5 py-8 shadow-[0_0_0_1px_var(--border)]">
-      <div className="mx-auto w-full max-w-[17rem] overflow-hidden rounded-[2.25rem] border-[6px] border-stud bg-black">
+    <div className="border border-border bg-card px-5 py-8">
+      <div className="mx-auto w-full max-w-[17rem] overflow-hidden rounded-[2.25rem] border-[6px] border-bezel bg-black">
         {children}
       </div>
     </div>
@@ -32,35 +32,48 @@ function Frame({
   );
 }
 
+const CAPTION =
+  "text-left font-mono text-[0.8rem] leading-relaxed text-pretty text-muted-foreground";
+
 export function ShotFigure({
   shot,
   priority = false,
+  transitionName,
   className,
 }: {
   shot: Shot;
   priority?: boolean;
+  /** Shared with the home page's still, so the still grows into this picture. */
+  transitionName?: string;
   className?: string;
 }) {
+  const image = (
+    <Image
+      src={shot.src}
+      alt={shot.alt}
+      width={shot.width}
+      height={shot.height}
+      priority={priority}
+      sizes={
+        shot.frame === "phone" ? "272px" : "(min-width: 1024px) 960px, 100vw"
+      }
+      className="block w-full"
+    />
+  );
   return (
     <figure className={cn("flex flex-col gap-3", className)}>
       <Frame frame={shot.frame} url={shot.url}>
-        <Image
-          src={shot.src}
-          alt={shot.alt}
-          width={shot.width}
-          height={shot.height}
-          priority={priority}
-          sizes={
-            shot.frame === "phone"
-              ? "272px"
-              : "(min-width: 1024px) 960px, 100vw"
-          }
-          className="w-full"
-        />
+        {transitionName ? (
+          <ViewTransition name={transitionName} share="morph" default="none">
+            <div>{image}</div>
+          </ViewTransition>
+        ) : (
+          image
+        )}
       </Frame>
-      <figcaption className="text-left font-mono text-[0.8rem] text-pretty text-muted-foreground">
-        {shot.caption}
-      </figcaption>
+      {shot.caption && (
+        <figcaption className={CAPTION}>{shot.caption}</figcaption>
+      )}
     </figure>
   );
 }
@@ -78,7 +91,7 @@ export function ClipFigure({
         <LazyVideo
           // The shape is reserved up front, so nothing moves when it loads.
           className={cn(
-            "w-full bg-black",
+            "block w-full bg-black",
             clip.frame === "phone" ? "aspect-[390/844]" : "aspect-[16/10]",
           )}
           webm={clip.webm}
@@ -87,9 +100,7 @@ export function ClipFigure({
           label={clip.label}
         />
       </Frame>
-      <figcaption className="text-left font-mono text-[0.8rem] text-pretty text-muted-foreground">
-        {clip.caption}
-      </figcaption>
+      <figcaption className={CAPTION}>{clip.caption}</figcaption>
     </figure>
   );
 }
